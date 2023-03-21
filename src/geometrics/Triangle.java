@@ -1,10 +1,13 @@
 package geometrics;
 import primitives.Vector;
 import primitives.Point;
+
 /**
- * This class represents a triangle in 3D space.
+ This class represents a triangle in 3D space, and it is a subclass of Polygon.
+ @author Maayan Amar
  */
 public class Triangle extends Polygon {
+
     /**
      * Constructs a new triangle with the given vertices.
      *
@@ -15,6 +18,7 @@ public class Triangle extends Polygon {
     public Triangle(Point vertex1, Point vertex2, Point vertex3) {
         super(vertex1, vertex2, vertex3);
     }
+
 
     @Override
     public Vector getNormal(Point point) {

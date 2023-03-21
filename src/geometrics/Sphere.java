@@ -4,9 +4,15 @@ import primitives.Point;
 import primitives.Vector;
 
 /**
- * This class represents a sphere in 3D space.
+ The Sphere class represents a sphere in 3D space.
+ Extends RadialGeometry.
+ @author Maayan Amar
  */
+
 public class Sphere extends RadialGeometry {
+    /**
+     * The center point of the sphere.
+     */
     private final Point center;
 
     /**
@@ -21,14 +27,12 @@ public class Sphere extends RadialGeometry {
     }
 
     /**
-     * Returns the center point of the sphere.
-     *
+     *  Gets the center point of the sphere.
      * @return The center point of the sphere.
      */
     public Point getCenter() {
         return center;
     }
-
     @Override
     public Vector getNormal(Point point) {
         // Implementation here
