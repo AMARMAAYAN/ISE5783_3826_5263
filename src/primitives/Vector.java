@@ -66,6 +66,14 @@ public class Vector extends Point {
     public Vector normalize(){
         double len=length();
         return new Vector(xyz.reduce(length()));
+
+        //in some point we wiil need to change to:
+        /** double len=length();
+         double x= xyz.d1/len;
+         double y= xyz.d2 /len;
+         double z= xyz.d3/len;
+
+         return new Vector(x,y,z); **/
     }
 
     @Override
@@ -84,6 +92,18 @@ public class Vector extends Point {
         return new Vector(xyz.add(vector.xyz));
     }
 
+
+    public Vector subtract(Vector other){
+        return new Vector(xyz.subtract(other.xyz));
+
+        //in some point we change to:
+        /**
+         double x=xyz.d1 - other.xyz.d1;
+         double y=xyz.d2 - other.xyz.d2;
+         double z=xyz.d3 - other.xyz.d3;
+         **/
+
+    }
     /**
      * Returns a new vector that is the result of scaling this vector by the specified scalar value.
      * @param x The scalar value to scale this vector by.

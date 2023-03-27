@@ -21,23 +21,30 @@ public class Plane implements Geometry{
     /**
      * Constructs a new plane with the given three points.
      *
-     * @param vertex The first point.
-     * @param vertex1 The second point.
-     * @param vertex2 The third point.
+     * @param p1 The first point.
+     * @param p2 The second point.
+     * @param p3 The third point.
      */
-    public Plane(Point vertex, Point vertex1, Point vertex2) {
-        q0 =vertex;
-        normal = null;
+    public Plane(Point p1, Point p2, Point p3) {
+        this.q0 =p1;
+
+        Vector U=p1.subtract(p2); //AB
+        Vector V=p1.subtract(p3); //AC
+
+        Vector N=U.crossProduct(V); //AB X AC
+
+        //right hand rule
+       this.normal = N.normalize();
     }
 
     /**
      * Constructs a new plane with the given point and normal vector.
      * @param q0 A point on the plane.
-     * @param normal The normal vector to the plane.
+     * @param vector The normal vector to the plane.
      */
-    public Plane(Point q0, Vector normal) {
+    public Plane(Point q0, Vector vector) {
         this.q0 = q0;
-        this.normal = normal;
+        this.normal = vector.normalize();
     }
 
 

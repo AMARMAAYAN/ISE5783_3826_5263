@@ -8,15 +8,24 @@ import primitives.Point;
  */
 public class Triangle extends Polygon {
 
+    final Point p0;
+    final Point p1;
+    final Point p2;
+
     /**
      * Constructs a new triangle with the given vertices.
      *
-     * @param vertex1 The first vertex of the triangle.
-     * @param vertex2 The second vertex of the triangle.
-     * @param vertex3 The third vertex of the triangle.
+     * @param pA The first vertex of the triangle.
+     * @param pB The second vertex of the triangle.
+     * @param pC The third vertex of the triangle.
      */
-    public Triangle(Point vertex1, Point vertex2, Point vertex3) {
-        super(vertex1, vertex2, vertex3);
+    public Triangle(Point pA, Point pB, Point pC) {
+
+        super(pA,pB,pC);
+        this.p0=pA;
+        this.p1=pB;
+        this.p2=pC;
+
     }
 
 
@@ -24,5 +33,10 @@ public class Triangle extends Polygon {
     public Vector getNormal(Point point) {
         // Implementation here
         return null;
+    }
+
+    @Override
+    public String toString() {
+        return "Triangle{" + "p0=" + p0 + ", p1=" + p1 + ", p2=" + p2 + '}';
     }
 }
