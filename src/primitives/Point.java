@@ -82,7 +82,7 @@ public class Point {
      * @param vector the vector to add to this point
      * @return a new point that is the result of adding the vector to this point
      */
-    public Object add(Vector vector) {
+    public Point add(Vector vector) {
         return new Point(xyz.add(vector.xyz));
     }
 

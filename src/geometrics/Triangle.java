@@ -28,13 +28,6 @@ public class Triangle extends Polygon {
 
     }
 
-
-    @Override
-    public Vector getNormal(Point point) {
-        // Implementation here
-        return null;
-    }
-
     @Override
     public String toString() {
         return "Triangle{" + "p0=" + p0 + ", p1=" + p1 + ", p2=" + p2 + '}';

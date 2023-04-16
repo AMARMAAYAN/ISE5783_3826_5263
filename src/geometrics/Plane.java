@@ -1,22 +1,25 @@
 package geometrics;
+
 import primitives.Point;
 import primitives.Vector;
+
 /**
- The Plane class represents a plane in 3D space.
- Implements Geometry.
- @author Maayan Amar
+ * The Plane class represents a plane in 3D space.
+ * Implements Geometry.
+ *
+ * @author Maayan Amar
  */
-public class Plane implements Geometry{
+public class Plane implements Geometry {
 
     /**
      * A point on the plane.
      */
-    final Point q0;
+    final protected Point q0;
 
     /**
      * The normal vector to the plane.
      */
-    final Vector normal;
+    final protected Vector normal;
 
     /**
      * Constructs a new plane with the given three points.
@@ -26,27 +29,26 @@ public class Plane implements Geometry{
      * @param p3 The third point.
      */
     public Plane(Point p1, Point p2, Point p3) {
-        this.q0 =p1;
+        this.q0 = p1;
 
-        Vector U=p1.subtract(p2); //AB
-        Vector V=p1.subtract(p3); //AC
-
-        Vector N=U.crossProduct(V); //AB X AC
+        Vector U = p1.subtract(p2); //AB
+        Vector V = p1.subtract(p3); //AC
+        Vector N = U.crossProduct(V); //AB X AC
 
         //right hand rule
-       this.normal = N.normalize();
+        this.normal = N.normalize();
     }
 
     /**
      * Constructs a new plane with the given point and normal vector.
-     * @param q0 A point on the plane.
+     *
+     * @param q0     A point on the plane.
      * @param vector The normal vector to the plane.
      */
     public Plane(Point q0, Vector vector) {
         this.q0 = q0;
         this.normal = vector.normalize();
     }
-
 
 
     @Override
@@ -56,6 +58,7 @@ public class Plane implements Geometry{
 
     /**
      * Returns the normal vector to the plane.
+     *
      * @return The normal vector to the plane.
      */
     public Vector getNormal() {

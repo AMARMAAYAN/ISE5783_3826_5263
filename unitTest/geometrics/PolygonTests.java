@@ -18,6 +18,18 @@ import primitives.Vector;
 public class PolygonTests {
 
    /** Test method for {@link geometrics.Polygon#Polygon(primitives.Point...)}. */
+
+   @Test
+   void testwhatisthis(){
+      assertDoesNotThrow(
+              ()-> new Polygon(
+                          new Point(0, 0, 1),
+                          new Point(1, 0, 0),
+                          new Point(0, 1, 0),
+                          new Point(-1, 1, 1))
+              );
+   }
+
    @Test
    public void testConstructor() {
       // ============ Equivalence Partitions Tests ==============

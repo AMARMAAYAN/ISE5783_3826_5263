@@ -2,28 +2,44 @@ package primitives;
 import java.util.Objects;
 
 /**
- The Ray class represents a ray in 3D space, defined by a starting point and a direction vector.
+ The Ray class represents a ray in 3D space, defined by a starting point and a direction dir.
  */
 public class Ray {
 
     /**
      * The starting point of the ray.
      */
-    final Point p;
+    final Point p0;
 
     /**
-     * The normalized direction vector of the ray.
+     * The normalized direction dir of the ray.
      */
-    final Vector vector;
+    final Vector dir;
 
     /**
-     * Constructs a Ray object with a given starting point and direction vector.
+     * returns the point po
+     * @return po
+     */
+    public Point getP0() {
+        return p0;
+    }
+
+    /**
+     * returns thr vector dir
+     * @return dir
+     */
+    public Vector getDir() {
+        return dir;
+    }
+
+    /**
+     * Constructs a Ray object with a given starting point and direction dir.
      * @param p The starting point of the ray.
-     * @param vector The direction vector of the ray.
+     * @param dir The direction dir of the ray.
      */
-    public Ray(Point p, Vector vector) {
-        this.p = p;
-        this.vector = vector.normalize();
+    public Ray(Point p, Vector dir) {
+        this.p0 = p;
+        this.dir = dir.normalize();
     }
 
     @Override
@@ -31,19 +47,19 @@ public class Ray {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Ray ray = (Ray) o;
-        return Objects.equals(p, ray.p) && Objects.equals(vector, ray.vector);
+        return Objects.equals(p0, ray.p0) && Objects.equals(dir, ray.dir);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(p, vector);
+        return Objects.hash(p0, dir);
     }
 
     @Override
     public String toString() {
         return "Ray{" +
-                "p=" + p +
-                ", vector=" + vector +
+                "p0=" + p0 +
+                ", dir=" + dir +
                 '}';
     }
 }

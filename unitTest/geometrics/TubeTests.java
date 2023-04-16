@@ -4,13 +4,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class SphereTest {
+class TubeTests {
 
     @Test
-    void getCenter() {
-    }
+    void testGetNormal() {
 
-    @Test
-    void getNormal() {
     }
 }
