@@ -5,7 +5,9 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import static primitives.Util.isZero;
 /**
- * Unit tests for primitives. Vector class
+ The VectorTests class is responsible for testing the Vector class.
+ It includes unit tests for different operations that can be performed on a vector, such as addition, subtraction, scalar multiplication, cross product, and more.
+@author  Maayan Amar .
  */
 class VectorTests {
 
@@ -31,11 +33,15 @@ class VectorTests {
                 "crossProduct() for parallel vectors does not throw an exception");
     }
     Vector v=new Vector(0,3,4);
+
     /**
      * Test method for {@link primitives.Vector#length()}.
      */
     @Test
-     void testLength() {
+    void testLength() {
+        // ============ Equivalence Partitions Tests ==============
+        // TC01: Test that length of vector (0,3,4) is proper
+        assertEquals(5, new Vector(0,3,4).length(),0.00001, "length() wrong value");
 
     }
     /**
@@ -76,13 +82,15 @@ class VectorTests {
     void testAdd() {
         Vector v1 = new Vector(1, 2, 3);
         Vector v2 = new Vector(-2, -4, -6);
+        Vector v3=new Vector(2,4,6);
 
         // ============ Equivalence Partitions Tests ==============
-        assertEquals(new Vector(-1, -2, -3), v1.add(v2), "Add does not work correctly");
+        //TC01: simple test
+        assertEquals(new Vector(-1, -2, -3), v1.add(v2), "Add vector does not work correctly");
 
         // =============== Boundary Values Tests =================
-        Vector v3 = new Vector(0, 0, 0);
-        assertEquals(v1, v1.add(v3), "Adding zero vector should not change the vector");
+       //TC11: Zero vector as a result of the sum of opposite vectors
+        assertThrows(IllegalArgumentException.class, ()->v2.add(v3), "Summing two opposite vectors must throw an exception");
     }
 
 
@@ -95,18 +103,19 @@ class VectorTests {
         Vector v2 = new Vector(-2, -4, -6);
 
         // ============ Equivalence Partitions Tests ==============
-        assertEquals(new Vector(3, 6, 9), v1.subtract(v2), "Subtract does not work correctly");
+        //TC01: simple test
+        assertEquals(new Vector(3, 6, 9), v1.subtract(v2), "Subtracting vectors does not work correctly");
 
         // =============== Boundary Values Tests =================
-        Vector v3 = new Vector(0, 0, 0);
-        assertEquals(v1, v1.subtract(v3), "Subtracting zero vector should not change the vector");
+       //TC11:Zero vector as a result of subtracting the same vector
+        assertThrows(IllegalArgumentException.class, ()->v1.subtract(v1),"Subtracting the same vector must throw an exception");
     }
 
     /**
-     * Test method for {@link primitives.Vector#scale(primitives.Vector)}.
+     * Test method for {@link primitives.Vector#scale(double)}.
      */
     @Test
-    void testScale() {
+     void testScale() {
         Vector v1 = new Vector(1, 2, 3);
 
         // ============ Equivalence Partitions Tests ==============
@@ -124,13 +133,14 @@ class VectorTests {
     void testDotProduct() {
         Vector v1 = new Vector(1, 2, 3);
         Vector v2 = new Vector(-2, -4, -6);
-
+        Vector v3=new Vector(0,-3,2);
         // ============ Equivalence Partitions Tests ==============
-        assertEquals(-28, v1.dotProduct(v2), 0.00001, "Dot product does not work correctly");
+        //TC01: simple test
+        assertEquals(-28d, v1.dotProduct(v2), 0.00001, "Dot product does not work correctly");
 
         // =============== Boundary Values Tests =================
-        Vector v3 = new Vector(0, 0, 0);
-        assertEquals(0, v1.dotProduct(v3), 0.00001, "Dot product for orthogonal vectors should be 0");
+        //Dot product for orthogonal vectors
+        assertEquals(0d, v1.dotProduct(v3), 0.00001, "Dot product for orthogonal vectors should be 0");
     }
 
 }

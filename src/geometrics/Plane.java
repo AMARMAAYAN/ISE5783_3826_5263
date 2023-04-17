@@ -64,4 +64,6 @@ public class Plane implements Geometry {
     public Vector getNormal() {
         return normal;
     }
+
+
 }

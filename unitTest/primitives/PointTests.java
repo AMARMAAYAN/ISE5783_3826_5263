@@ -5,10 +5,12 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
- * Unit tests for primitives. Point class
+ * The PointTests class is responsible for testing the Vector class.
+ * It includes unit tests for different operations that can be performed on a point, such as addition, subtraction and more.
  * @author Maayan Amar
  */
 class PointTests {
+
     /**
      * Test method for {@link primitives.Point#add(primitives.Vector)}.
      */
