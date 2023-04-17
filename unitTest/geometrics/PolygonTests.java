@@ -12,7 +12,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static primitives.Util.isZero;
 
 import org.junit.jupiter.api.Test;
-
 import geometrics.Polygon;
 import primitives.Point;
 import primitives.Vector;

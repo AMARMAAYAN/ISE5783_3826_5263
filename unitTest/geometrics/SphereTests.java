@@ -3,7 +3,6 @@
  * Maayan Amar-211763826, email:maayanamar11.01@gmail.com
  */
 package geometrics;
-
 import org.junit.jupiter.api.Test;
 import primitives.Point;
 import primitives.Vector;
