@@ -2,7 +2,7 @@
  * Tehila Ben Moshe-213385263, email:bmtehila@gmail.com
  * Maayan Amar-211763826, email:maayanamar11.01@gmail.com
  */
-package geometrics;
+package geometries;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -12,16 +12,15 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static primitives.Util.isZero;
 
 import org.junit.jupiter.api.Test;
-import geometrics.Polygon;
 import primitives.Point;
 import primitives.Vector;
 
 /** Testing Polygons
  * @author Dan */
 public class PolygonTests {
-
-   /** Test method for {@link geometrics.Polygon#Polygon(primitives.Point...)}. */
-
+   /**
+    * Test method for{@link geometries.Polygon#getNormal(Point)} )}
+    */
    @Test
    void testwhatisthis(){
       assertDoesNotThrow(
@@ -80,7 +79,7 @@ public class PolygonTests {
 
    }
 
-   /** Test method for {@link geometrics.Polygon#getNormal(primitives.Point)}. */
+   /** Test method for {@link Polygon#getNormal(primitives.Point)}. */
    @Test
    public void testGetNormal() {
       // ============ Equivalence Partitions Tests ==============

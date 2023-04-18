@@ -2,7 +2,7 @@
  * Tehila Ben Moshe-213385263, email:bmtehila@gmail.com
  * Maayan Amar-211763826, email:maayanamar11.01@gmail.com
  */
-package geometrics;
+package geometries;
 import org.junit.jupiter.api.Test;
 import primitives.Point;
 import primitives.Vector;
@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class SphereTests {
     /**
-     * Test method for {@link geometrics.Sphere#getNormal(Point)}.
+     * Test method for{@link geometries.Sphere#getNormal(Point)}
      */
     @Test
     void testGetNormal() {

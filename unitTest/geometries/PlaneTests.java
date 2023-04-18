@@ -2,7 +2,7 @@
  * Tehila Ben Moshe-213385263, email:bmtehila@gmail.com
  * Maayan Amar-211763826, email:maayanamar11.01@gmail.com
  */
-package geometrics;
+package geometries;
 
 import org.junit.jupiter.api.Test;
 import primitives.Point;
@@ -18,7 +18,7 @@ import static primitives.Util.isZero;
 class PlaneTests {
 
     /**
-     * Test method for {@link geometrics.Plane#Plane}.
+     * Test method for{@link geometries.Plane#getNormal(Point)}
      */
     @Test
     public void testConstructor() {
@@ -40,7 +40,7 @@ class PlaneTests {
 
 
     /**
-     * Test method for {@link geometrics.Plane#getNormal(primitives.Point)}.
+     * Test method for {@link Plane#getNormal(primitives.Point)}.
      */
     @Test
     public void testGetNormal() {

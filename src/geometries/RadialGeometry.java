@@ -1,4 +1,4 @@
-package geometrics;
+package geometries;
 /**
  The RadialGeometry class is an abstract class that represents geometric objects with a radial attribute, which implements the Geometry interface.
  @author Maayan Amar

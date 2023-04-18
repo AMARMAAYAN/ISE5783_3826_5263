@@ -2,7 +2,7 @@
  * Tehila Ben Moshe-213385263, email:bmtehila@gmail.com
  * Maayan Amar-211763826, email:maayanamar11.01@gmail.com
  */
-package geometrics;
+package geometries;
 import org.junit.jupiter.api.Test;
 import primitives.Point;
 import primitives.Ray;
@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class TubeTests {
 
     /**
-     * Test method for {@link geometrics.Tube#getNormal(Point)}.
+     * Test method for{@link geometries.Tube#getNormal(Point)}
      */
     @Test
     void testGetNormal() {
