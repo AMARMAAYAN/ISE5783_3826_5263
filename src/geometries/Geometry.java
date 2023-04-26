@@ -7,7 +7,7 @@ import primitives.Vector;
  This interface is implemented by various geometric shapes such as planes, spheres, etc.
  @author Maayan Amar
  */
-public interface Geometry {
+public interface Geometry extends Intersectable {
     /**
      * Returns the normal vector to the Geometry object at a given point.
      *

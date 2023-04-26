@@ -1,5 +1,6 @@
 package primitives;
 import java.util.Objects;
+import static primitives.Util.*;
 
 /**
  The Ray class represents a ray in 3D space, defined by a starting point and a direction dir.
@@ -30,6 +31,12 @@ public class Ray {
      */
     public Vector getDir() {
         return dir;
+    }
+
+    public Point getPoint(double t){
+        Vector tv = dir.scale(t); //multiply the double with the vector
+        Point p= p0.add(tv); //adds the vector to the point and return a point
+        return p;
     }
 
     /**
