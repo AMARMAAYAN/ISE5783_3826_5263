@@ -1,11 +1,9 @@
 package geometries;
-
-import static primitives.Util.isZero;
-
+import primitives.*;
 import java.util.List;
+import static primitives.Util.*;
 
-import primitives.Point;
-import primitives.Vector;
+
 
 /**
  * Polygon class represents two-dimensional polygon in 3D Cartesian coordinate
@@ -90,4 +88,42 @@ public class Polygon implements Geometry {
     public Vector getNormal(Point point) {
         return plane.getNormal();
     }
+
+
+    public List<Point>findIntersections(Ray ray){
+        double EPSILON = 1e-10;
+        //intersection between the plane and th ray
+        List<Point> planeIntersections = plane.findIntersections(ray);
+        if (planeIntersections == null) {
+            // The ray doesn't intersect the plane, so it can't intersect the polygon
+            return null;
+        }
+
+        // Next, check if any of the plane intersections are inside the polygon
+        Point intersection = planeIntersections.get(0);
+        Vector edge1, edge2, normal;
+        double sign, angleSum = 0;
+        Vector zeroVector = new Vector(0, 0, 0);
+        for (int i = 0; i < size; i++) {
+            edge1 = vertices.get(i).subtract(intersection);
+            edge2 = vertices.get((i + 1) % size).subtract(intersection);
+            normal = edge1.crossProduct(edge2);
+            if (normal.equals(zeroVector)) {
+                // The ray intersects an edge of the polygon, so we consider it as inside the polygon
+                return List.of(intersection);
+            }
+            sign = Math.signum(normal.dotProduct(ray.getDir()));
+            if (sign == 0) {
+                // The ray is parallel to this edge, so we skip it
+                continue;
+            }
+            angleSum += sign * Math.acos(edge1.dotProduct(edge2) / (edge1.length() * edge2.length()));
+        }
+        if (Math.abs(angleSum - 2 * Math.PI) < EPSILON) {
+            // The point is inside the polygon
+            return List.of(intersection);
+        }
+        // The point is outside the polygon
+        return null;
+       }
 }
