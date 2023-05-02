@@ -30,13 +30,14 @@ public class Triangle extends Polygon {
 
     public List<Point> findIntersections(Ray ray) {
 
-/**  Point point=ray.getP0(); //get point p0
- *         Vector v=ray.getDir(); //get direction of the vector
- *         Vector normal = p0.crossProduct(p1).normalize();
- *         double det = v.dotProduct(normal);
- *         // Vector n = getNormal(point); // Get the normal vector of the plane
- *         //double t = alignZero(n.dotProduct(p0.subtract(point)) / n.dotProduct(v))
- **/
+
+   /**  Point point=ray.getP0(); //get point p0
+  *         Vector v=ray.getDir(); //get direction of the vector
+  *         Vector normal = p0.crossProduct(p1).normalize();
+  *         double det = v.dotProduct(normal);
+  *         // Vector n = getNormal(point); // Get the normal vector of the plane
+  *         //double t = alignZero(n.dotProduct(p0.subtract(point)) / n.dotProduct(v))
+   **/
 
         Point point = ray.getP0(); //get the head of the ray
 
@@ -78,13 +79,12 @@ public class Triangle extends Polygon {
             double s3 = alignZero(ray.getDir().dotProduct(n3));
 
 
-
             if (s1 == 0) return null;
             double n2n3 = alignZero(n2.dotProduct(n3));
             if (s1 * s2 <= 0) return null; // must have same sign
             double n3n1 = alignZero(n3.dotProduct(n1));
             if (s2 * n3n1 <= 0) return null; // must have same sign
-/*
+
             //BVA
             //1- if two of them=0: the ray is on the vertex - there is no intersection - return null
             if ((isZero(s1) && isZero(s2)) ||
@@ -109,13 +109,11 @@ public class Triangle extends Polygon {
                 return List.of(point); // Ray intersects triangle inside
             } else {
                 return null; // Ray intersects triangle outside
-            }*/
-
+            }
 
 
         } catch (IllegalArgumentException ignore) {
             return null;
-
 
         }
     }
