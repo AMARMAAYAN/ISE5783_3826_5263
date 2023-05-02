@@ -30,13 +30,7 @@ class TubeTests {
         assertEquals(new Vector(1,0,0), tube.getNormal(new Point(1,0,2)), "ERROR - TC02: Wrong normal to tube at head");
     }
 
-    /**
-     * Test method for {@link geometries.Tube#findIntersections(primitives.Ray)}
-     */
-    @Test
-    void testFindIntersections() {
 
-    }
 
 
 
