@@ -90,40 +90,43 @@ public class Polygon implements Geometry {
     }
 
 
-    public List<Point>findIntersections(Ray ray){
-        double EPSILON = 1e-10;
-        //intersection between the plane and th ray
+    public List<Point>findIntersections(Ray ray) {
+        //find the intersection with the plane
         List<Point> planeIntersections = plane.findIntersections(ray);
-        if (planeIntersections == null) {
-            // The ray doesn't intersect the plane, so it can't intersect the polygon
+        if (planeIntersections == null)
             return null;
+
+        Point p = planeIntersections.get(0);
+        Point p0 = ray.getP0();
+        Vector v = ray.getDir();
+        double oldSign = 0;
+        double sign = 0;
+
+        Vector v1 = vertices.get(1).subtract(p0);
+        Vector v2 = vertices.get(0).subtract(p0);
+
+        try {
+            oldSign = v.dotProduct(v1.crossProduct(v2));
+        } catch (IllegalArgumentException e) {
+            System.out.println(this.vertices);
+        }
+        if (isZero(oldSign))
+            return null;
+
+
+        for (int i = vertices.size() - 1; i > 0; --i) {
+            v1 = v2;
+            v2 = vertices.get(i).subtract(p0);
+            sign = alignZero(v.dotProduct(v1.crossProduct(v2)));
+            if ((oldSign * sign) <= 0)
+                return null;
         }
 
-        // Next, check if any of the plane intersections are inside the polygon
-        Point intersection = planeIntersections.get(0);
-        Vector edge1, edge2, normal;
-        double sign, angleSum = 0;
-        Vector zeroVector = new Vector(0, 0, 0);
-        for (int i = 0; i < size; i++) {
-            edge1 = vertices.get(i).subtract(intersection);
-            edge2 = vertices.get((i + 1) % size).subtract(intersection);
-            normal = edge1.crossProduct(edge2);
-            if (normal.equals(zeroVector)) {
-                // The ray intersects an edge of the polygon, so we consider it as inside the polygon
-                return List.of(intersection);
-            }
-            sign = Math.signum(normal.dotProduct(ray.getDir()));
-            if (sign == 0) {
-                // The ray is parallel to this edge, so we skip it
-                continue;
-            }
-            angleSum += sign * Math.acos(edge1.dotProduct(edge2) / (edge1.length() * edge2.length()));
-        }
-        if (Math.abs(angleSum - 2 * Math.PI) < EPSILON) {
-            // The point is inside the polygon
-            return List.of(intersection);
-        }
-        // The point is outside the polygon
-        return null;
-       }
+        return List.of(p);
+    }
+
 }
+
+
+
+
