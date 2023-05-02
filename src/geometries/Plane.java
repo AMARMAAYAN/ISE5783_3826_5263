@@ -104,5 +104,4 @@ public class Plane implements Geometry {
         return List.of(point);
     }
 
-
 }

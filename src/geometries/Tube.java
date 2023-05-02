@@ -3,6 +3,7 @@ import primitives.Ray;
 import primitives.Vector;
 import primitives.Point;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -57,7 +58,47 @@ public class Tube extends RadialGeometry {
 
     @Override
     public List<Point> findIntersections(Ray ray) {
-        return null;
+        List<Point> intersections = new ArrayList<Point>();
+        Vector rayDirection = ray.getDir();
+        Point rayOrigin = ray.getP0();
+
+        // Calculate the coefficients of the quadratic equation to find the intersection points
+        Vector axisDirection = axisRay.getDir();
+        Point axisOrigin = axisRay.getP0();
+        double a = rayDirection.dotProduct(rayDirection) - Math.pow(rayDirection.dotProduct(axisDirection), 2);
+        double b = 2 * (rayDirection.dotProduct(rayOrigin.subtract(axisOrigin)) - rayDirection.dotProduct(axisDirection) * rayOrigin.subtract(axisOrigin).dotProduct(axisDirection));
+        double c = rayOrigin.subtract(axisOrigin).dotProduct(rayOrigin.subtract(axisOrigin)) - Math.pow(rayOrigin.subtract(axisOrigin).dotProduct(axisDirection), 2) - Math.pow(radius, 2);
+
+        double discriminant = b * b - 4 * a * c;
+        if (discriminant < 0) {
+            return intersections; // no intersection
+        }
+        else if (discriminant == 0) {
+            double t = -b / (2 * a);
+            Point intersection = ray.getPoint(t);
+            double tAxis = axisDirection.dotProduct(intersection.subtract(axisOrigin));
+            if (tAxis >= 0 && tAxis <= axisDirection.length()) {
+                intersections.add(intersection);
+            }
+        }
+        else {
+            double t1 = (-b + Math.sqrt(discriminant)) / (2 * a);
+            double t2 = (-b - Math.sqrt(discriminant)) / (2 * a);
+            Point intersection1 = ray.getPoint(t1);
+            Point intersection2 = ray.getPoint(t2);
+            double tAxis1 = axisDirection.dotProduct(intersection1.subtract(axisOrigin));
+            double tAxis2 = axisDirection.dotProduct(intersection2.subtract(axisOrigin));
+            if (tAxis1 >= 0 && tAxis1 <= axisDirection.length()) {
+                intersections.add(intersection1);
+            }
+            if (tAxis2 >= 0 && tAxis2 <= axisDirection.length()) {
+                intersections.add(intersection2);
+            }
+        }
+        return intersections;
     }
+
+
+
 }
 

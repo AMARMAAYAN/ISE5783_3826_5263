@@ -90,21 +90,27 @@ public class Polygon implements Geometry {
     }
 
 
-    public List<Point>findIntersections(Ray ray) {
-        //find the intersection with the plane
+    /**
+     * Finds the intersection point between a given ray and a polygon.
+     * @param ray The ray to intersect with the polygon.
+     * @return A list containing the intersection point, or null if there is no intersection.
+     */
+    public List<Point> findIntersections(Ray ray) {
+        // Find the intersection point with the plane
         List<Point> planeIntersections = plane.findIntersections(ray);
         if (planeIntersections == null)
             return null;
 
+        // Get the first intersection point and initialize variables for checking if it's inside the polygon
         Point p = planeIntersections.get(0);
         Point p0 = ray.getP0();
         Vector v = ray.getDir();
         double oldSign = 0;
         double sign = 0;
 
+        // Calculate the signs of the cross products between the ray direction vector and the edges of the polygon
         Vector v1 = vertices.get(1).subtract(p0);
         Vector v2 = vertices.get(0).subtract(p0);
-
         try {
             oldSign = v.dotProduct(v1.crossProduct(v2));
         } catch (IllegalArgumentException e) {
@@ -113,7 +119,7 @@ public class Polygon implements Geometry {
         if (isZero(oldSign))
             return null;
 
-
+        // Iterate through the remaining edges of the polygon and check if the signs of the cross products change
         for (int i = vertices.size() - 1; i > 0; --i) {
             v1 = v2;
             v2 = vertices.get(i).subtract(p0);
@@ -122,9 +128,9 @@ public class Polygon implements Geometry {
                 return null;
         }
 
+        // If the intersection point is inside the polygon, return it in a list
         return List.of(p);
     }
-
 }
 
 

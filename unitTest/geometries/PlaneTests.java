@@ -55,10 +55,12 @@ class PlaneTests {
         // =============== Boundary Values Tests =============
         // There are no boundary values tests according to instructions
     }
-
+    /**
+     * Test method for {@link geometries.Plane#findIntersections(Ray)}.
+     */
     @Test
     void testFindIntersections() {
-        // Equivalence Partitions tests ======================================================================
+        //  ==================================Equivalence Partitions tests====================================
         // EP01 test if neither orthogonal nor parallel points intersects with plane
         Plane plane = new Plane(new Point(1, 0, 0), new Vector(0, 1, 0));
         Ray ray = new Ray(new Point(0, -2, 0), new Vector(-3, 6, 0));
@@ -70,7 +72,7 @@ class PlaneTests {
         assertEquals(null, plane.findIntersections(ray), "ray does not intersect plane");
 
 
-        // Boundary Value Analysis tests ======================================================================
+        //=================================== Boundary Value Analysis tests ===============================
         // BV01  ray is parallel to plane (0 points)
         ray = new Ray(new Point(0, -2, 0), new Vector(0, 0, 1));
         assertEquals(null, plane.findIntersections(ray), "ray is parallel to plane");
