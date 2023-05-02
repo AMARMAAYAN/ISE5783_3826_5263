@@ -3,6 +3,8 @@ import primitives.Ray;
 import primitives.Vector;
 import primitives.Point;
 
+import java.util.List;
+
 /**
  This class represents a tube in 3D space, and it extends RadialGeometry.
  A tube is defined by its axisRay and its radius.
@@ -51,6 +53,11 @@ public class Tube extends RadialGeometry {
         // get the normalized vector perpendicular to the surface of the shape at the given point
         return point.subtract(O).normalize();
 
+    }
+
+    @Override
+    public List<Point> findIntersections(Ray ray) {
+        return null;
     }
 }
 

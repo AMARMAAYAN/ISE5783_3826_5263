@@ -2,6 +2,8 @@ package geometries;
 
 import primitives.*;
 import static primitives.Util.*;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -43,49 +45,38 @@ public class Sphere extends RadialGeometry {
     }
 
     public List<Point> findIntersections(Ray ray){
-        Point p0=ray.getP0(); //get point p0
-        Vector v=ray.getDir(); //get direction of the vector
-
-        //if p0=center
-        if(p0.equals(center)){
-            return List.of(center.add(v.scale(radius)));
+        if (ray.getP0().equals(center)) {
+            List<Point> points = new ArrayList<>(1);
+            Point p = center.add(ray.getDir().scale(radius));
+            points.add(p);
+            return points;
         }
 
-        Vector u = center.subtract(p0);
-        double tm=alignZero(v.dotProduct(u)); //tm=v*u
-        double d= alignZero(Math.sqrt(v.lengthSquared()-tm*tm));
-
-        //if the ray direction above the sphere
-        if(d >= this.getRadius()){
+        Vector u = center.subtract(ray.getP0());
+        double Tm = ray.getDir().dotProduct(u);
+        double d = Math.sqrt(u.lengthSquared()-Tm*Tm);
+        if (d >= radius)
             return null;
+        double Th = Math.sqrt(radius*radius-d*d);
+        double t1 = alignZero(Tm + Th);
+        double t2 = alignZero(Tm - Th);
+        if (t1 <= 0 && t2 <= 0)
+            return null;
+        int size = 0;
+        if(t1 > 0)
+            size += 1;
+        if(t2 > 0)
+            size += 1;
+        List<Point> points = new ArrayList<>(size);
+        if (t1 > 0) {
+            Point p = ray.getPoint(t1);
+            points.add(p);
         }
-
-        //double dSquared=isZero(tm) ? v.lengthSquared() : v.lengthSquared() - tm*tm;
-       // if(thSquared<=0) return null;
-
-        double th =alignZero(Math.sqrt(this.radius * this.radius - d*d));
-        double t1= alignZero(tm-th);
-        double t2= alignZero(tm+th);
-
-        // if both of them >0 : there is 2 Intersection points
-        if(t1>0 && t2>0){
-           Point p1=ray.getPoint(t1);
-           Point p2 = ray.getPoint(t2);
-           return List.of(p1,p2);
+        if (t2 > 0) {
+            Point p = ray.getPoint(t2);
+            points.add(p);
         }
-
-        //if only one of them>0 : there is 1 intersection point
-        if(t1>0){
-            Point p1=ray.getPoint(t1);
-            return List.of(p1);
-        }
-
-        if(t2>0){
-            Point p2=ray.getPoint(t2);
-            return List.of(p2);
-        }
-
-        return null;
+        return points;
     }
 }
 

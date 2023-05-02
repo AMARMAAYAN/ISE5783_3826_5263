@@ -97,4 +97,28 @@ public class Point {
 
         return new Vector(xyz.subtract(point.xyz));
     }
+
+    /**
+     * Getter of X coordinate value
+     * @return x coordinate value
+     */
+    public double getX() {
+        return xyz.d1;
+    }
+
+    /**
+     * Getter of Y coordinate value
+     * @return y coordinate value
+     */
+    public double getY() {
+        return xyz.d2;
+    }
+
+    /**
+     * Getter of Z coordinate value
+     * @return z coordinate value
+     */
+    public double getZ() {
+        return xyz.d3;
+    }
 }

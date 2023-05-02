@@ -23,7 +23,6 @@ public class Plane implements Geometry {
 
     /**
      * Constructs a new plane with the given three points.
-     *
      * @param p1 The first point.
      * @param p2 The second point.
      * @param p3 The third point.
