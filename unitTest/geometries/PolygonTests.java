@@ -102,7 +102,6 @@ public class PolygonTests {
    /**
     * Test method for {@link geometries.Polygon#findIntersections(Ray)}.
     */
-
    @Test
    void findIntersections() {
       Polygon p = new Polygon(new Point(1,1,1), new Point(2,0.5,0.5),new Point(1,-1,1), new Point(-2,0.5,2.5));

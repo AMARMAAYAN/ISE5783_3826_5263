@@ -31,6 +31,9 @@ class TriangleTests {
         // No boundary values tests are required for this class
     }
 
+    /**
+     * Test method for {@link geometries.Triangle#findIntersections(Ray)}.
+     */
     @Test
     void findIntersections(){
         // Equivalence Partitions tests ======================================================================
