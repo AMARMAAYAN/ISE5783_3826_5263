@@ -35,7 +35,7 @@ public class Camera {
         this.vTo = vTo.normalize();
         this.vUp = vUp.normalize();
 
-        //reciving vRight by doing a cross product between vTp and vUp
+        //receiving vRight by doing a cross product between vTp and vUp
         vRight=this.vTo.crossProduct(this.vUp);
     }
 

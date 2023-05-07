@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 /**
- * The PointTests class is responsible for testing the Vector class.
+ * The PointTests class is responsible for testing the Point class.
  * It includes unit tests for different operations that can be performed on a point, such as addition, subtraction and more.
  * @author Maayan Amar
  */
