@@ -1,8 +1,12 @@
 package renderer;
 import primitives.*;
-
 import static primitives.Util.isZero;
 
+/**
+ A class representing a camera in a 3D space.
+ The camera is defined by its location, orientation, distance to the object, and view plane size.
+ @author Maayan Amar
+ */
 public class Camera {
 
     //p0=the location of the camera
@@ -25,6 +29,15 @@ public class Camera {
 
     //object actual height
     private double height;
+
+    /**
+     * Constructs a new camera with the given location, orientation and distance to the object.
+     *
+     * @param p0  the location of the camera
+     * @param vTo the direction of the camera
+     * @param vUp the up direction of the camera
+     * @throws IllegalArgumentException if the vUp and vTo vectors are not orthogonal
+     */
 
     public Camera(Point p0, Vector vTo, Vector vUp) {
         if(!isZero(vTo.dotProduct(vUp))){
@@ -62,6 +75,16 @@ public class Camera {
     }
 
 
+
+    /**
+     * Constructs a ray from the camera to the specified pixel on the view plane.
+     *
+     * @param nX the number of pixels in the x axis
+     * @param nY the number of pixels in the y axis
+     * @param j  the x coordinate of the pixel on the view plane
+     * @param i  the y coordinate of the pixel on the view plane
+     * @return the ray constructed from the camera to the specified pixel on the view plane
+     */
     public Ray constructRay(int nX, int nY, int j, int i){
 
         //center point of the view plane
