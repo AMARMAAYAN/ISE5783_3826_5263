@@ -34,6 +34,7 @@ public class AmbientLight {
         intensity = Color.BLACK.scale(Ka);
     }
 
+
     /**
      * Getter for the intensity of the ambient light.
      *

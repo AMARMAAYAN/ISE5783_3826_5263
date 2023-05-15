@@ -25,7 +25,7 @@ class ImageWriterTest {
                  }
              }
 
-             // Draw the grid using the white color
+             // Draw the grid using the white colors
              int gridRows = 10;
              int gridColumns = 16;
              int squareWidth = nX / gridColumns;
