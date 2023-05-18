@@ -1,5 +1,8 @@
 package renderer;
 import primitives.*;
+
+import java.util.MissingResourceException;
+
 import static primitives.Util.isZero;
 
 /**
@@ -29,6 +32,10 @@ public class Camera {
 
     //object actual height
     private double height;
+
+    private ImageWriter imageWriter;
+    private RayTracerBase rayTracer;
+
 
     /**
      * Constructs a new camera with the given location, orientation and distance to the object.
@@ -72,6 +79,65 @@ public class Camera {
     public Camera setVPDistance(double distance){
     this.distance=distance;
     return this;
+    }
+
+    /**
+     * Sets the ImageWriter object for writing the rendered image.
+     *
+     * @param imageWriter the ImageWriter object
+     * @return the camera object itself
+     */
+    public Camera setImageWriter(ImageWriter imageWriter) {
+        this.imageWriter = imageWriter;
+        return this;
+    }
+
+    /**
+     * Sets the RayTracerBase object for ray tracing.
+     *
+     * @param rayTracer the RayTracerBase object
+     * @return the camera object itself
+     */
+    public Camera setRayTracer(RayTracerBase rayTracer) {
+        this.rayTracer = rayTracer;
+        return this;
+    }
+
+    /**
+     * Renders the image by tracing rays through each pixel of the view plane.
+     * Throws an exception if any required fields are null.
+     */
+    public void renderImage() {
+        if (p0 == null || vTo == null || vUp == null || vRight == null || distance == 0 ||
+                width == 0 || height == 0 || imageWriter == null || rayTracer == null) {
+            throw new UnsupportedOperationException("Missing required fields for rendering the image");
+        }
+
+        // TODO: Implement ray tracing and image rendering logic here
+        throw new UnsupportedOperationException("renderImage method is not implemented yet");
+    }
+
+    /**
+     * Prints a grid on the image.
+     * Throws an exception if the ImageWriter field is null.
+     *
+     * @param interval the interval between the grid lines
+     * @param color    the color of the grid lines
+     * @throws MissingResourcesException if the ImageWriter field is null
+     */
+    public void printGrid(int interval, Color color) {
+        //=== running on the view plane===//
+        if (imageWriter == null) {
+            throw new MissingResourceException("Missing ImageWriter for printing the grid");
+        }
+        for (int i = 0; i < imageWriter.getNx(); i++) {
+            for (int j = 0; j < imageWriter.getNy(); j++) {
+                //=== create the net ===//
+                if (i % interval == 0 || j % interval == 0) {
+                    imageWriter.writePixel(i, j, color);
+                }
+            }
+        }
     }
 
 
