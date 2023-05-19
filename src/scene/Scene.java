@@ -1,22 +1,26 @@
 package scene;
-import geometries.Geometries;
+
 import lighting.AmbientLight;
-import primitives.*;
+import geometries.Geometries;
+import primitives.Color;
 
-
+//================== Scene class (PDS - Plain Data Structure) ==================//
 public class Scene {
-    private final String name;
-    private final Color background;
-    private final Geometries geometries;
-    private AmbientLight ambientLight;
+
+    //==== use of design pattern called "builder pattern" ====//
+    private final String name; // the scene's name
+    private final Color background; // the background's color (default-black)
+    private final AmbientLight ambientLight; //the ambientLight
+    private final Geometries geometries; // the 3D model
+
 
 
     //constructor that gets only the sceneBuilder name-put the value for the scene
-    private Scene(SceneBuilder builder){
-        name=builder.name;
-        background=builder.background;
-        geometries=builder.geometries;
-        ambientLight=builder.ambientLight;
+    private Scene(SceneBuilder builder) {
+        this.name = builder.name;
+        this.background = builder.background;
+        this.ambientLight = builder.ambientLight;
+        this.geometries = builder.geometries;
     }
 
     //getter function for the scene
@@ -26,23 +30,24 @@ public class Scene {
 
     public Geometries getGeometries(){return geometries;}
 
-    public Scene setAmbientLight(AmbientLight ambientLight){
-        this.ambientLight=ambientLight;
-        return this;
-    }
+    public AmbientLight getAmbientLight() {return ambientLight;}
 
-    //create the builder class for the scene:
+
+    //================== SceneBuilder class ==================//:
     public static class SceneBuilder{
-        private String name;
+        private final String name; // the scene's name
+        private Color background=Color.BLACK; //define the background with black color
+        private AmbientLight ambientLight=AmbientLight.NONE; //the ambientLight initialize to null
+        private Geometries geometries =new Geometries(); // initialize to an empty 3D model
 
-        //define the background with black color
-        private Color background=Color.BLACK;
-        private Geometries geometries=new Geometries();
-        private AmbientLight ambientLight=new AmbientLight();
+
+       // private Geometries geometries = new Geometries();
+      //  private AmbientLight ambientLight=new AmbientLight();
 
         public SceneBuilder(String name){this.name=name;}
 
 
+        //========= chaining method =========//
         //setter methods - return this
         public SceneBuilder setBackground(Color background) {
             this.background = background;
@@ -59,21 +64,11 @@ public class Scene {
             return this;
         }
 
-
         //return the scene from the builder
         public Scene build() {
             return new Scene(this);
         }
 
-        //validate
-        public void validateObject(Scene scene){
-            //do nothing
-        }
-
-        //for the file
-        public SceneBuilder readXmlFile(String fileName){
-            return  this;
-        }
     }
 
 
