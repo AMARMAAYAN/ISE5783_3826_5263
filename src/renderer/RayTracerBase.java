@@ -1,8 +1,8 @@
 package renderer;
-import primitives.*;
-import scene.Scene;
 
-import java.awt.Color;
+import primitives.Color;
+import primitives.Ray;
+import scene.Scene;
 
 /**
  * The RayTracerBase class is an abstract class that serves as a base for ray tracing algorithms.
@@ -27,5 +27,5 @@ public abstract class RayTracerBase {
      * @param ray the ray to be traced
      * @return the color at the intersection point
      */
-    public abstract Color traceRay(Ray ray);
+     abstract Color traceRay(Ray ray);
 }

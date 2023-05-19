@@ -1,7 +1,8 @@
 package renderer;
 import primitives.*;
-
+import primitives.Color;
 import java.util.MissingResourceException;
+import java.util.NoSuchElementException;
 
 import static primitives.Util.isZero;
 
@@ -36,7 +37,7 @@ public class Camera {
     private ImageWriter imageWriter;
     private RayTracerBase rayTracer;
 
-
+//===== constructor to initialize camera =======//
     /**
      * Constructs a new camera with the given location, orientation and distance to the object.
      *
@@ -51,13 +52,15 @@ public class Camera {
             throw new IllegalArgumentException("vUp and vTo are not orthogonal");
         }
         this.p0=p0;
-
         this.vTo = vTo.normalize();
         this.vUp = vUp.normalize();
 
         //receiving vRight by doing a cross product between vTp and vUp
         vRight=this.vTo.crossProduct(this.vUp);
     }
+
+
+    //Chaining methods.
 
     /**
      * setter - chaining method
@@ -108,14 +111,33 @@ public class Camera {
      * Throws an exception if any required fields are null.
      */
     public void renderImage() {
-        if (p0 == null || vTo == null || vUp == null || vRight == null || distance == 0 ||
-                width == 0 || height == 0 || imageWriter == null || rayTracer == null) {
-            throw new UnsupportedOperationException("Missing required fields for rendering the image");
-        }
+        if (this.imageWriter == null)
+            throw new UnsupportedOperationException("Missing imageWriter");
+        if (this.rayTracer == null)
+            throw new UnsupportedOperationException("Missing rayTracerBase");
 
-        // TODO: Implement ray tracing and image rendering logic here
-        throw new UnsupportedOperationException("renderImage method is not implemented yet");
+        for (int i = 0; i < this.imageWriter.getNy(); i++) {
+            for (int j = 0; j < this.imageWriter.getNy(); j++) {
+                Color color = castRay(j,i);
+                this.imageWriter.writePixel(j, i, color);
+            }
+        }
     }
+
+    private Color castRay(int j,int i){
+        Ray ray = constructRay(
+                this.imageWriter.getNx(),
+                this.imageWriter.getNy(),
+                j,
+                i);
+        return this.rayTracer.traceRay(ray);
+    }
+
+    public void writeToImage() {
+        this.imageWriter.writeToImage();
+    }
+
+
 
     /**
      * Prints a grid on the image.
@@ -123,12 +145,12 @@ public class Camera {
      *
      * @param interval the interval between the grid lines
      * @param color    the color of the grid lines
-     * @throws MissingResourcesException if the ImageWriter field is null
+     * @throws MissingResourceException if the ImageWriter field is null
      */
     public void printGrid(int interval, Color color) {
         //=== running on the view plane===//
         if (imageWriter == null) {
-            throw new MissingResourceException("Missing ImageWriter for printing the grid");
+            throw new NoSuchElementException("Missing ImageWriter for printing the grid");
         }
         for (int i = 0; i < imageWriter.getNx(); i++) {
             for (int j = 0; j < imageWriter.getNy(); j++) {

@@ -71,19 +71,31 @@ public class Ray {
                 '}';
     }
 
+    /**
+     * Finds the closest point from a given list of intersections.
+     *
+     * @param intersections The list of Point objects representing intersections.
+     * @return The Point object that is closest to the reference point.
+     */
     public Point findClosestPoint(List<Point> intersections) {
-        Point closestPoint=null;
-        double miniDistance= Double.MAX_VALUE;
+        Point closestPoint = null;
+        double miniDistance = Double.MAX_VALUE;
         double ptDistance;
 
-        for(Point pt: intersections){
-            ptDistance=pt.distanceSquared(p0);
-            if(ptDistance < miniDistance){
+        // Iterate through each Point object in the intersections list
+        for (Point pt : intersections) {
+            // Calculate the distance between the current point (pt) and a reference point (p0)
+            ptDistance = pt.distanceSquared(p0);
+
+            // Check if the calculated distance is smaller than the current minimum distance
+            if (ptDistance < miniDistance) {
+                // If so, update the minimum distance and set the closest point to the current point
                 miniDistance = ptDistance;
-                closestPoint=pt;
+                closestPoint = pt;
             }
         }
-        return closestPoint;
 
+        // Return the closest point found
+        return closestPoint;
     }
 }

@@ -12,6 +12,7 @@ import java.util.Objects;
  */
 public class Point {
 
+    public static final Point ZERO = new Point(0,0,0);
     /**
      * The coordinates of the point in three-dimensional space */
     final Double3 xyz;
@@ -40,17 +41,17 @@ public class Point {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Point point)) return false;
-        return xyz.equals(point.xyz);
+        return this.xyz.equals(point.xyz);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(xyz);
+        return Objects.hash(this.xyz);
     }
 
     @Override
     public String toString() {
-        return "Point:" + xyz;
+        return "Point:" + this.xyz;
     }
 
     /**
@@ -95,7 +96,12 @@ public class Point {
      */
     public Vector subtract(Point point) {
 
-        return new Vector(xyz.subtract(point.xyz));
+        Double3 result = this.xyz.subtract(point.xyz);
+
+        if (result.equals(Double3.ZERO)) {
+            throw new IllegalArgumentException("ZERO vector not allowed");
+        }
+        return new Vector(result);
     }
 
     /**
