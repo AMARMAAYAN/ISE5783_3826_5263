@@ -14,7 +14,7 @@ import java.util.List;
  It implements the Intersectable interface, which means that it can be intersected with a Ray object.
  */
 
-public class Geometries implements Intersectable {
+public class Geometries extends Intersectable {
 
     /**
      * A list of intersectable geometries that are stored in this Geometries object.

@@ -39,7 +39,7 @@ public class Triangle extends Polygon {
      * @param ray The ray to calculate the intersection with.
      * @return A list of intersection points, or null if there are no intersections.
      */
-
+    @Override
     public List<Point> findIntersections(Ray ray) {
 
             // First, check if there is an intersection between the ray and the plane

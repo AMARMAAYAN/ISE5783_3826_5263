@@ -97,8 +97,5 @@ public class Tube extends RadialGeometry {
         }
         return intersections;
     }
-
-
-
 }
 

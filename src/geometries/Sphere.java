@@ -1,6 +1,8 @@
 package geometries;
 
 import primitives.*;
+
+import static java.lang.Math.sqrt;
 import static primitives.Util.*;
 
 import java.util.ArrayList;
@@ -52,7 +54,8 @@ public class Sphere extends RadialGeometry {
      * @param ray The ray to intersect with the sphere.
      * @return A list of intersection points between the ray and the sphere, or null if there are no intersections.
      */
-    public List<Point> findIntersections(Ray ray){
+    @Override
+    public  List<Point> findIntersections(Ray ray){
         if (ray.getP0().equals(center)) { // if the ray's starting point is equal to the sphere's center
             List<Point> points = new ArrayList<>(1); // create a list with a capacity of one
             Point p = center.add(ray.getDir().scale(radius)); // calculate the intersection point using the ray's direction and the sphere's radius
@@ -86,5 +89,27 @@ public class Sphere extends RadialGeometry {
         }
         return points; // return the list of intersection points
     }
+//    protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
+//
+//        Vector pointToCenter;
+//        try {
+//            pointToCenter = center.subtract(ray.getP0());
+//        } catch (IllegalArgumentException ignore) {
+//            return List.of(new GeoPoint(this, ray.getPoint(radius)));
+//        }
+//
+//        double tm = pointToCenter.dotProduct(ray.getDir());
+//        double distanceFromCenterSquared = pointToCenter.dotProduct(pointToCenter) - tm * tm;
+//        double thSquared = radiusSquared - distanceFromCenterSquared;
+//        //check that ray crosses area of sphere, if not then return null
+//        if (alignZero(thSquared) <= 0) return null;
+//
+//        double th = sqrt(thSquared);
+//        double secondDistance = tm + th;
+//        if (alignZero(secondDistance) <= 0) return null;
+//        double firstDistance = tm - th;
+//        return firstDistance <= 0 ? List.of(new GeoPoint(this, ray.getPoint(secondDistance))) //
+//                : List.of(new GeoPoint(this, ray.getPoint(firstDistance)), new GeoPoint(this, ray.getPoint(secondDistance)));
+//    }
 }
 

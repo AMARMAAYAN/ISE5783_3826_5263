@@ -9,7 +9,7 @@ import static primitives.Util.*;
  *
  * @author Maayan Amar
  */
-public class Plane implements Geometry {
+public class Plane extends Geometry {
 
     /**
      * A point on the plane.
@@ -65,7 +65,7 @@ public class Plane implements Geometry {
     }
 
     @Override
-    public List <Point> findIntersections(Ray ray){
+    public List <GeoPoint> findGeoIntersections(Ray ray){
          Point p0=ray.getP0(); //get point p0
          Vector v=ray.getDir(); //get direction of the vector
 
@@ -101,7 +101,7 @@ public class Plane implements Geometry {
 
         Point point = ray.getPoint(t);
 
-        return List.of(point);
+        return List.of(new GeoPoint(this,point));
     }
 
 }
