@@ -1,14 +1,14 @@
 package renderer;
 import org.junit.jupiter.api.Test;
 import primitives.*;
-import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Testing ImageWriter Class
  *
  * @author tehila
  *
  */
-class ImageWriterTest {
+class ImageWriterTests {
 
     //==== the size of the view plane =====//
     int nX = 800;

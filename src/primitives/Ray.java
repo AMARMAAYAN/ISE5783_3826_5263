@@ -1,6 +1,8 @@
 package primitives;
 import java.util.List;
 import java.util.Objects;
+import geometries.Intersectable.GeoPoint;
+
 import static primitives.Util.*;
 
 /**
@@ -98,4 +100,28 @@ public class Ray {
         // Return the closest point found
         return closestPoint;
     }
+    public GeoPoint findClosestGeoPoint(List<GeoPoint> intersections) {
+
+        GeoPoint closestPoint = null;
+        double miniDistance = Double.MAX_VALUE;
+        double ptDistance;
+
+        // Iterate through each Point object in the intersections list
+        for (GeoPoint gp : intersections) {
+            // Calculate the distance between the current point (gp) and a reference point (p0)
+            ptDistance = gp.point.distanceSquared(p0);
+
+            // Check if the calculated distance is smaller than the current minimum distance
+            if (ptDistance < miniDistance) {
+                // If so, update the minimum distance and set the closest point to the current point
+                miniDistance = ptDistance;
+                closestPoint = gp;
+            }
+        }
+
+        // Return the closest point found
+        return closestPoint;
+    }
+
+
 }
