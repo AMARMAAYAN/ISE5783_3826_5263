@@ -55,61 +55,46 @@ public class Sphere extends RadialGeometry {
      * @return A list of intersection points between the ray and the sphere, or null if there are no intersections.
      */
     @Override
-    public  List<Point> findIntersections(Ray ray){
-        if (ray.getP0().equals(center)) { // if the ray's starting point is equal to the sphere's center
-            List<Point> points = new ArrayList<>(1); // create a list with a capacity of one
-            Point p = center.add(ray.getDir().scale(radius)); // calculate the intersection point using the ray's direction and the sphere's radius
-            points.add(p); // add the intersection point to the list
-            return points; // return the list of intersection points
+    protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
+        Point p0 = ray.getP0(); // ray's starting point
+        Point O = this.center; //the sphere's center point
+        Vector V = ray.getDir(); // "the v vector" from the presentation
+
+        // if p0 on center, calculate with line parametric representation
+        // the direction vector normalized.
+        if (O.equals(p0)) {
+            Point newPoint = p0.add(ray.getDir().scale(this.radius));
+            return List.of(new GeoPoint(this,newPoint));
         }
 
-        Vector u = center.subtract(ray.getP0()); // calculate the vector from the ray's starting point to the sphere's center
-        double Tm = ray.getDir().dotProduct(u); // calculate the projection of u onto the ray's direction
-        double d = Math.sqrt(u.lengthSquared()-Tm*Tm); // calculate the distance between the ray's starting point and the intersection point
-        if (d >= radius) // if the distance is greater than or equal to the sphere's radius, there are no intersections
+        Vector U = O.subtract(p0);
+        double tm = V.dotProduct(U);
+        double d = Math.sqrt(U.lengthSquared() - tm * tm);
+        if (d >= this.radius) {
             return null;
-        double Th = Math.sqrt(radius*radius-d*d); // calculate the distance between the intersection points
-        double t1 = alignZero(Tm + Th); // calculate the first intersection point
-        double t2 = alignZero(Tm - Th); // calculate the second intersection point
-        if (t1 <= 0 && t2 <= 0) // if both intersection points are behind the ray's starting point, there are no intersections
-            return null;
-        int size = 0; // initialize the size of the list of intersection points to zero
-        if(t1 > 0)
-            size += 1; // increment the size of the list if the first intersection point is in front of the ray's starting point
-        if(t2 > 0)
-            size += 1; // increment the size of the list if the second intersection point is in front of the ray's starting point
-        List<Point> points = new ArrayList<>(size); // create a new list of intersection points with the correct size
-        if (t1 > 0) { // if the first intersection point is in front of the ray's starting point
-            Point p = ray.getPoint(t1); // calculate the first intersection point
-            points.add(p); // add the first intersection point to the list of intersection points
         }
-        if (t2 > 0) { // if the second intersection point is in front of the ray's starting point
-            Point p = ray.getPoint(t2); // calculate the second intersection point
-            points.add(p); // add the second intersection point to the list of intersection points
+
+        double th = Math.sqrt(this.radius * this.radius - d * d);
+        double t1 = tm - th;
+        double t2 = tm + th;
+
+        if (t1 > 0 && t2 > 0) {
+            Point p1 = ray.getPoint(t1);
+            Point p2 = ray.getPoint(t2);
+            return List.of(new GeoPoint(this,p1),new GeoPoint(this,p2));
         }
-        return points; // return the list of intersection points
+
+        if (t1 > 0) {
+            Point p1 = ray.getPoint(t1);
+            return List.of(new GeoPoint(this,p1));
+        }
+
+        if (t2 > 0) {
+            Point p2 = ray.getPoint(t2);
+            return List.of(new GeoPoint(this,p2));
+        }
+        return null;
     }
-//    protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
-//
-//        Vector pointToCenter;
-//        try {
-//            pointToCenter = center.subtract(ray.getP0());
-//        } catch (IllegalArgumentException ignore) {
-//            return List.of(new GeoPoint(this, ray.getPoint(radius)));
-//        }
-//
-//        double tm = pointToCenter.dotProduct(ray.getDir());
-//        double distanceFromCenterSquared = pointToCenter.dotProduct(pointToCenter) - tm * tm;
-//        double thSquared = radiusSquared - distanceFromCenterSquared;
-//        //check that ray crosses area of sphere, if not then return null
-//        if (alignZero(thSquared) <= 0) return null;
-//
-//        double th = sqrt(thSquared);
-//        double secondDistance = tm + th;
-//        if (alignZero(secondDistance) <= 0) return null;
-//        double firstDistance = tm - th;
-//        return firstDistance <= 0 ? List.of(new GeoPoint(this, ray.getPoint(secondDistance))) //
-//                : List.of(new GeoPoint(this, ray.getPoint(firstDistance)), new GeoPoint(this, ray.getPoint(secondDistance)));
-//    }
+
 }
 
