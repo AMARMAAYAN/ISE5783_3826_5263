@@ -57,10 +57,11 @@ public class Tube extends RadialGeometry {
     }
 
     @Override
-    public List<Point> findIntersections(Ray ray) {
-        List<Point> intersections = new ArrayList<Point>();
+    protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
+        List<GeoPoint> intersections = new ArrayList<GeoPoint>();
         Vector rayDirection = ray.getDir();
         Point rayOrigin = ray.getP0();
+        boolean condition=false;
 
         // Calculate the coefficients of the quadratic equation to find the intersection points
         Vector axisDirection = axisRay.getDir();
@@ -75,10 +76,10 @@ public class Tube extends RadialGeometry {
         }
         else if (discriminant == 0) {
             double t = -b / (2 * a);
-            Point intersection = ray.getPoint(t);
-            double tAxis = axisDirection.dotProduct(intersection.subtract(axisOrigin));
+            Point p = ray.getPoint(t);
+            double tAxis = axisDirection.dotProduct(p.subtract(axisOrigin));
             if (tAxis >= 0 && tAxis <= axisDirection.length()) {
-                intersections.add(intersection);
+                intersections.add(0,new GeoPoint(this,p));
             }
         }
         else {
@@ -89,10 +90,14 @@ public class Tube extends RadialGeometry {
             double tAxis1 = axisDirection.dotProduct(intersection1.subtract(axisOrigin));
             double tAxis2 = axisDirection.dotProduct(intersection2.subtract(axisOrigin));
             if (tAxis1 >= 0 && tAxis1 <= axisDirection.length()) {
-                intersections.add(intersection1);
+                intersections.add(0,new GeoPoint(this,intersection1));
+                condition=true;
             }
             if (tAxis2 >= 0 && tAxis2 <= axisDirection.length()) {
-                intersections.add(intersection2);
+                if(condition==true)
+                    intersections.add(1,new GeoPoint(this,intersection2));
+                else
+                    intersections.add(0,new GeoPoint(this,intersection2));
             }
         }
         return intersections;
