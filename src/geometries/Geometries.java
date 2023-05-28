@@ -66,6 +66,21 @@ public class Geometries extends Intersectable {
         return listOfAllThePoint;
     }
 
+    @Override
+    protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
+
+        List<GeoPoint> intersections = null;
+        for (Intersectable geometry :list) {
+            var temp = geometry.findGeoIntersections(ray);
+            if (temp != null) {
+                if (intersections == null)
+                    intersections = new LinkedList<>();
+                intersections.addAll(temp);
+            }
+        }
+        return intersections;
+    }
+
     /**
      * Adds the given Intersectable geometries to this Geometries object.
      *

@@ -38,7 +38,7 @@ public class Scene {
         private final String name; // the scene's name
         private Color background=Color.BLACK; //define the background with black color
         private AmbientLight ambientLight=AmbientLight.NONE; //the ambientLight initialize to null
-        private Geometries geometries =new Geometries(); // initialize to an empty 3D model
+        public Geometries geometries =new Geometries(); // initialize to an empty 3D model
 
 
        // private Geometries geometries = new Geometries();
