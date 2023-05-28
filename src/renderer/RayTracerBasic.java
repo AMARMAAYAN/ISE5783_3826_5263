@@ -58,7 +58,9 @@ public class RayTracerBasic extends RayTracerBase {
         if(geoPoint==null){
             return this.scene.getBackground();
         }
-        return this.scene.getAmbientLight().getIntensity();
+        Color intensity=geoPoint.geometry.getEmission();
+        intensity=intensity.add(scene.getAmbientLight().getIntensity());
+        return intensity;
     }
 
 

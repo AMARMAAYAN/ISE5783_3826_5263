@@ -102,7 +102,7 @@ public class Ray {
     }
     public GeoPoint findClosestGeoPoint(List<GeoPoint> intersections) {
 
-        GeoPoint closestPoint = null;
+        GeoPoint closestGeoPoint = null;
         double miniDistance = Double.MAX_VALUE;
         double ptDistance;
 
@@ -115,12 +115,12 @@ public class Ray {
             if (ptDistance < miniDistance) {
                 // If so, update the minimum distance and set the closest point to the current point
                 miniDistance = ptDistance;
-                closestPoint = gp;
+                closestGeoPoint = gp;
             }
         }
 
         // Return the closest point found
-        return closestPoint;
+        return closestGeoPoint;
     }
 
 
