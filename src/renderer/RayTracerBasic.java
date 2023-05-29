@@ -1,12 +1,13 @@
 package renderer;
 
-import primitives.Color;
-import primitives.Point;
-import primitives.Ray;
+import lighting.LightSource;
+import primitives.*;
 import scene.Scene;
 import geometries.Intersectable.GeoPoint;
 
 import java.util.List;
+
+import static primitives.Util.alignZero;
 
 /**
  * The RayTracerBasic class is a basic implementation of the RayTracerBase abstract class.
@@ -31,36 +32,70 @@ public class RayTracerBasic extends RayTracerBase {
      */
     @Override
     public Color traceRay(Ray ray) {
-        // Initialize the variable to track the closest point
-        GeoPoint closestPoint = null;
-
-        // Find the intersections of the ray with the geometries in the scene
+        int i;
         List<GeoPoint> intersections = scene.getGeometries().findGeoIntersections(ray);
-
-        // Check if any intersections are found
-        if (intersections != null) {
-            // Find the closest point among the intersections
-            closestPoint = ray.findClosestGeoPoint(intersections);
-        }
-
-        // Calculate the color at the closest point
-        return calcColor(closestPoint);
+        return intersections == null ? scene.getBackground() : calcColor(ray.findClosestGeoPoint(intersections), ray);
     }
 
     /**
-     * Calculates the color based on the intersection geoPoint.
-     *
-     * @param geoPoint The Point object representing the intersection geoPoint.
-     * @return The Color object representing the calculated color.
+     * function calculates local effects of color on point
+     * @param gp geometry point to color
+     * @param ray ray that intersects
+     * @return color
      */
-    private Color calcColor(GeoPoint geoPoint){
-        //if the ray does not have an intersection with object
-        if(geoPoint==null){
-            return this.scene.getBackground();
+    private Color calcLocalEffects(GeoPoint gp, Ray ray) {
+        Color color = Color.BLACK;
+        Vector vector = ray.getDir();
+        Vector normal = gp.geometry.getNormal(gp.point);
+        double nv = alignZero(normal.dotProduct(vector));
+        if (nv == 0)
+            return color;
+        Material material = gp.geometry.getMaterial();
+        for (LightSource lightSource : scene.getLights()) {
+            Vector lightVector = lightSource.getL(gp.point);
+            double nl = alignZero(normal.dotProduct(lightVector));
+            if (nl * nv > 0) {
+                Color lightIntensity = lightSource.getIntensity(gp.point);
+                color = color.add(lightIntensity.scale(calcDiffusive(material, nl)), lightIntensity.scale(calcSpecular(material, normal, lightVector, nl, vector)));
+            }
         }
-        Color intensity=geoPoint.geometry.getEmission();
-        intensity=intensity.add(scene.getAmbientLight().getIntensity());
-        return intensity;
+        return color;
+    }
+
+    /**
+     * function calculates specular color
+     * @param material material of geometry
+     * @param normal normal of geometry
+     * @param lightVector light vector
+     * @param nl dot product of normal and light vector
+     * @param vector direction of ray
+     * @return specular color
+     */
+    private Double3 calcSpecular(Material material, Vector normal, Vector lightVector, double nl, Vector vector) {
+        Vector reflectedVector = lightVector.subtract(normal.scale(2 * nl));
+        double max = Math.max(0, vector.scale(-1).dotProduct(reflectedVector));
+        return material.kS.scale(Math.pow(max, material.nShininess));
+
+    }
+
+    /**
+     * function calculates diffusive color
+     * @param material material of geometry
+     * @param nl dot product of normal and light vector
+     * @return diffusive color
+     */
+    private Double3 calcDiffusive(Material material, double nl) {
+        return material.kD.scale(Math.abs(nl));
+    }
+
+    /**
+     * function calculates color of point
+     *
+     * @param geoPoint point to color
+     * @return color
+     */
+    private Color calcColor(GeoPoint geoPoint, Ray ray) {
+        return geoPoint.geometry.getEmission().add(scene.getAmbientLight().getIntensity(), calcLocalEffects(geoPoint, ray));
     }
 
 

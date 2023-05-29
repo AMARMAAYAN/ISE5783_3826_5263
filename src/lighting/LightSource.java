@@ -1,5 +1,20 @@
 package lighting;
 import primitives.*;
+
+/**
+
+ Represents a light source in a scene.
+
+ Provides methods for retrieving the intensity of the light at a given point
+
+ and the direction vector from the light source to a given point.
+
+ This interface should be implemented by classes representing specific types of light sources.
+
+ The implementing classes should provide implementations for these methods.
+
+ @author Maayan Amar
+ */
 public interface LightSource {
 
     /**

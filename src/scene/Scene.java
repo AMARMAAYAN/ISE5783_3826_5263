@@ -2,7 +2,11 @@ package scene;
 
 import lighting.AmbientLight;
 import geometries.Geometries;
+import lighting.LightSource;
 import primitives.Color;
+
+import java.util.LinkedList;
+import java.util.List;
 
 //================== Scene class (PDS - Plain Data Structure) ==================//
 public class Scene {
@@ -13,6 +17,7 @@ public class Scene {
     private final AmbientLight ambientLight; //the ambientLight
     private final Geometries geometries; // the 3D model
 
+    private List<LightSource> lights=new LinkedList<LightSource>();
 
 
     //constructor that gets only the sceneBuilder name-put the value for the scene
@@ -32,17 +37,17 @@ public class Scene {
 
     public AmbientLight getAmbientLight() {return ambientLight;}
 
+    public List<LightSource> getLights() {return lights;}
+
 
     //================== SceneBuilder class ==================//:
     public static class SceneBuilder{
         private final String name; // the scene's name
         private Color background=Color.BLACK; //define the background with black color
-        private AmbientLight ambientLight=AmbientLight.NONE; //the ambientLight initialize to null
+        private AmbientLight ambientLight=AmbientLight.NONE;//the ambientLight initialize to null
         public Geometries geometries =new Geometries(); // initialize to an empty 3D model
+        public List<LightSource> lights=new LinkedList<LightSource>();
 
-
-       // private Geometries geometries = new Geometries();
-      //  private AmbientLight ambientLight=new AmbientLight();
 
         public SceneBuilder(String name){this.name=name;}
 
@@ -61,6 +66,10 @@ public class Scene {
 
         public SceneBuilder setGeometries(Geometries geometries) {
             this.geometries = geometries;
+            return this;
+        }
+        public SceneBuilder setLights(List<LightSource> lights) {
+            this.lights = lights;
             return this;
         }
 

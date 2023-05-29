@@ -70,11 +70,11 @@ public class ImageWriter {
      */
     public void writeToImage() {
         try {
-            File file = new File("C:/Users/bmteh/ISE5783_3826_5263/.images" + '/' + imageName + ".png");
+            File file = new File(FOLDER_PATH + '/' + imageName + ".png");
             ImageIO.write(image, "png", file);
         } catch (IOException e) {
             logger.log(Level.SEVERE, "I/O error", e);
-            throw new IllegalStateException("I/O error - may be missing directory " + "C:/Users/bmteh/ISE5783_3826_5263/.images", e);
+            throw new IllegalStateException("I/O error - may be missing directory " + FOLDER_PATH, e);
         }
     }
 

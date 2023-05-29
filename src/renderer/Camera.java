@@ -13,82 +13,125 @@ import static primitives.Util.isZero;
  */
 public class Camera {
 
-    //p0=the location of the camera
-    private Point p0;
-
-    //x axis vector
+    private Point position;
     private Vector vTo;
-
-    //y axis vector
     private Vector vUp;
-
-    //z axis vector
     private Vector vRight;
-
-    //the distance from the object to the camera
     private double distance;
-
-    //object actual width
-    private double width;
-
-    //object actual height
     private double height;
-
+    private double width;
     private ImageWriter imageWriter;
     private RayTracerBase rayTracer;
 
-//===== constructor to initialize camera =======//
+
     /**
-     * Constructs a new camera with the given location, orientation and distance to the object.
+     * function that gets the position of the camera
      *
-     * @param p0  the location of the camera
-     * @param vTo the direction of the camera
-     * @param vUp the up direction of the camera
-     * @throws IllegalArgumentException if the vUp and vTo vectors are not orthogonal
+     * @return the position
      */
-
-    public Camera(Point p0, Vector vTo, Vector vUp) {
-        if(!isZero(vTo.dotProduct(vUp))){
-            throw new IllegalArgumentException("vUp and vTo are not orthogonal");
-        }
-        this.p0=p0;
-        this.vTo = vTo.normalize();
-        this.vUp = vUp.normalize();
-
-        //receiving vRight by doing a cross product between vTp and vUp
-        vRight=this.vTo.crossProduct(this.vUp);
+    public Point getPosition() {
+        return position;
     }
 
-
-    //Chaining methods.
+    /**
+     * function that gets the vTo vector
+     *
+     * @return the vTo vector
+     */
+    public Vector getvTo() {
+        return vTo;
+    }
 
     /**
-     * setter - chaining method
-     * @param width - the with of the vew plane
-     * @param height - the height of the view plane
-     * @return thge camera with the configured view plane
+     * function that gets the vUp vector
+     *
+     * @return the vUp vector
      */
-    public Camera setVPSize(double width, double height){
-        this.width=width;
-        this.height=height;
+    public Vector getvUp() {
+        return vUp;
+    }
+
+    /**
+     * function that gets the vRight vector
+     *
+     * @return the vRight vector
+     */
+    public Vector getvRight() {
+        return vRight;
+    }
+
+    /**
+     * function that gets the distance
+     *
+     * @return the distance
+     */
+    public double getDistance() {
+        return distance;
+    }
+
+    /**
+     * function that gets the height
+     *
+     * @return the height
+     */
+    public double getHeight() {
+        return height;
+    }
+
+    /**
+     * function that gets the width
+     *
+     * @return the width
+     */
+    public double getWidth() {
+        return width;
+    }
+
+    /**
+     * function that constructs the camera
+     *
+     * @param _position the position
+     * @param _vTo      the vTo vector
+     * @param _vUp      the vUp vector
+     */
+    public Camera(Point _position, Vector _vTo, Vector _vUp) {
+        if (_vTo.dotProduct(_vUp) != 0)
+            throw new IllegalArgumentException("vTo and vUp must be orthogonal");
+        position = _position;
+        vTo = _vTo.normalize();
+        vUp = _vUp.normalize();
+        vRight = vTo.crossProduct(vUp).normalize();
+    }
+
+    /**
+     * function that sets the width and height
+     *
+     * @param width  of the view plane
+     * @param height of the view plane
+     * @return this
+     */
+    public Camera setVPSize(double width, double height) {
+        this.width = width;
+        this.height = height;
         return this;
     }
 
     /**
-     * setter - chaining method
-     * @param distance - the object distance from the center of the camera
-     * @return the camera with the configured distance
+     * function that sets the distance
+     *
+     * @param distance value to set
+     * @return this
      */
-    public Camera setVPDistance(double distance){
-    this.distance=distance;
-    return this;
+    public Camera setVPDistance(double distance) {
+        this.distance = distance;
+        return this;
     }
 
     /**
-     * Sets the ImageWriter object for writing the rendered image.
+     * function that sets imageWriter
      *
-     * @param imageWriter the ImageWriter object
-     * @return the camera object itself
+     * @param imageWriter object to set
+     * @return camera
      */
     public Camera setImageWriter(ImageWriter imageWriter) {
         this.imageWriter = imageWriter;
@@ -96,10 +139,10 @@ public class Camera {
     }
 
     /**
-     * Sets the RayTracerBase object for ray tracing.
+     * function that sets the rayTracer
      *
-     * @param rayTracer the RayTracerBase object
-     * @return the camera object itself
+     * @param rayTracer object to set
+     * @return camera itself
      */
     public Camera setRayTracer(RayTracerBase rayTracer) {
         this.rayTracer = rayTracer;
@@ -107,101 +150,86 @@ public class Camera {
     }
 
     /**
-     * Renders the image by tracing rays through each pixel of the view plane.
-     * Throws an exception if any required fields are null.
+     * function that gets the ray from the camera to the point
+     *
+     * @param nX the x resolution
+     * @param nY the y resolution
+     * @param i  the x coordinate
+     * @param j  the y coordinate
+     * @return the ray
      */
-    public void renderImage() {
-        if (this.imageWriter == null)
-            throw new UnsupportedOperationException("Missing imageWriter");
-        if (this.rayTracer == null)
-            throw new UnsupportedOperationException("Missing rayTracerBase");
+    public Ray constructRay(int nX, int nY, int j, int i) {
+        Point pC = position.add(vTo.scale(distance));
 
-        for (int i = 0; i < this.imageWriter.getNy(); i++) {
-            for (int j = 0; j < this.imageWriter.getNy(); j++) {
-                Color color = castRay(j,i);
-                this.imageWriter.writePixel(j, i, color);
-            }
-        }
+        double rY = height / nY;
+        double rX = width / nX;
+
+        double yI = -(i - (nY - 1d) / 2) * rY;
+        double jX = (j - (nX - 1d) / 2) * rX;
+        Point Pij = pC;
+
+        if (yI != 0) Pij = Pij.add(vUp.scale(yI));
+        if (jX != 0) Pij = Pij.add(vRight.scale(jX));
+
+        return new Ray(position, Pij.subtract(position));
     }
-
-    private Color castRay(int j,int i){
-        Ray ray = constructRay(
-                this.imageWriter.getNx(),
-                this.imageWriter.getNy(),
-                j,
-                i);
-        return this.rayTracer.traceRay(ray);
-    }
-
-    public void writeToImage() {
-        this.imageWriter.writeToImage();
-    }
-
-
 
     /**
-     * Prints a grid on the image.
-     * Throws an exception if the ImageWriter field is null.
-     *
-     * @param interval the interval between the grid lines
-     * @param color    the color of the grid lines
-     * @throws MissingResourceException if the ImageWriter field is null
+     * function that gets the color of the pixel and renders in to image
      */
-    public void printGrid(int interval, Color color) {
-        //=== running on the view plane===//
-        if (imageWriter == null) {
-            throw new NoSuchElementException("Missing ImageWriter for printing the grid");
-        }
+    public Camera renderImage() {
+        if (position == null || vTo == null || vUp == null || vRight == null || distance == 0 || height == 0 || width == 0 || imageWriter == null || rayTracer == null)
+            throw new MissingResourceException("", "", "Camera is not initialized");
+        int nX = imageWriter.getNx();
+        int nY = imageWriter.getNy();
         for (int i = 0; i < imageWriter.getNx(); i++) {
             for (int j = 0; j < imageWriter.getNy(); j++) {
-                //=== create the net ===//
-                if (i % interval == 0 || j % interval == 0) {
+                Ray ray = constructRay(nX, nY, j, i);
+                imageWriter.writePixel(j, i, this.castRay(nX, nY, i, j));
+            }
+        }
+        return this;
+    }
+
+    /**
+     * function that prints grid on top of image
+     *
+     * @param interval of grid
+     * @param color    of grid
+     */
+    public void printGrid(int interval, Color color) {
+        if (imageWriter == null)
+            throw new MissingResourceException("", "", "Camera is not initialized");
+        for (int i = 0; i < imageWriter.getNx(); i++) {
+            for (int j = 0; j < imageWriter.getNy(); j++) {
+                if ((i % interval == 0) || (j % interval == 0))
                     imageWriter.writePixel(i, j, color);
-                }
             }
         }
     }
 
-
-
     /**
-     * Constructs a ray from the camera to the specified pixel on the view plane.
-     *
-     * @param nX the number of pixels in the x axis
-     * @param nY the number of pixels in the y axis
-     * @param j  the x coordinate of the pixel on the view plane
-     * @param i  the y coordinate of the pixel on the view plane
-     * @return the ray constructed from the camera to the specified pixel on the view plane
+     * function that calls write to image function
      */
-    public Ray constructRay(int nX, int nY, int j, int i){
-
-        //center point of the view plane
-        Point Pc=p0.add(vTo.scale(distance));
-
-        //pixels ratios
-        double Rx=width / nX;
-        double Ry=width / nY;
-
-        //Pij point[i,j] in view plane coordinate
-        Point Pij=Pc;
-
-        //delta values for moving on the view plane
-        double Xj= (j - (nX - 1) / 2d) * Rx;
-        double Yi= -(i - (nY - 1) / 2d) * Ry;
-
-        if (!isZero(Xj)) {
-            Pij=Pij.add(vRight.scale(Xj));
-        }
-
-        if (!isZero(Yi)) {
-            Pij=Pij.add(vUp.scale(Yi));
-        }
-
-        //vector from the camera in the direction of point(i,j) in the view plane
-        Vector Vij = Pij.subtract(p0);
-
-        return new Ray(p0, Vij);
+    public void writeToImage() {
+        if (imageWriter == null)
+            throw new MissingResourceException("", "", "Camera is not initialized");
+        imageWriter.writeToImage();
     }
 
+    /**
+     * function that casts ray and returns color
+     *
+     * @param nX the x resolution
+     * @param nY the y resolution
+     * @param i  the x coordinate
+     * @param j  the y coordinate
+     * @return the color
+     */
+    private Color castRay(int nX, int nY, int i, int j) {
+        Ray tempRay = constructRay(nX, nY, j, i);
+        return rayTracer.traceRay(tempRay);
+
+    }
 
 }
