@@ -5,6 +5,17 @@ import primitives.Point;
 import primitives.Util;
 import primitives.Vector;
 
+/**
+
+ Represents a spot light source in a scene.
+
+ Extends the PointLight class.
+
+ Calculates the intensity of the light at a given point based on the direction of the light.
+
+ Inherits the position and attenuation properties from the PointLight class.
+ @author AMARMAAYAN
+ */
 public class SpotLight extends PointLight{
 
     private Vector direction;
@@ -15,7 +26,7 @@ public class SpotLight extends PointLight{
      * @param color     of the intensity of the source of the light
      * @param dir ->for the direction
      */
-    protected SpotLight(Color color, Point position, Vector dir) {
+    public SpotLight(Color color, Point position, Vector dir) {
         super(color, position);
         this.direction = dir.normalize();
     }

@@ -4,38 +4,43 @@ import primitives.Color;
 import primitives.Point;
 import primitives.Vector;
 
-public class DirectionalLight extends Light implements LightSource{
+/**
+
+ Represents a directional light source in a scene.
+
+ A directional light source is located infinitely far away and emits light in a specific direction.
+
+ The intensity of the light is constant and does not depend on the distance from the light source.
+
+ The direction of the light is normalized to a unit vector.
+
+ Implements the LightSource interface to provide information about the light source.
+
+ Extends the Light class to inherit the intensity property.
+
+ @author Maayan Amar
+ */
+public class DirectionalLight extends Light implements LightSource {
     private Vector direction;
 
     /**
-     * Constructs a light with the given intensity.
-     *
-     * @param intensity the intensity of the light
+
+     Constructs a directional light with the given intensity and direction.
+     @param intensity the intensity of the light
+     @param direction the direction of the light
      */
-    protected DirectionalLight(Color intensity, Vector dir) {
+    public DirectionalLight(Color intensity, Vector direction) {
         super(intensity);
-        this.direction = dir.normalize();
+        this.direction = direction.normalize();
     }
 
-        /**
-         * Return the intensity light on specific point
-         *
-         * @param p the point on the object (Point3D)
-         * @return the intensity (Color)
-         */
-        @Override
-        public Color getIntensity(Point p) {
-            return this.intensity;
-        }
+    @Override
+    public Color getIntensity(Point p) {
+        return getIntensity();
+    }
 
-        /**
-         * Return normalize direction vector from the light source to the object
-         *
-         * @param p the point on the object (Point)
-         * @return normalize direction vector from the light source to the object (Vector)
-         */
-        @Override
-        public Vector getL(Point p) {
-            return this.direction.normalize();
-        }
+    @Override
+    public Vector getL(Point p) {
+        return direction;
+    }
 }
