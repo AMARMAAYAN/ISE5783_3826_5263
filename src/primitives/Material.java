@@ -13,7 +13,7 @@ public class Material {
 
     public Double3 kD = Double3.ZERO;
     public Double3 kS = Double3.ZERO;
-    public int nShininess = 0;
+    public int shininess = 0;
 
     /**
 
@@ -63,8 +63,8 @@ public class Material {
      @param nShininess The shininess factor (int)
      @return The Material object with the updated shininess factor
      */
-    public Material setnShininess(int nShininess) {
-        this.nShininess = nShininess;
+    public Material setShininess(int nShininess) {
+        this.shininess = nShininess;
         return this;
     }
 }

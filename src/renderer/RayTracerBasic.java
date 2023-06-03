@@ -7,6 +7,7 @@ import geometries.Intersectable.GeoPoint;
 
 import java.util.List;
 
+
 import static primitives.Util.alignZero;
 
 /**
@@ -14,6 +15,9 @@ import static primitives.Util.alignZero;
  * It provides an empty implementation for the traceRay method.
  */
 public class RayTracerBasic extends RayTracerBase {
+
+    //Constant variable for ray head offset size for shading rays
+    private static final double DELTA = 0.1;
 
     /**
      * Constructs a RayTracerBasic object with the given scene.
@@ -37,6 +41,27 @@ public class RayTracerBasic extends RayTracerBase {
         return intersections == null ? scene.getBackground() : calcColor(ray.findClosestGeoPoint(intersections), ray);
     }
 
+    private static final double EPS = 0.1;
+    private boolean unshaded(GeoPoint gp, Vector l, Vector n, LightSource lightSource, double nl) {
+        Vector lightDirection = l.scale(-1); // from point to light source
+        Vector epsVector = n.scale(nl < 0 ? EPS : -EPS);
+        Point point = gp.point.add(epsVector);
+        Ray lightRay = new Ray(point, lightDirection);
+        var intersections = scene.getGeometries().findGeoIntersections(lightRay);
+
+        if (intersections != null) {
+            double distance = lightSource.getDistance(gp.point);
+            for (GeoPoint gPoint  : intersections) {
+                if (gPoint.point.distance(gp.point) < distance)
+                    return false;
+            }
+        }
+
+        return true;
+    }
+
+
+
     /**
      * function calculates local effects of color on point
      * @param gp geometry point to color
@@ -55,9 +80,13 @@ public class RayTracerBasic extends RayTracerBase {
             Vector lightVector = lightSource.getL(gp.point);
             double nl = alignZero(normal.dotProduct(lightVector));
             if (nl * nv > 0) {
-                Color lightIntensity = lightSource.getIntensity(gp.point);
-                color = color.add(lightIntensity.scale(calcDiffusive(material, nl)), lightIntensity.scale(calcSpecular(material, normal, lightVector, nl, vector)));
+                if (unshaded(gp,lightVector, normal,lightSource, nl)){
+                    Color lightIntensity = lightSource.getIntensity(gp.point);
+                    color = color.add(lightIntensity.scale(calcDiffusive(material, nl)), lightIntensity.scale(calcSpecular(material, normal, lightVector, nl, vector)));
+                }
+
             }
+
         }
         return color;
     }
@@ -74,7 +103,7 @@ public class RayTracerBasic extends RayTracerBase {
     private Double3 calcSpecular(Material material, Vector normal, Vector lightVector, double nl, Vector vector) {
         Vector reflectedVector = lightVector.subtract(normal.scale(2 * nl));
         double max = Math.max(0, vector.scale(-1).dotProduct(reflectedVector));
-        return material.kS.scale(Math.pow(max, material.nShininess));
+        return material.kS.scale(Math.pow(max, material.shininess));
 
     }
 
