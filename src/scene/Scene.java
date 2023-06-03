@@ -14,11 +14,31 @@ public class Scene {
     //==== use of design pattern called "builder pattern" ====//
     private final String name; // the scene's name
     private final Color background; // the background's color (default-black)
-    private final AmbientLight ambientLight; //the ambientLight
+    private AmbientLight ambientLight; //the ambientLight
     private final Geometries geometries; // the 3D model
-
     private List<LightSource> lights=new LinkedList<LightSource>();
 
+    //getter function for the scene
+    public String getName(){return name;}
+
+    public Color getBackground(){return background;}
+
+    public AmbientLight getAmbientLight() {return ambientLight;}
+    public Geometries getGeometries(){
+        if (geometries == null) return new Geometries();
+        return geometries;
+    }
+    public List<LightSource> getLights() {return this.lights;}
+    public Scene setLight(List<LightSource> lights) {
+        this.lights = lights;
+        return this;
+    }
+
+    ////////////תוספת לא כתובה
+    public Scene setAmbientLight(AmbientLight ambientLight) {
+        this.ambientLight = ambientLight;
+        return this;
+    }
 
     //constructor that gets only the sceneBuilder name-put the value for the scene
     private Scene(SceneBuilder builder) {
@@ -28,26 +48,13 @@ public class Scene {
         this.geometries = builder.geometries;
     }
 
-    //getter function for the scene
-    public String getName(){return name;}
-
-    public Color getBackground(){return background;}
-
-    public Geometries getGeometries(){return geometries;}
-
-    public AmbientLight getAmbientLight() {return ambientLight;}
-
-    public List<LightSource> getLights() {return lights;}
-
-
     //================== SceneBuilder class ==================//:
     public static class SceneBuilder{
         private final String name; // the scene's name
         private Color background=Color.BLACK; //define the background with black color
         private AmbientLight ambientLight=AmbientLight.NONE;//the ambientLight initialize to null
-        public Geometries geometries =new Geometries(); // initialize to an empty 3D model
-        public List<LightSource> lights=new LinkedList<LightSource>();
 
+        public Geometries geometries =new Geometries(); // initialize to an empty 3D model
 
         public SceneBuilder(String name){this.name=name;}
 
@@ -68,10 +75,7 @@ public class Scene {
             this.geometries = geometries;
             return this;
         }
-        public SceneBuilder setLights(List<LightSource> lights) {
-            this.lights = lights;
-            return this;
-        }
+
 
         //return the scene from the builder
         public Scene build() {
