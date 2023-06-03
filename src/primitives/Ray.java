@@ -9,6 +9,7 @@ import static primitives.Util.*;
  The Ray class represents a ray in 3D space, defined by a starting point and a direction dir.
  */
 public class Ray {
+    private static final double DELTA = 0.1;
 
     /**
      * The starting point of the ray.
@@ -51,6 +52,20 @@ public class Ray {
         this.p0 = p;
         this.dir = dir.normalize();
     }
+
+    /**
+     * Constructor tthat moves the ray by DELTA
+     *
+     * @param p0  point direction – direction (must be normalized) normal – normal
+     * @param n   normal vector
+     * @param dir direction vector of the ray
+     */
+    public Ray(Point p0, Vector dir, Vector n) {
+        double delta = dir.dotProduct(n) >= 0 ? DELTA : -DELTA;
+        this.p0 = p0.add(n.scale(delta));
+        this.dir = dir;
+    }
+
 
     @Override
     public boolean equals(Object o) {

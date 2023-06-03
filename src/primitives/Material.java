@@ -11,12 +11,59 @@ package primitives;
  */
 public class Material {
 
-    public Double3 kD = Double3.ZERO;
-    public Double3 kS = Double3.ZERO;
+    public Double3 kD = Double3.ZERO; // Diffusion attenuation coefficient
+    public Double3 kS = Double3.ZERO; // Specular reflection attenuation coefficient
     public int shininess = 0;
+    public Double3 kT = Double3.ZERO ; // Transparency attenuation coefficient
+    public Double3 kR = Double3.ZERO; // Reflection attenuation coefficient
 
+    //sets:
+    /**
+     *set kT function -the Transparency attenuation coefficient of the material.
+     *@param kT Transparency attenuation coefficient (Double3)
+     *@return The Material object with the updated Transparency attenuation coefficient
+     */
+    public Material setKt(Double3 kT) {
+        this.kT = kT;
+        return this;
+    }
     /**
 
+     /**
+     * set kT function -the Transparency attenuation coefficient of the material.
+     * @param kT Transparency attenuation coefficient (double)
+     * @return The Material object with the updated Transparency attenuation coefficient
+     */
+    public Material setKt(double kT) {
+        this.kT = new Double3(kT);
+        return this;
+    }
+    /**
+
+     /**
+     Sets the diffuse reflection attenuation coefficient of the material.
+     @param kR The diffuse  reflection attenuation coefficient (Double3)
+     @return The Material object with the updated diffuse reflection attenuation coefficient
+     */
+    public Material setKr(Double3 kR) {
+        this.kR = kR;
+        return this;
+    }
+    /**
+
+     /**
+     * set kT function - diffuse reflection attenuation coefficient
+     * @param kR The diffuse reflection attenuation coefficient (double)
+     * @return The Material object with the updated diffuse reflection attenuation coefficient
+     */
+    public Material setKr(double kR) {
+        this.kR = new Double3(kR);
+        return this;
+    }
+    /**
+
+
+    /**
      Sets the diffuse reflection coefficient of the material.
      @param kD The diffuse reflection coefficient (Double3)
      @return The Material object with the updated diffuse reflection coefficient
