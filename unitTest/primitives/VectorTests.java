@@ -3,7 +3,9 @@
  * Maayan Amar-211763826, email:maayanamar11.01@gmail.com
  */
 package primitives;
+
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static primitives.Util.isZero;
 

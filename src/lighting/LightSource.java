@@ -1,22 +1,30 @@
 package lighting;
-import primitives.*;
+
+import primitives.Color;
+import primitives.Point;
+import primitives.Vector;
 
 /**
-
- Represents a light source in a scene.
-
- Provides methods for retrieving the intensity of the light at a given point
-
- and the direction vector from the light source to a given point.
-
- This interface should be implemented by classes representing specific types of light sources.
-
- The implementing classes should provide implementations for these methods.
-
- @author Maayan Amar
+ * Represents a light source in a scene.
+ * <p>
+ * Provides methods for retrieving the intensity of the light at a given point
+ * <p>
+ * and the direction vector from the light source to a given point.
+ * <p>
+ * This interface should be implemented by classes representing specific types of light sources.
+ * <p>
+ * The implementing classes should provide implementations for these methods.
+ *
+ * @author Maayan Amar
  */
 public interface LightSource {
 
+    /**
+     * get the distance to the Light source
+     *
+     * @param point given point to calculate the distance
+     * @return distance from the given point to the light source
+     */
     double getDistance(Point point);
 
 

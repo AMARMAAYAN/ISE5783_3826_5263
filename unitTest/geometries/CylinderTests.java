@@ -1,12 +1,16 @@
 package geometries;
 
 import org.junit.jupiter.api.Test;
-import primitives.*;
+import primitives.Point;
+import primitives.Ray;
+import primitives.Vector;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
 /**
  * The  CylinderTests class is responsible for testing the Cylinder class.
  * It includes unit tests for getNormal method  .
+ *
  * @author Maayan Amar
  */
 class CylinderTests {

@@ -1,11 +1,11 @@
-
 package geometries;
 
+import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
-import primitives.Point;
 
-import static primitives.Util.*;
+import static primitives.Util.alignZero;
+import static primitives.Util.isZero;
 
 /**
  * The Cylinder class represents a cylinder in 3D space, which is a subclass of the Tube class.
