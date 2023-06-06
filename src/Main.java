@@ -1,12 +1,8 @@
-import static java.lang.System.out;
-import static primitives.Util.isZero;
-/**
- * Tehila Ben Moshe-213385263, email:bmtehila@gmail.com
- * Maayan Amar-211763826, email:maayanamar11.01@gmail.com
- */
-
 import primitives.Point;
 import primitives.Vector;
+
+import static java.lang.System.out;
+import static primitives.Util.isZero;
 
 /**
  * Test program for the 1st stage

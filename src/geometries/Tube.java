@@ -1,15 +1,20 @@
 package geometries;
+
+import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
-import primitives.Point;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
+import static primitives.Util.alignZero;
+
 /**
- This class represents a tube in 3D space, and it extends RadialGeometry.
- A tube is defined by its axisRay and its radius.
- @author Maayan Amar
+ * This class represents a tube in 3D space, and it extends RadialGeometry.
+ * A tube is defined by its axisRay and its radius.
+ *
+ * @author Maayan Amar
  */
 public class Tube extends RadialGeometry {
 
@@ -21,8 +26,8 @@ public class Tube extends RadialGeometry {
     /**
      * Constructs a new tube with the given axisRay and radius.
      *
-     * @param axisRay   The axisRay of the tube.
-     * @param radius The radius of the tube.
+     * @param axisRay The axisRay of the tube.
+     * @param radius  The radius of the tube.
      */
     public Tube(Ray axisRay, double radius) {
         super(radius);
@@ -57,32 +62,36 @@ public class Tube extends RadialGeometry {
     }
 
     @Override
-    protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
-        List<GeoPoint> intersections = new ArrayList<GeoPoint>();
+    protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray, double maxDistance) {
+        List<GeoPoint> intersections = new LinkedList<>();
         Vector rayDirection = ray.getDir();
         Point rayOrigin = ray.getP0();
-        boolean condition=false;
+        boolean condition = false;
 
         // Calculate the coefficients of the quadratic equation to find the intersection points
         Vector axisDirection = axisRay.getDir();
         Point axisOrigin = axisRay.getP0();
+
         double a = rayDirection.dotProduct(rayDirection) - Math.pow(rayDirection.dotProduct(axisDirection), 2);
         double b = 2 * (rayDirection.dotProduct(rayOrigin.subtract(axisOrigin)) - rayDirection.dotProduct(axisDirection) * rayOrigin.subtract(axisOrigin).dotProduct(axisDirection));
         double c = rayOrigin.subtract(axisOrigin).dotProduct(rayOrigin.subtract(axisOrigin)) - Math.pow(rayOrigin.subtract(axisOrigin).dotProduct(axisDirection), 2) - Math.pow(radius, 2);
 
         double discriminant = b * b - 4 * a * c;
         if (discriminant < 0) {
-            return intersections; // no intersection
-        }
-        else if (discriminant == 0) {
+            return null; // no intersection
+        } else if (discriminant == 0) {
             double t = -b / (2 * a);
+            if(alignZero(t - maxDistance) >=0){
+                return null;
+            }
             Point p = ray.getPoint(t);
             double tAxis = axisDirection.dotProduct(p.subtract(axisOrigin));
             if (tAxis >= 0 && tAxis <= axisDirection.length()) {
-                intersections.add(0,new GeoPoint(this,p));
+                intersections.add(0, new GeoPoint(this, p));
             }
-        }
-        else {
+        } else {
+
+            // todo use maxDistance
             double t1 = (-b + Math.sqrt(discriminant)) / (2 * a);
             double t2 = (-b - Math.sqrt(discriminant)) / (2 * a);
             Point intersection1 = ray.getPoint(t1);
@@ -90,14 +99,14 @@ public class Tube extends RadialGeometry {
             double tAxis1 = axisDirection.dotProduct(intersection1.subtract(axisOrigin));
             double tAxis2 = axisDirection.dotProduct(intersection2.subtract(axisOrigin));
             if (tAxis1 >= 0 && tAxis1 <= axisDirection.length()) {
-                intersections.add(0,new GeoPoint(this,intersection1));
-                condition=true;
+                intersections.add(0, new GeoPoint(this, intersection1));
+                condition = true;
             }
             if (tAxis2 >= 0 && tAxis2 <= axisDirection.length()) {
-                if(condition==true)
-                    intersections.add(1,new GeoPoint(this,intersection2));
+                if (condition == true)
+                    intersections.add(1, new GeoPoint(this, intersection2));
                 else
-                    intersections.add(0,new GeoPoint(this,intersection2));
+                    intersections.add(0, new GeoPoint(this, intersection2));
             }
         }
         return intersections;

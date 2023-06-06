@@ -3,7 +3,9 @@
  * Maayan Amar-211763826, email:maayanamar11.01@gmail.com
  */
 package primitives;
+
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -11,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * The PointTests class is responsible for testing the Point class.
  * It includes unit tests for different operations that can be performed on a point, such as addition, subtraction and more.
+ *
  * @author Maayan Amar
  */
 class PointTests {
@@ -55,6 +58,7 @@ class PointTests {
         assertEquals(14d, new Point(1, 1, 1).distanceSquared(new Point(2, 3, 4)), 0.0001, //
                 "Wrong squared distance between the point and itself");
     }
+
     @Test
     void testDistanceSquared2() {
         // =============== Boundary Values Tests ==================
@@ -62,11 +66,13 @@ class PointTests {
         assertEquals(0d, new Point(1, 2, 3).distanceSquared(new Point(1, 2, 3)), 0.0001, //
                 "Wrong squared distance between the point and itself");
     }
+
     @Test
     void testAllDistanceSquared() {
         testDistanceSquared1();
         testDistanceSquared2();
     }
+
     /**
      * Test method for {@link primitives.Point#distance(primitives.Point)}.
      */
