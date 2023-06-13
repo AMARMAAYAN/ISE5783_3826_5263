@@ -1,12 +1,12 @@
 package renderer;
-
 import org.junit.jupiter.api.Test;
-import primitives.Color;
+import primitives.*;
 
 /**
  * Testing ImageWriter Class
  *
  * @author tehila
+ *
  */
 class ImageWriterTests {
 
@@ -37,7 +37,9 @@ class ImageWriterTests {
         imageWriter.writeToImage();
 
 
+
     }
+
 
 
 }

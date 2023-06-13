@@ -1,16 +1,17 @@
 package geometries;
 
-import primitives.Point;
-import primitives.Ray;
-import primitives.Vector;
+import primitives.*;
 
+import static java.lang.Math.sqrt;
+import static primitives.Util.*;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The Sphere class represents a sphere in 3D space.
- * Extends RadialGeometry.
- *
- * @author Maayan Amar
+ The Sphere class represents a sphere in 3D space.
+ Extends RadialGeometry.
+ @author Maayan Amar
  */
 
 public class Sphere extends RadialGeometry {
@@ -54,46 +55,54 @@ public class Sphere extends RadialGeometry {
      * @return A list of intersection points between the ray and the sphere, or null if there are no intersections.
      */
     @Override
-    protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray,double maxDistance) {
-        Point p0 = ray.getP0(); // ray's starting point
-        Point O = this.center; //the sphere's center point
-        Vector V = ray.getDir(); // "the v vector" from the presentation
+    protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray, double maxDistance) {
+        Point P0 = ray.getP0();
+        Vector v = ray.getDir();
 
-        // if p0 on center, calculate with line parametric representation
-        // the direction vector normalized.
-        if (O.equals(p0)) {
-            Point newPoint = ray.getPoint(this.radius);
-            return List.of(new GeoPoint(this, newPoint));
+        if (P0.equals(center)) {
+            if (alignZero(radius - maxDistance) > 0) {
+                return null;
+            }
+            return List.of(new GeoPoint(this, ray.getPoint(radius)));
         }
 
-        Vector U = O.subtract(p0);
-        double tm = V.dotProduct(U);
-        double d = Math.sqrt(U.lengthSquared() - tm * tm);
-        if (d >= this.radius) {
+        Vector U = center.subtract(P0);
+
+        double tm = alignZero(v.dotProduct(U));
+        double d = alignZero(Math.sqrt(U.lengthSquared() - tm * tm));
+
+        // no intersections : the ray direction is above the sphere
+        if (d >= radius) {
             return null;
         }
 
-        double th = Math.sqrt(this.radius * this.radius - d * d);
-        double t1 = tm - th;
-        double t2 = tm + th;
+        double th = alignZero(Math.sqrt(radius * radius - d * d));
 
-        if (t1 > 0 && t2 > 0 && (t1 - maxDistance) < 0  && (t2 - maxDistance) < 0) {
-            Point p1 = ray.getPoint(t1);
-            Point p2 = ray.getPoint(t2);
-            return List.of(new GeoPoint(this, p1), new GeoPoint(this, p2));
+        double t1 = alignZero(tm - th);
+        double t2 = alignZero(tm + th);
+
+        if (t1 <= 0 && t2 <= 0) {
+            return null;
         }
 
-        if (t1 > 0  && (t1 - maxDistance) < 0) {
-            Point p1 = ray.getPoint(t1);
-            return List.of(new GeoPoint(this, p1));
+        if (t1 > 0 && t2 > 0 && alignZero(t1 - maxDistance) <= 0 && alignZero(t2 - maxDistance) <= 0) {
+//            Point P1 = P0.add(v.scale(t1));
+//            Point P2 = P0.add(v.scale(t2));
+            Point P1 = ray.getPoint(t1);
+            Point P2 = ray.getPoint(t2);
+            return List.of(new GeoPoint(this, P1), new GeoPoint(this, P2));
         }
-
-        if (t2 > 0  && (t2 - maxDistance) < 0) {
-            Point p2 = ray.getPoint(t2);
-            return List.of(new GeoPoint(this, p2));
+        if (t1 > 0 && alignZero(t1 - maxDistance) <= 0) {
+//            Point P1 = P0.add(v.scale(t1));
+            Point P1 = ray.getPoint(t1);
+            return List.of(new GeoPoint(this, P1));
+        }
+        if (t2 > 0 && alignZero(t2 - maxDistance) <= 0) {
+//            Point P2 = P0.add(v.scale(t2));
+            Point P2 = ray.getPoint(t2);
+            return List.of(new GeoPoint(this, P2));
         }
         return null;
+
     }
-
 }
-

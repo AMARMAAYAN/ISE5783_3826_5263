@@ -3,18 +3,14 @@
  * Maayan Amar-211763826, email:maayanamar11.01@gmail.com
  */
 package geometries;
-
 import org.junit.jupiter.api.Test;
 import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
+import static org.junit.jupiter.api.Assertions.*;
 /**
  * The TubeTests class is responsible for testing the Tube class.
  * It includes unit tests for getNormal method .
- *
  * @author Maayan Amar
  */
 class TubeTests {
@@ -31,8 +27,14 @@ class TubeTests {
 
         // =============== Boundary Values Tests =================
         //TC11: Test for a point at the head of the tube
-        assertEquals(new Vector(1, 0, 0), tube.getNormal(new Point(1, 0, 2)), "ERROR - TC02: Wrong normal to tube at head");
+        assertEquals(new Vector(1,0,0), tube.getNormal(new Point(1,0,2)), "ERROR - TC02: Wrong normal to tube at head");
     }
+
+
+
+
+
+
 
 
 }

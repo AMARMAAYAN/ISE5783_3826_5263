@@ -1,15 +1,17 @@
 package geometries;
 
+import primitives.Point;
 import primitives.Ray;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 
 /**
- * The Geometries class represents a collection of intersectable geometries.
- * It implements the Intersectable interface, which means that it can be intersected with a Ray object.
+
+ The Geometries class represents a collection of intersectable geometries.
+ It implements the Intersectable interface, which means that it can be intersected with a Ray object.
  */
 
 public class Geometries extends Intersectable {
@@ -17,13 +19,14 @@ public class Geometries extends Intersectable {
     /**
      * A list of intersectable geometries that are stored in this Geometries object.
      */
-    List<Intersectable> intersectables;
+     private List<Intersectable> intersectables;
+
 
     /**
      * Constructs an empty Geometries object.
      */
     public Geometries() {
-        intersectables = new LinkedList<Intersectable>();
+        intersectables = new LinkedList<>();
     }
 
 
@@ -32,66 +35,43 @@ public class Geometries extends Intersectable {
      *
      * @param intersectables An array of Intersectable geometries to add to this Geometries object.
      */
-
     public Geometries(Intersectable... intersectables) {
-        this.intersectables = new LinkedList<Intersectable>();
-        Collections.addAll(this.intersectables, intersectables);
+        this();
+        add(intersectables);
     }
 
     /**
-     * Adds the given Intersectable geometries to this Geometries object.
-     *
-     * @param intersectables An array of Intersectable geometries to add to this Geometries object.
+     * Add interfaces to the list of the geometries
+     * @param intersectables one or more interfaces to add to the geometries list
      */
-    public void add(Intersectable... intersectables) {
-        Collections.addAll(this.intersectables, intersectables);
+    public void add(Intersectable... intersectables){
+        for(var item : intersectables){
+            this.intersectables.add(item);
+        }
     }
 
+
+    /**
+     * find intersections of ray with geometry shape
+     *
+     * @param ray ray that cross the geometry
+     * @return list of intersection points that were found
+     */
 
     @Override
-    protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray, double maxDistance) {
-        List<GeoPoint> intersection = null;
+    protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray,double maxDistance) {
 
-        for (Intersectable geometry : this.intersectables) { // loop on all the geometry that implement "the Intersectables"
-            // list of crossing point between the ray ana the geometry//
-            var geoIntersections = geometry.findGeoIntersections(ray,maxDistance);
-            if (geoIntersections != null) { // if there is a crossing
-                if (intersection == null) {
-                    intersection = new LinkedList<>();
-                }
-                intersection.addAll(geoIntersections);
+        List<GeoPoint> list = new LinkedList<GeoPoint>();;
+        for (Intersectable geometry :intersectables) {
+            List<GeoPoint> lst = geometry.findGeoIntersections(ray, maxDistance);
+            if (lst != null) {
+                if (list == null)
+                    list = new LinkedList<>();
+                list.addAll(lst);
             }
         }
-
-        return intersection;
+        return list;
     }
-
-
-    /**
-     * Finds all the intersection points of the given Ray object with the geometries stored in this Geometries object.
-     *
-     * @param ray The Ray object to intersect with the geometries in this Geometries object.
-     * @return A list of Point objects that represent the intersection points of the given Ray object with the geometries in this Geometries object,
-     *         or null if no intersection points were found.
-     */
-    //@Override
-    /**
-     public List<Point> findIntersections(Ray ray) {
-     List<Point> listOfAllThePoint = new ArrayList<>();
-
-     for (Intersectable geometry : intersectables) {
-     List<Point> pointList = geometry.findIntersections(ray);
-     if (pointList == null) continue;
-     for (Point point : pointList) {
-     listOfAllThePoint.add(point);
-     }
-     }
-
-     if (listOfAllThePoint.size() == 0)
-     return null;
-     return listOfAllThePoint;
-     }
-     */
 
 
 }

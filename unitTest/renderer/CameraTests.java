@@ -1,16 +1,16 @@
 package renderer;
 
-import org.junit.jupiter.api.Test;
-import primitives.Point;
-import primitives.Ray;
-import primitives.Vector;
+import static org.junit.jupiter.api.Assertions.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
+
+import primitives.*;
 
 /**
  * Testing Camera Class
  *
  * @author Dan
+ *
  */
 class CameraTests {
     static final Point ZERO_POINT = new Point(0, 0, 0);

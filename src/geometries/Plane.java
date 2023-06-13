@@ -1,13 +1,7 @@
 package geometries;
-
-import primitives.Point;
-import primitives.Ray;
-import primitives.Vector;
-
 import java.util.List;
-
-import static primitives.Util.alignZero;
-import static primitives.Util.isZero;
+import primitives.*;
+import static primitives.Util.*;
 
 /**
  * The Plane class represents a plane in 3D space.
@@ -29,7 +23,6 @@ public class Plane extends Geometry {
 
     /**
      * Constructs a new plane with the given three points.
-     *
      * @param p1 The first point.
      * @param p2 The second point.
      * @param p3 The third point.
@@ -72,43 +65,45 @@ public class Plane extends Geometry {
     }
 
     @Override
-    protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray, double maxDistance) {
-        Point p0 = ray.getP0(); //get point p0
-        Vector v = ray.getDir(); //get direction of the vector
+    protected List <GeoPoint> findGeoIntersectionsHelper(Ray ray, double maxDistance){
+         Point p0=ray.getP0(); //get point p0
+         Vector v=ray.getDir(); //get direction of the vector
 
-        Vector n = normal;
+        Vector n= normal;
 
-        if (q0.equals(p0)) { //if they equal-there is no Intersections between them
+        if(q0.equals(p0)){ //if they equal-there is no Intersections between them
             return null;
         }
 
-        Vector p0_q0 = q0.subtract(p0);
+        Vector p0_q0=q0.subtract(p0);
 
         //numerator
-        double n_p0q0 = alignZero(n.dotProduct(p0_q0));
+        double n_p0q0=alignZero(n.dotProduct(p0_q0));
 
         //because then t will be equal to 0
-        if (isZero(n_p0q0)) {
+        if(isZero(n_p0q0)){
             return null;
         }
 
         //denominator
-        double nv = alignZero(n.dotProduct(v));
+        double nv=alignZero(n.dotProduct(v));
 
         //denominator can't be zero -ray is lying in the plane axis
-        if (isZero(nv)) {
+        if(isZero(nv)){
             return null;
         }
 
-        double t = alignZero(n_p0q0 / nv);
+        double t = alignZero(n_p0q0/nv);
 
+        if(t<=0){
+            return null;
+        }
         if (t <= 0 || alignZero(t - maxDistance) >=0) {
             return null;
         }
-
         Point point = ray.getPoint(t);
 
-        return List.of(new GeoPoint(this, point));
+        return List.of(new GeoPoint(this,point));
     }
 
 }

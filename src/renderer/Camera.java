@@ -1,17 +1,15 @@
 package renderer;
-
+import primitives.*;
 import primitives.Color;
-import primitives.Point;
-import primitives.Ray;
-import primitives.Vector;
-
 import java.util.MissingResourceException;
+import java.util.NoSuchElementException;
+
+import static primitives.Util.isZero;
 
 /**
- * A class representing a camera in a 3D space.
- * The camera is defined by its location, orientation, distance to the object, and view plane size.
- *
- * @author Maayan Amar
+ A class representing a camera in a 3D space.
+ The camera is defined by its location, orientation, distance to the object, and view plane size.
+ @author Maayan Amar
  */
 public class Camera {
 
@@ -25,22 +23,6 @@ public class Camera {
     private ImageWriter imageWriter;
     private RayTracerBase rayTracer;
 
-
-    /**
-     * function that constructs the camera
-     *
-     * @param _position the position
-     * @param _vTo      the vTo vector
-     * @param _vUp      the vUp vector
-     */
-    public Camera(Point _position, Vector _vTo, Vector _vUp) {
-        if (_vTo.dotProduct(_vUp) != 0)
-            throw new IllegalArgumentException("vTo and vUp must be orthogonal");
-        position = _position;
-        vTo = _vTo.normalize();
-        vUp = _vUp.normalize();
-        vRight = vTo.crossProduct(vUp).normalize();
-    }
 
     /**
      * function that gets the position of the camera
@@ -103,6 +85,22 @@ public class Camera {
      */
     public double getWidth() {
         return width;
+    }
+
+    /**
+     * function that constructs the camera
+     *
+     * @param _position the position
+     * @param _vTo      the vTo vector
+     * @param _vUp      the vUp vector
+     */
+    public Camera(Point _position, Vector _vTo, Vector _vUp) {
+        if (_vTo.dotProduct(_vUp) != 0)
+            throw new IllegalArgumentException("vTo and vUp must be orthogonal");
+        position = _position;
+        vTo = _vTo.normalize();
+        vUp = _vUp.normalize();
+        vRight = vTo.crossProduct(vUp).normalize();
     }
 
     /**
@@ -180,20 +178,10 @@ public class Camera {
      * function that gets the color of the pixel and renders in to image
      */
     public Camera renderImage() {
-        if (position == null
-                || vTo == null
-                || vUp == null
-                || vRight == null
-                || distance == 0
-                || height == 0
-                || width == 0
-                || imageWriter == null
-                || rayTracer == null)
+        if (position == null || vTo == null || vUp == null || vRight == null || distance == 0 || height == 0 || width == 0 || imageWriter == null || rayTracer == null)
             throw new MissingResourceException("", "", "Camera is not initialized");
-
         int nX = imageWriter.getNx();
         int nY = imageWriter.getNy();
-
         for (int i = 0; i < imageWriter.getNx(); i++) {
             for (int j = 0; j < imageWriter.getNy(); j++) {
                 Ray ray = constructRay(nX, nY, j, i);
@@ -202,7 +190,6 @@ public class Camera {
         }
         return this;
     }
-
 
     /**
      * function that prints grid on top of image

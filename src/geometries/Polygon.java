@@ -1,13 +1,8 @@
 package geometries;
-
-import primitives.Point;
-import primitives.Ray;
-import primitives.Vector;
-
+import primitives.*;
 import java.util.List;
+import static primitives.Util.*;
 
-import static primitives.Util.alignZero;
-import static primitives.Util.isZero;
 
 
 /**
@@ -97,46 +92,51 @@ public class Polygon extends Geometry {
 
     /**
      * Finds the intersection point between a given ray and a polygon.
-     *
      * @param ray The ray to intersect with the polygon.
      * @return A list containing the intersection point, or null if there is no intersection.
      */
     @Override
-    protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray,double  maxDistance) {
-        // Find the intersection point with the plane
-        List<GeoPoint> planeIntersections = plane.findGeoIntersections(ray, maxDistance);
-        if (planeIntersections == null)
+    protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray, double maxDistance) {
+        List<GeoPoint> planeIntersections = plane.findGeoIntersections(ray);
+
+        if (planeIntersections == null) {
             return null;
-
-        // Get the first intersection point and initialize variables for checking if it's inside the polygon
-        Point p = planeIntersections.get(0).point;
-        Point p0 = ray.getP0();
-        Vector v = ray.getDir();
-        double oldSign = 0;
-        double sign = 0;
-
-        // Calculate the signs of the cross products between the ray direction vector and the edges of the polygon
-        Vector v1 = vertices.get(1).subtract(p0);
-        Vector v2 = vertices.get(0).subtract(p0);
-        try {
-            oldSign = v.dotProduct(v1.crossProduct(v2));
-        } catch (IllegalArgumentException e) {
-            System.out.println(this.vertices);
         }
-        if (isZero(oldSign))
-            return null;
 
-        // Iterate through the remaining edges of the polygon and check if the signs of the cross products change
+        Point P0 = ray.getP0();
+        Vector v = ray.getDir();
+
+        Point P1 = vertices.get(1);
+        Point P2 = vertices.get(0);
+
+        Vector v1 = P0.subtract(P1);
+        Vector v2 = P0.subtract(P2);
+
+        double sign = alignZero(v.dotProduct(v1.crossProduct(v2)));
+
+        if (isZero(sign)) {
+            return null;
+        }
+
+        boolean positive = sign > 0;
+
+        //iterate through all vertices of the polygon
         for (int i = vertices.size() - 1; i > 0; --i) {
             v1 = v2;
-            v2 = vertices.get(i).subtract(p0);
-            sign = alignZero(v.dotProduct(v1.crossProduct(v2)));
-            if ((oldSign * sign) <= 0)
-                return null;
-        }
+            v2 = P0.subtract(vertices.get(i));
 
-        // If the intersection point is inside the polygon, return it in a list
-        return List.of(new GeoPoint(this, p));
+            sign = alignZero(v.dotProduct(v1.crossProduct(v2)));
+            if (isZero(sign)) {
+                return null;
+            }
+
+            if (positive != (sign > 0)) {
+                return null;
+            }
+        }
+        Point point = planeIntersections.get(0).point;
+
+        return List.of(new GeoPoint(this, point));
     }
 }
 

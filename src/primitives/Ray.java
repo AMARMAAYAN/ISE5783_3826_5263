@@ -1,15 +1,14 @@
 package primitives;
-
-import geometries.Intersectable.GeoPoint;
-
 import java.util.List;
 import java.util.Objects;
+import geometries.Intersectable.GeoPoint;
+
+import static primitives.Util.*;
 
 /**
- * The Ray class represents a ray in 3D space, defined by a starting point and a direction dir.
+ The Ray class represents a ray in 3D space, defined by a starting point and a direction dir.
  */
 public class Ray {
-    private static final double DELTA = 0.1;
 
     /**
      * The starting point of the ray.
@@ -22,32 +21,7 @@ public class Ray {
     final Vector dir;
 
     /**
-     * Constructs a Ray object with a given starting point and direction dir.
-     *
-     * @param p   The starting point of the ray.
-     * @param dir The direction dir of the ray.
-     */
-    public Ray(Point p, Vector dir) {
-        this.p0 = p;
-        this.dir = dir.normalize();
-    }
-
-    /**
-     * Constructor tthat moves the ray by DELTA
-     *
-     * @param p0  point direction – direction (must be normalized) normal – normal
-     * @param n   normal vector
-     * @param dir direction vector of the ray
-     */
-    public Ray(Point p0, Vector dir, Vector n) {
-        double delta = dir.dotProduct(n) >= 0 ? DELTA : -DELTA;
-        this.p0 = p0.add(n.scale(delta));
-        this.dir = dir;
-    }
-
-    /**
      * returns the point po
-     *
      * @return po
      */
     public Point getP0() {
@@ -56,17 +30,26 @@ public class Ray {
 
     /**
      * returns thr vector dir
-     *
      * @return dir
      */
     public Vector getDir() {
         return dir;
     }
 
-    public Point getPoint(double t) {
+    public Point getPoint(double t){
         Vector tv = dir.scale(t); //multiply the double with the vector
-        Point p = p0.add(tv); //adds the vector to the point and return a point
+        Point p= p0.add(tv); //adds the vector to the point and return a point
         return p;
+    }
+
+    /**
+     * Constructs a Ray object with a given starting point and direction dir.
+     * @param p The starting point of the ray.
+     * @param dir The direction dir of the ray.
+     */
+    public Ray(Point p, Vector dir) {
+        this.p0 = p;
+        this.dir = dir.normalize();
     }
 
     @Override
@@ -117,7 +100,6 @@ public class Ray {
         // Return the closest point found
         return closestPoint;
     }
-
     public GeoPoint findClosestGeoPoint(List<GeoPoint> intersections) {
 
         GeoPoint closestGeoPoint = null;

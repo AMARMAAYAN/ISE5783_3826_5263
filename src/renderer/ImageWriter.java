@@ -1,13 +1,13 @@
 package renderer;
 
 import primitives.Color;
-
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.imageio.*;
 
 /**
  * Image writer class combines accumulation of pixel color matrix and finally
@@ -18,15 +18,15 @@ import java.util.logging.Logger;
  * @author Dan
  */
 public class ImageWriter {
-    private static final String FOLDER_PATH = System.getProperty("user.dir") + "/images";
     private int nX;
     private int nY;
+
+    private static final String FOLDER_PATH = System.getProperty("user.dir") + "/images";
+
     private BufferedImage image;
     private String imageName;
 
     private Logger logger = Logger.getLogger("ImageWriter");
-
-    // ***************** Constructors ********************** //
 
     /**
      * Image Writer constructor accepting image name and View Plane parameters,
@@ -43,11 +43,10 @@ public class ImageWriter {
         image = new BufferedImage(nX, nY, BufferedImage.TYPE_INT_RGB);
     }
 
-    // ***************** Getters/Setters ********************** //
+    //region Getters/Setters
 
     /**
      * View Plane Y axis resolution
-     *
      * @return the amount of vertical pixels
      */
     public int getNy() {
@@ -62,8 +61,7 @@ public class ImageWriter {
     public int getNx() {
         return nX;
     }
-
-    // ***************** Operations ******************** //
+//endregion
 
     /**
      * Function writeToImage produces unoptimized png file of the image according to
@@ -71,11 +69,11 @@ public class ImageWriter {
      */
     public void writeToImage() {
         try {
-            File file = new File("C:/Users/bmteh/ISE5783_3826_5263/.images" + '/' + imageName + ".png");
+            File file = new File(FOLDER_PATH + '/' + imageName + ".png");
             ImageIO.write(image, "png", file);
         } catch (IOException e) {
             logger.log(Level.SEVERE, "I/O error", e);
-            throw new IllegalStateException("I/O error - may be missing directory " + "C:/Users/bmteh/ISE5783_3826_5263/.images", e);
+            throw new IllegalStateException("I/O error - may be missing directory " + FOLDER_PATH, e);
         }
     }
 
@@ -83,13 +81,33 @@ public class ImageWriter {
      * The function writePixel writes a color of a specific pixel into pixel color
      * matrix
      *
-     * @param xIndex X-axis index of the pixel
-     * @param yIndex Y-axis index of the pixel
+     * @param xIndex X axis index of the pixel
+     * @param yIndex Y axis index of the pixel
      * @param color  final color of the pixel
      */
     public void writePixel(int xIndex, int yIndex, Color color) {
         image.setRGB(xIndex, yIndex, color.getColor().getRGB());
-
     }
 
+    /**
+     *Grid printing
+     * @param interval The space between pixels
+     * @param color color of grid
+     */
+    public void printGrid(int interval, Color color) {
+        for (int i = 0; i < nX; i+= interval) {
+            for (int j = 0; j < nY; j++) {
+                // _width/interval // _height/interval
+                writePixel(i, j, color);
+
+            }
+        }
+        for (int i = 0; i < nX; i++) {
+            for (int j = 0; j < nY; j+= interval) {
+                // _width/interval // _height/interval
+                writePixel(i, j, color);
+
+            }
+        }
+    }
 }
