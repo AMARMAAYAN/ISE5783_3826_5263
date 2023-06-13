@@ -1,13 +1,8 @@
 package geometries;
-
-import primitives.Point;
-import primitives.Ray;
-import primitives.Vector;
-
+import primitives.*;
 import java.util.List;
+import static primitives.Util.*;
 
-import static primitives.Util.alignZero;
-import static primitives.Util.isZero;
 
 
 /**
@@ -97,19 +92,18 @@ public class Polygon extends Geometry {
 
     /**
      * Finds the intersection point between a given ray and a polygon.
-     *
      * @param ray The ray to intersect with the polygon.
      * @return A list containing the intersection point, or null if there is no intersection.
      */
     @Override
-    protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray,double  maxDistance) {
+    protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
         // Find the intersection point with the plane
-        List<GeoPoint> planeIntersections = plane.findGeoIntersections(ray, maxDistance);
+        List<Point> planeIntersections = plane.findIntersections(ray);
         if (planeIntersections == null)
             return null;
 
         // Get the first intersection point and initialize variables for checking if it's inside the polygon
-        Point p = planeIntersections.get(0).point;
+        Point p = planeIntersections.get(0);
         Point p0 = ray.getP0();
         Vector v = ray.getDir();
         double oldSign = 0;
@@ -136,7 +130,7 @@ public class Polygon extends Geometry {
         }
 
         // If the intersection point is inside the polygon, return it in a list
-        return List.of(new GeoPoint(this, p));
+        return List.of(new GeoPoint(this,p));
     }
 }
 

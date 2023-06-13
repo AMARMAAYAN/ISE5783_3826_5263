@@ -3,20 +3,18 @@ package primitives;
 import java.util.Objects;
 
 /**
- * Represents a point in three-dimensional space using Cartesian coordinates.
- * The class provides methods for computing the distance between two points and
- * for adding a vector to a point and subtracting two points to obtain a vector.
- * The class overrides the equals, hashCode, and toString methods for object comparison
- * and string representation.
- *
- * @author Maayan Amar
+ Represents a point in three-dimensional space using Cartesian coordinates.
+ The class provides methods for computing the distance between two points and
+ for adding a vector to a point and subtracting two points to obtain a vector.
+ The class overrides the equals, hashCode, and toString methods for object comparison
+ and string representation.
+ @author Maayan Amar
  */
 public class Point {
 
-    public static final Point ZERO = new Point(0, 0, 0);
+    public static final Point ZERO = new Point(0,0,0);
     /**
-     * The coordinates of the point in three-dimensional space
-     */
+     * The coordinates of the point in three-dimensional space */
     final Double3 xyz;
 
     /**
@@ -27,7 +25,7 @@ public class Point {
      * @param z the z-coordinate of the point
      */
     public Point(double x, double y, double z) {
-        xyz = new Double3(x, y, z);
+       xyz=new Double3(x,y,z);
     }
 
     /**
@@ -35,21 +33,20 @@ public class Point {
      *
      * @param double3 the Double3 object containing the coordinates
      */
-    Point(Double3 double3) {
-        this(double3.d1, double3.d2, double3.d3);
+     Point(Double3 double3 ) {
+        this(double3.d1,double3.d2,double3.d3);
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Point point = (Point) o;
-        return xyz.equals(point.xyz);
+        if (!(o instanceof Point point)) return false;
+        return this.xyz.equals(point.xyz);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(xyz);
+        return Objects.hash(this.xyz);
     }
 
     @Override
@@ -63,10 +60,10 @@ public class Point {
      * @param other the other point to compute the distance to
      * @return the square of the distance between this point and the other point
      */
-    public double distanceSquared(Point other) {
-        return (other.xyz.d1 - xyz.d1) * (other.xyz.d1 - xyz.d1) +
-                (other.xyz.d2 - xyz.d2) * (other.xyz.d2 - xyz.d2) +
-                (other.xyz.d3 - xyz.d3) * (other.xyz.d3 - xyz.d3);
+    public double distanceSquared(Point other){
+        return(other.xyz.d1- xyz.d1)*(other.xyz.d1- xyz.d1)+
+                (other.xyz.d2- xyz.d2)*(other.xyz.d2- xyz.d2)+
+                (other.xyz.d3- xyz.d3)*(other.xyz.d3- xyz.d3);
 
     }
 
@@ -76,7 +73,7 @@ public class Point {
      * @param other the other point to compute the distance to
      * @return the distance between this point and the other point
      */
-    public double distance(Point other) {
+    public double distance(Point other){
         return Math.sqrt(distanceSquared(other));
     }
 
@@ -109,7 +106,6 @@ public class Point {
 
     /**
      * Getter of X coordinate value
-     *
      * @return x coordinate value
      */
     public double getX() {
@@ -118,7 +114,6 @@ public class Point {
 
     /**
      * Getter of Y coordinate value
-     *
      * @return y coordinate value
      */
     public double getY() {
@@ -127,7 +122,6 @@ public class Point {
 
     /**
      * Getter of Z coordinate value
-     *
      * @return z coordinate value
      */
     public double getZ() {

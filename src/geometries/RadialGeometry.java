@@ -1,11 +1,9 @@
 package geometries;
-
 /**
- * The RadialGeometry class is an abstract class that represents geometric objects with a radial attribute, which implements the Geometry interface.
- *
- * @author Maayan Amar
+ The RadialGeometry class is an abstract class that represents geometric objects with a radial attribute, which implements the Geometry interface.
+ @author Maayan Amar
  */
-public abstract class RadialGeometry extends Geometry {
+public abstract class RadialGeometry extends Geometry  {
 
     /**
      * The radius of the radial geometry object.
@@ -14,7 +12,6 @@ public abstract class RadialGeometry extends Geometry {
 
     /**
      * Constructor that receives the radius of the body as a parameter
-     *
      * @param radius - the radius of the radial geometry object.
      */
     public RadialGeometry(double radius) {

@@ -1,16 +1,17 @@
 package geometries;
 
-import primitives.Point;
-import primitives.Ray;
-import primitives.Vector;
+import primitives.*;
 
+import static java.lang.Math.sqrt;
+import static primitives.Util.*;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The Sphere class represents a sphere in 3D space.
- * Extends RadialGeometry.
- *
- * @author Maayan Amar
+ The Sphere class represents a sphere in 3D space.
+ Extends RadialGeometry.
+ @author Maayan Amar
  */
 
 public class Sphere extends RadialGeometry {
@@ -18,6 +19,7 @@ public class Sphere extends RadialGeometry {
      * The center point of the sphere.
      */
     private final Point center;
+
 
 
     /**
@@ -32,8 +34,7 @@ public class Sphere extends RadialGeometry {
     }
 
     /**
-     * Gets the center point of the sphere.
-     *
+     *  Gets the center point of the sphere.
      * @return The center point of the sphere.
      */
     public Point getCenter() {
@@ -54,7 +55,7 @@ public class Sphere extends RadialGeometry {
      * @return A list of intersection points between the ray and the sphere, or null if there are no intersections.
      */
     @Override
-    protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray,double maxDistance) {
+    protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
         Point p0 = ray.getP0(); // ray's starting point
         Point O = this.center; //the sphere's center point
         Vector V = ray.getDir(); // "the v vector" from the presentation
@@ -62,8 +63,8 @@ public class Sphere extends RadialGeometry {
         // if p0 on center, calculate with line parametric representation
         // the direction vector normalized.
         if (O.equals(p0)) {
-            Point newPoint = ray.getPoint(this.radius);
-            return List.of(new GeoPoint(this, newPoint));
+            Point newPoint = p0.add(ray.getDir().scale(this.radius));
+            return List.of(new GeoPoint(this,newPoint));
         }
 
         Vector U = O.subtract(p0);
@@ -77,20 +78,20 @@ public class Sphere extends RadialGeometry {
         double t1 = tm - th;
         double t2 = tm + th;
 
-        if (t1 > 0 && t2 > 0 && (t1 - maxDistance) < 0  && (t2 - maxDistance) < 0) {
+        if (t1 > 0 && t2 > 0) {
             Point p1 = ray.getPoint(t1);
             Point p2 = ray.getPoint(t2);
-            return List.of(new GeoPoint(this, p1), new GeoPoint(this, p2));
+            return List.of(new GeoPoint(this,p1),new GeoPoint(this,p2));
         }
 
-        if (t1 > 0  && (t1 - maxDistance) < 0) {
+        if (t1 > 0) {
             Point p1 = ray.getPoint(t1);
-            return List.of(new GeoPoint(this, p1));
+            return List.of(new GeoPoint(this,p1));
         }
 
-        if (t2 > 0  && (t2 - maxDistance) < 0) {
+        if (t2 > 0) {
             Point p2 = ray.getPoint(t2);
-            return List.of(new GeoPoint(this, p2));
+            return List.of(new GeoPoint(this,p2));
         }
         return null;
     }

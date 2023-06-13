@@ -1,37 +1,33 @@
 package renderer;
+import static org.junit.jupiter.api.Assertions.*;
 
-import geometries.Geometry;
-import geometries.Plane;
-import geometries.Sphere;
-import geometries.Triangle;
+import geometries.*;
 import org.junit.jupiter.api.Test;
-import primitives.Point;
-import primitives.Vector;
 
+import primitives.*;
+
+import java.util.LinkedList;
 import java.util.List;
-
 /**
- * The CameraIntegrationTests class is used to test the integration between the camera and various geometries.
- * It includes methods for testing sphere, plane and triangle intersection with a given camera, and testing
- * whether the expected amount of intersections is found.
- *
- * @author Maayan Amar
+ The CameraIntegrationTests class is used to test the integration between the camera and various geometries.
+ It includes methods for testing sphere, plane and triangle intersection with a given camera, and testing
+ whether the expected amount of intersections is found.
+ @author Maayan Amar
  */
 
 public class CameraIntegrationTests {
 
-    static final Point ZERO_POINT = new Point(0, 0, 0);
-
     private void assertEquals(String string, int i, int intersections) {
     }
+    static final Point ZERO_POINT = new Point(0, 0, 0);
 
     /**
      * Helper method for testing the integration between a given geometry and a given camera. The method finds the
      * amount of intersection points between the given geometry and the camera, and checks whether the amount is
      * equal to the expected amount of intersections.
      *
-     * @param geo      The geometry being tested
-     * @param camera   The camera being tested
+     * @param geo The geometry being tested
+     * @param camera The camera being tested
      * @param expected The expected amount of intersections
      * @param testCase A description of the test case
      */
@@ -46,7 +42,7 @@ public class CameraIntegrationTests {
                     intersections += intersectionPoints.size();
             }
         }
-        assertEquals("ERROR " + testCase + ":Wrong amount of intersections", expected, intersections);
+        assertEquals("ERROR "+ testCase +":Wrong amount of intersections",expected ,intersections);
     }
 
 
@@ -80,6 +76,7 @@ public class CameraIntegrationTests {
     }
 
 
+
     /**
      * Test method for the integration between the camera and planes of different sizes and positions.
      * It tests whether the expected amount of intersection points are found for each test case.
@@ -89,13 +86,13 @@ public class CameraIntegrationTests {
         Camera camera = new Camera(ZERO_POINT, new Vector(0, 0, 1), new Vector(0, -1, 0)).setVPDistance(1).setVPSize(3,
                 3);
         // Tc01: 9 intersection points-plane against camera
-        cameraIntegrations(new Plane(new Point(0, 0, 5), new Vector(0, 0, 1)), camera, 9, "TC01");
+        cameraIntegrations(new Plane(new Point(0, 0, 5),new Vector(0, 0, 1)), camera, 9, "TC01");
 
         // TC02: 9 intersection points-plane with small angle
-        cameraIntegrations(new Plane(new Point(0, 0, 5), new Vector(0, -1, 2)), camera, 9, "TC02");
+        cameraIntegrations(new Plane( new Point(0, 0, 5),new Vector(0, -1, 2)), camera, 9, "TC02");
 
         // TC03: 6 intersection points-plane parallel to lower rays
-        cameraIntegrations(new Plane(new Point(0, 0, 5), new Vector(0, -1, 1)), camera, 6, "TC03");
+        cameraIntegrations(new Plane(new Point(0, 0, 5),new Vector(0, -1, 1)), camera, 6, "TC03");
 
     }
 

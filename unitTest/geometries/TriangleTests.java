@@ -3,18 +3,14 @@
  * Maayan Amar-211763826, email:maayanamar11.01@gmail.com
  */
 package geometries;
-
 import org.junit.jupiter.api.Test;
 import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
+import static org.junit.jupiter.api.Assertions.*;
 /**
  * The TriangleTests class is responsible for testing the Triangle class.
  * It includes unit tests for getNormal method .
- *
  * @author Maayan Amar
  */
 class TriangleTests {
@@ -39,14 +35,14 @@ class TriangleTests {
      * Test method for {@link geometries.Triangle#findIntersections(Ray)}.
      */
     @Test
-    void findIntersections() {
+    void findIntersections(){
         // Equivalence Partitions tests ======================================================================
 
         // EP01 ray passes through triangle
         Ray ray = new Ray(new Point(3, 3, 2), new Vector(-1, -1, -4));
         Triangle triangle = new Triangle(new Point(1, 0, 0), new Point(1, 5, 0), new Point(6, 0, 0));
         assertEquals(1, triangle.findIntersections(ray).size());
-        assertEquals(new Point(2.5, 2.5, 0), triangle.findIntersections(ray).get(0));
+          assertEquals(new Point(2.5, 2.5, 0), triangle.findIntersections(ray).get(0));
 
         // EP02 ray misses triangle on one side
         ray = new Ray(new Point(3, 3, 2), new Vector(1, 1, -4));

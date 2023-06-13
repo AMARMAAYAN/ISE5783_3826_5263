@@ -1,18 +1,13 @@
 package geometries;
 
-import primitives.Point;
-import primitives.Ray;
-import primitives.Vector;
+import primitives.*;
 
 import java.util.List;
 
-import static primitives.Util.alignZero;
-import static primitives.Util.isZero;
+import static primitives.Util.*;
 //new
-
 /**
  * This class represents a triangle in 3D space, and it is a subclass of Polygon.
- *
  * @author Maayan Amar
  */
 public class Triangle extends Polygon {
@@ -45,41 +40,41 @@ public class Triangle extends Polygon {
      * @return A list of intersection points, or null if there are no intersections.
      */
     @Override
-    protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray,double maxDistance) {
+    protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
 
-        // First, check if there is an intersection between the ray and the plane
-        List<GeoPoint> planeIntersections = this.plane.findGeoIntersections(ray,maxDistance);
-        //if there is no intersection between the ray and the plane - return null
-        if (planeIntersections == null) {
+            // First, check if there is an intersection between the ray and the plane
+            List<GeoPoint> planeIntersections = this.plane.findGeoIntersections(ray);
+            //if there is no intersection between the ray and the plane - return null
+            if (planeIntersections == null) {
+                return null;
+            }
+
+            // Find the vectors from the beginning of the ray to each of the vertices of the triangle
+            Vector v1 = vertices.get(0).subtract(ray.getP0());
+            Vector v2 = vertices.get(1).subtract(ray.getP0());
+            Vector v3 = vertices.get(2).subtract(ray.getP0());
+
+            // Calculate the normal vectors of the triangle edges
+            Vector n1 = v1.crossProduct(v2).normalize();
+            Vector n2 = v2.crossProduct(v3).normalize();
+            Vector n3 = v3.crossProduct(v1).normalize();
+
+            // Calculate the dot product between the ray direction vector and each of the triangle edge normal vectors
+            double s1 = alignZero(ray.getDir().dotProduct(n1));
+            double s2 = alignZero(ray.getDir().dotProduct(n2));
+            double s3 = alignZero(ray.getDir().dotProduct(n3));
+
+            // If any of the dot products is zero, there is no intersection
+            if (isZero(s1) || isZero(s2) || isZero(s3)) {
+                return null;
+            }
+
+            // If all dot products have the same sign, there is no intersection
+            if (s1 * s2 > 0 && s2 * s3 > 0) {
+                return List.of(new GeoPoint(this,planeIntersections.get(0).point));
+            }
+
             return null;
         }
-
-        // Find the vectors from the beginning of the ray to each of the vertices of the triangle
-        Vector v1 = vertices.get(0).subtract(ray.getP0());
-        Vector v2 = vertices.get(1).subtract(ray.getP0());
-        Vector v3 = vertices.get(2).subtract(ray.getP0());
-
-        // Calculate the normal vectors of the triangle edges
-        Vector n1 = v1.crossProduct(v2).normalize();
-        Vector n2 = v2.crossProduct(v3).normalize();
-        Vector n3 = v3.crossProduct(v1).normalize();
-
-        // Calculate the dot product between the ray direction vector and each of the triangle edge normal vectors
-        double s1 = alignZero(ray.getDir().dotProduct(n1));
-        double s2 = alignZero(ray.getDir().dotProduct(n2));
-        double s3 = alignZero(ray.getDir().dotProduct(n3));
-
-        // If any of the dot products is zero, there is no intersection
-        if (isZero(s1) || isZero(s2) || isZero(s3)) {
-            return null;
-        }
-
-        // If all dot products have the same sign, there is no intersection
-        if (s1 * s2 > 0 && s2 * s3 > 0) {
-            return List.of(new GeoPoint(this, planeIntersections.get(0).point));
-        }
-
-        return null;
-    }
 }
 

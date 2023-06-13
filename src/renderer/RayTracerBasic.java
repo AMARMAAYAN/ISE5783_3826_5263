@@ -1,227 +1,223 @@
 package renderer;
 
-import geometries.Intersectable.GeoPoint;
-import lighting.LightSource;
+import geometries.Geometry;
+import geometries.Intersectable;
 import primitives.*;
+import lighting.*;
+import java.lang.Math.*;
+import geometries.Intersectable.GeoPoint;
 import scene.Scene;
+import static primitives.Util.*;
 
 import java.util.List;
 
-import static primitives.Util.alignZero;
-
 /**
- * The RayTracerBasic class is a basic implementation of the RayTracerBase abstract class.
- * It provides an empty implementation for the traceRay method.
+ * Rey tracer
+ * calculate the color ray-geometry intersection
+ * @author rivki and efrat
  */
 public class RayTracerBasic extends RayTracerBase {
     private static final int MAX_CALC_COLOR_LEVEL = 10;
     private static final double MIN_CALC_COLOR_K = 0.001;
-    private static final Double3 INITIAL_K = Double3.ONE;
-    private static final double EPS = 0.1;  //Constant variable for ray head offset size for shading rays
+    private static final Double3 INITIAL_K = new Double3(1d);
 
     /**
-     * Constructs a RayTracerBasic object with the given scene.
+     * ctor - initializing the scene parameter
+     * uses super ctor
      *
-     * @param scene the scene object to be used for ray tracing
+     * @param scene
      */
     public RayTracerBasic(Scene scene) {
         super(scene);
     }
-
     /**
-     * Traces a ray and returns null, indicating no intersection has been found.
+     * Calculation of intensity of shadow on pixel's color with consideration of the transparency
      *
-     * @param ray the ray to be traced
-     * @return null, indicating no intersection
+     * @param light    - Light source that effects the color and thus the shadow
+     * @param l        - Vector from light source to point
+     * @param n        - Normal to point
+     * @param geopoint - The point of which the color is calculated
+     * @return - The attenuation coefficient of light - determines the intensity of the shadow
      */
-    @Override
-    public Color traceRay(Ray ray) { //refactoring:
-        GeoPoint closestPoint = findClosestIntersection(ray);
-        if (closestPoint == null) {
-            return scene.getBackground();
-        }  return calcColor(closestPoint, ray);
-    }
-
-    /**
-     * Calculates reflected ray and refraction ray
-     *
-     * @param geoPoint geometry point
-     * @param ray      ray
-     * @return color
-     */
-    private Color calcGlobalEffects(GeoPoint geoPoint, Ray ray, int level, Double3 k) {
-        Color color = Color.BLACK;
-        Material material = geoPoint.geometry.getMaterial();
-        Ray reflectedRay = constructReflectionRay(geoPoint, geoPoint.geometry.getNormal(geoPoint.point), ray.getDir());
-        Ray refractedRay = constructRefractionRay(geoPoint, geoPoint.geometry.getNormal(geoPoint.point), ray.getDir());
-        return calcGlobalEffects(geoPoint, level, color, material.kR, k, reflectedRay)
-                .add(calcGlobalEffects(geoPoint, level, color, material.kT, k, refractedRay));
-    }
-
-    /**
-     * TODO
-     *
-     * @param geoPoint
-     * @param level
-     * @param color
-     * @param kx
-     * @param k
-     * @param ray
-     * @return
-     */
-    private Color calcGlobalEffects(GeoPoint geoPoint, int level, Color color, Double3 kx, Double3 k, Ray ray) {
-        Double3 kkx = kx.product(k);
-        if (kkx.lowerThan(MIN_CALC_COLOR_K)) return Color.BLACK;
-        GeoPoint reflectedPoint = findClosestIntersection(ray);
-        if (reflectedPoint != null) {
-            color = color.add(calcColor(reflectedPoint, ray, level - 1, kkx).scale(kx));
+    private Double3 transparency(GeoPoint geopoint, LightSource light, Vector l, Vector n) {
+        Vector lightDirection = l.scale(-1); // from point to light source
+        Ray lightRay = new Ray(geopoint.point, lightDirection, n); //build ray with delta
+        double lightDistance = light.getDistance(geopoint.point);
+        var intersections = scene.getGeometries().findGeoIntersections(lightRay);
+        if (intersections == null) return Double3.ONE; //no intersections
+        Double3 ktr = new Double3(1d);
+        for (GeoPoint gp : intersections) {
+            if (alignZero(gp.point.distance(geopoint.point) - lightDistance) <= 0) {
+                ktr = ktr.product(gp.geometry.getMaterial().getKt()); //the more transparency the less shadow
+                if (ktr.lowerThan(MIN_CALC_COLOR_K)) return Double3.ZERO;
+            }
         }
-        return color;
+        return ktr;
     }
-
-
     /**
-     * Determines if a point on a surface is unshaded by checking if it is directly visible to a light source.
+     * According to the pong model
+     * This model is additive in which we connect all the components that will eventually
+     * make up an image with background colors, self-colors and texture colors.
      *
-     * @param gp          The GeoPoint representing the point on the surface.
-     * @param l           The direction Vector from the point on the surface to the light source.
-     * @param n           The surface normal Vector at the given point.
-     * @param lightSource The LightSource object being considered.
-     * @return True if the point on the surface is unshaded, false otherwise.
+     * @param geoPoint the geometry and the lighted point at him
+     * @param ray      the ray that goes out of the camera
+     * @return the color at the point
      */
-
-    private boolean unshaded(GeoPoint gp,  LightSource lightSource, Vector l, Vector n) {
-        Vector lightDirection = l.scale(-1);
-        Ray lightRay = new Ray(gp.point, lightDirection , n);
-        double maxDistance = lightSource.getDistance(gp.point);
-        var intersections = scene.getGeometries().findGeoIntersections(lightRay, maxDistance);
-
-        if (intersections != null) {
-              return false;
-        }
-
-        return true;
+    private Color calcColor(GeoPoint geoPoint, Ray ray) {
+        return calcColor(geoPoint, ray, MAX_CALC_COLOR_LEVEL, INITIAL_K)
+                .add(scene.getAmbientLight().getIntensity());
     }
-
-
     /**
-     * function calculates local effects of color on point
+     * overload methode of {@link renderer.RayTracerBasic#calcColor(GeoPoint, Ray)}
      *
-     * @param gp  geometry point to color
-     * @param ray ray that intersects
-     * @return color
+     * @param geoPoint the geometry and the lighted point at him
+     * @param ray      the ray that goes out of the camera
+     * @param level    the level of the recursion
+     * @param k        Represents influencing factors of transparency and reflection
+     * @return the color at the point
      */
-    private Color calcLocalEffects(GeoPoint gp, Ray ray) {
+    private Color calcColor(GeoPoint geoPoint, Ray ray, int level, Double3 k) {
+        Color color = geoPoint.geometry.getEmission()
+                .add(calcLocalEffects(geoPoint, ray, k));
+
+        return 1 == level ? color : color.add(calcGlobalEffects(geoPoint, ray, level, k));
+    }
+    /**
+     * Computer lighting effects as at a certain point on geometry
+     *
+     * @param gp  the geometry and the lighted point at him
+     * @param ray the ray from the camera
+     * @return the total color at the point including the specular and diffusive
+     */
+    private Color calcLocalEffects(GeoPoint gp, Ray ray, Double3 k) {
         Color color = Color.BLACK;
-        Vector vector = ray.getDir();
-        Vector normal = gp.geometry.getNormal(gp.point);
-        double nv = alignZero(normal.dotProduct(vector));
-        if (nv == 0)
+        Vector v = ray.getDir();
+        Vector n = gp.geometry.getNormal(gp.point); //normal to point
+        double nv = alignZero(n.dotProduct(v));
+        if (nv == 0) //vectors orthogonal - no effect
             return color;
         Material material = gp.geometry.getMaterial();
-        for (LightSource lightSource : scene.getLights()) {
-            Vector lightVector = lightSource.getL(gp.point);
-            double nl = alignZero(normal.dotProduct(lightVector));
-            if (nl * nv > 0) {
-                if (unshaded(gp, lightSource, lightVector,normal)) {
-                    Color lightIntensity = lightSource.getIntensity(gp.point);
-                    color = color.add(lightIntensity.scale(calcDiffusive(material, nl)), lightIntensity.scale(calcSpecular(material, normal, lightVector, nl, vector)));
+
+        for (LightSource lightSource : scene.getLights()) { //sum of all effects of all lights on scene
+            Vector l = lightSource.getL(gp.point);
+            double nl = alignZero(n.dotProduct(l));
+            if (nl * nv > 0) { // sign(nl) == sing(nv)
+                Double3 ktr = transparency(gp, lightSource, l, n); //intensity of shadow
+                if (!ktr.product(k).lowerThan(MIN_CALC_COLOR_K)) {
+                    Color iL = lightSource.getIntensity(gp.point).scale(ktr);
+                    ;
+                    color = color.add(iL.scale(calcDiffusive(material, nl)), iL.scale(calcSpecular(material, n, l, v)));
                 }
-
             }
-
+        }
+        return color;
+    }
+    /**
+     * Computer influences factors of transparency and reflection
+     * @param gp the geometry and the lighted point at him
+     * @param ray the ray that goes out of the camera
+     * @param level the level of the recursion
+     * @param k Represents influencing factors of transparency and reflection
+     * @return the color with the transparency and reflection
+     */
+    private Color calcGlobalEffects(GeoPoint gp, Ray ray, int level, Double3 k){
+        Color color = Color.BLACK;
+        Material material = gp.geometry.getMaterial();
+        Double3 kr = material.getKr();
+        Double3 kkr = k.product(kr); //in each recursive iteration the impact of the reflection decreases
+        Vector n = gp.geometry.getNormal(gp.point);
+        if (!kkr.lowerThan(MIN_CALC_COLOR_K)) {
+            Ray reflectedRay = constructReflected(gp, ray);
+            GeoPoint reflectedPoint = findClosestIntersection(reflectedRay);
+            if (reflectedPoint == null) return color.add(scene.getBackground());
+            color = color.add(calcColor(reflectedPoint, reflectedRay, level - 1, kkr).scale(kr));
+        }
+        Double3 kt = material.getKt();
+        Double3 kkt = k.product(kt); //in each recursive iteration the impact of the refraction decreases
+        if (!kkt.lowerThan(MIN_CALC_COLOR_K)) {
+            Ray refractedRay = constructRefracted(gp, ray);
+            GeoPoint refractedPoint = findClosestIntersection(refractedRay);
+            if (refractedPoint == null) return color.add(scene.getBackground());
+            color = color.add(calcColor(refractedPoint, refractedRay, level - 1, kkt).scale(kt));
         }
         return color;
     }
 
     /**
-     * function calculates specular color
-     *
-     * @param material    material of geometry
-     * @param normal      normal of geometry
-     * @param lightVector light vector
-     * @param nl          dot product of normal and light vector
-     * @param vector      direction of ray
-     * @return specular color
+     * Produces a reflection bean that starts from
+     * the point where the ray struck from the camera and goes diagonally to the point
+     * @param geoPoint the point where the ray hit from the camera
+     * @param ray the ray from the camera
+     * @return a reflection ray
      */
-    private Double3 calcSpecular(Material material, Vector normal, Vector lightVector, double nl, Vector vector) {
-        Vector reflectedVector = lightVector.subtract(normal.scale(2 * nl));
-        double max = Math.max(0, vector.scale(-1).dotProduct(reflectedVector));
-        return material.kS.scale(Math.pow(max, material.shininess));
+    private Ray constructReflected(GeoPoint geoPoint, Ray ray) {
+        Vector v = ray.getDir();
+        Vector n = geoPoint.geometry.getNormal(geoPoint.point);
+        double nv = alignZero(v.dotProduct(n));
+        // r = v - 2*(v * n) * n
+        Vector r = v.subtract(n.scale(2d * nv)).normalize();
 
+        return new Ray(geoPoint.point, r, n); //use the constructor with the normal for moving the head a little
     }
-
     /**
-     * function calculates diffusive color
-     *
-     * @param material material of geometry
-     * @param nl       dot product of normal and light vector
-     * @return diffusive color
+     * Produces a transparency bean of rays that starts from
+     * the point where the ray hit from the camera and
+     * goes in the direction almost like the original beam
+     * @param geoPoint the point where the ray hit from the camera
+     * @param inRay the ray from the camera
+     * @return transparency ray
      */
-    private Double3 calcDiffusive(Material material, double nl) {
+    private Ray constructRefracted(GeoPoint geoPoint, Ray inRay) {
+        return new Ray(geoPoint.point, inRay.getDir(), geoPoint.geometry.getNormal(geoPoint.point));
+    }
+    /**
+     * Calculation of specular light component
+     * @param material - Attenuation coefficient for specular light component
+     * @param n - normal to point
+     * @param l - direction vector from light to point
+     * @param v - direction of ray shooted to point
+     * @return Color - the calculated color of specular light component
+     */
+    private Double3 calcSpecular(Material material, Vector n, Vector l, Vector v) {
+        Vector r = l.subtract(n.scale(2*l.dotProduct(n))).normalize();
+        return material.kS.scale(Math.pow(Math.max(0,v.scale(-1).dotProduct(r)), material.shininess));
+    }
+    /**
+     * Calculation of diffusion light component
+     * @param material - normal to point
+     * @param nl - dot product between n-normal to point and l-direction vector from light to point
+     * @return Color - the calculated color of diffusion light component
+     */
+    private Double3 calcDiffusive(Material material,double nl) {
         return material.kD.scale(Math.abs(nl));
     }
 
     /**
-     * function calculates color of point
-     *
-     * @param gp point to color
-     * @return color
+     * Trace the ray and calculates the color of the point that interact with the geometries of the scene
+     * @param ray the ray that came out of the camera
+     * @return the color of the object that the ray is interact with
      */
-    private Color calcColor(GeoPoint gp, Ray ray) {
-        //return scene.getAmbientLight().getIntensity().add(
-        // calcColor(gp, ray, MAX_CALC_COLOR_LEVEL, INITIAL_K).add(scene.ambient);
-
-        return calcColor(gp, ray, MAX_CALC_COLOR_LEVEL, INITIAL_K)
-                .add(scene.getAmbientLight().getIntensity());
-
-        //return geoPoint.geometry.getEmission().add(scene.getAmbientLight().getIntensity(), calcLocalEffects(geoPoint, ray));
+    public Color traceRay(Ray ray) {
+        GeoPoint clossestGeoPoint = findClosestIntersection(ray);
+        if (clossestGeoPoint == null)
+            return scene.getBackground();
+        return calcColor(clossestGeoPoint, ray);
     }
-
-
-    private Color calcColor(GeoPoint gp, Ray ray, int level, Double3 k) {
-        Color color = calcLocalEffects(gp, ray);
-        return 1 == level ? color : color.add(calcGlobalEffects(gp, ray, level, k));
-    }
-
     /**
-     * find the closest intersection to the starting point of the ray
-     *
+     * find closest intersection to the starting point of the ray
      * @param ray the ray that intersect with the geometries of the scene
-     * @return the geoPoint that is point is the closest point to the starting point of the ray
+     * @return the GeoPoint that is point is the closest point to the starting point of the ray
      */
     private GeoPoint findClosestIntersection(Ray ray) {
-        List<GeoPoint> intersections = this.scene.getGeometries().findGeoIntersections(ray);
-        if (intersections == null) {
+        if(ray == null){
             return null;
         }
-        return ray.findClosestGeoPoint(intersections);
-    }
 
-    /**
-     * function will construct a reflection ray
-     *
-     * @param geoPoint geometry point to check
-     * @param normal   normal vector
-     * @param vector   direction of ray to point
-     * @return reflection ray
-     */
-    private Ray constructReflectionRay(GeoPoint geoPoint, Vector normal, Vector vector) {
-        Vector reflectedVector = vector.subtract(normal.scale(2 * vector.dotProduct(normal)));
-        return new Ray(geoPoint.point, reflectedVector, normal);
+        List<GeoPoint> points = scene.getGeometries().findGeoIntersections(ray);
+        return ray.findClosestGeoPoint(points);
     }
-
-    /**
-     * function will construct a refraction ray
-     *
-     * @param geoPoint geometry point to check
-     * @param normal   normal vector
-     * @param vector   direction of ray to point
-     * @return refraction ray
-     */
-    private Ray constructRefractionRay(GeoPoint geoPoint, Vector normal, Vector vector) {
-        return new Ray(geoPoint.point, vector, normal);
-    }
-
 
 }
+
+
+
