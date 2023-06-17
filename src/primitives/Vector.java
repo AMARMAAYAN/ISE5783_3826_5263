@@ -16,18 +16,23 @@ public class Vector extends Point {
      * @throws IllegalArgumentException if the coordinates are (0,0,0), i.e. the zero vector.
      */
     public Vector(double x, double y,double z) {
-        super(x,y,z);
-        if(xyz.equals(Double3.ZERO)){
-            throw new IllegalArgumentException("Vector cannot be zero");
-        }
+//        super(x,y,z);
+//        if(xyz.equals(Double3.ZERO)){
+//            throw new IllegalArgumentException("Vector cannot be zero");
+//        }
+        this(new Double3(x, y, z));
     }
 
     /**
      * Constructs a new Vector object from the given Double3 object.
-     * @param double3 The Double3 object containing the X, Y, and Z coordinates of the vector.
+     * @param xyz The Double3 object containing the X, Y, and Z coordinates of the vector.
      */
-    Vector(Double3 double3){
-        this(double3.d1,double3.d2,double3.d3);
+    Vector(Double3 xyz){
+        super(xyz);
+        if (this.xyz.equals(Double3.ZERO)) {
+            throw new IllegalArgumentException("Vector(0,0,0) is not allowed");
+        }
+//        this(double3.d1,double3.d2,double3.d3);
     }
 
 
@@ -36,6 +41,7 @@ public class Vector extends Point {
      * @return The length of the vector.
      */
     public double length() {
+
         return Math.sqrt(lengthSquared());
     }
 
@@ -86,6 +92,7 @@ public class Vector extends Point {
      * @param vector The vector to add to this vector.
      * @return The sum of the two vectors.
      */
+    @Override
     public Vector add(Vector vector) {
         return new Vector(xyz.add(vector.xyz));
     }

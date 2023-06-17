@@ -19,7 +19,7 @@ import java.util.List;
 public class RayTracerBasic extends RayTracerBase {
     private static final int MAX_CALC_COLOR_LEVEL = 10;
     private static final double MIN_CALC_COLOR_K = 0.001;
-    private static final Double3 INITIAL_K = new Double3(1d);
+    private static final Double3 INITIAL_K = new Double3(1.0);
 
     /**
      * ctor - initializing the scene parameter
@@ -180,7 +180,7 @@ public class RayTracerBasic extends RayTracerBase {
      */
     private Double3 calcSpecular(Material material, Vector n, Vector l, Vector v) {
         Vector r = l.subtract(n.scale(2*l.dotProduct(n))).normalize();
-        return material.kS.scale(Math.pow(Math.max(0,v.scale(-1).dotProduct(r)), material.shininess));
+        return material.getKs().scale(Math.pow(Math.max(0,v.scale(-1).dotProduct(r)), material.getShininess()));
     }
     /**
      * Calculation of diffusion light component
@@ -189,7 +189,7 @@ public class RayTracerBasic extends RayTracerBase {
      * @return Color - the calculated color of diffusion light component
      */
     private Double3 calcDiffusive(Material material,double nl) {
-        return material.kD.scale(Math.abs(nl));
+        return material.getKd().scale(Math.abs(nl));
     }
 
     /**
@@ -200,7 +200,7 @@ public class RayTracerBasic extends RayTracerBase {
     public Color traceRay(Ray ray) {
         GeoPoint clossestGeoPoint = findClosestIntersection(ray);
         if (clossestGeoPoint == null)
-            return scene.getBackground();
+            return this.scene.getBackground();
         return calcColor(clossestGeoPoint, ray);
     }
     /**

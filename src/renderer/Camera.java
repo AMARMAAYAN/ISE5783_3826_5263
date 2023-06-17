@@ -2,7 +2,6 @@ package renderer;
 import primitives.*;
 import primitives.Color;
 import java.util.MissingResourceException;
-import java.util.NoSuchElementException;
 
 import static primitives.Util.isZero;
 
@@ -90,18 +89,20 @@ public class Camera {
     /**
      * function that constructs the camera
      *
-     * @param _position the position
-     * @param _vTo      the vTo vector
-     * @param _vUp      the vUp vector
+     * @param position the position
+     * @param vTo      the vTo vector
+     * @param vUp      the vUp vector
      */
-    public Camera(Point _position, Vector _vTo, Vector _vUp) {
-        if (!isZero(vUp.dotProduct(vTo))) {
-            throw new IllegalArgumentException("The vectors 'up' and and 'to' is not orthogonal");
+    public Camera(Point position, Vector vTo, Vector vUp) {
+        if (!isZero(vTo.dotProduct(vUp))) {
+            throw new IllegalArgumentException("vto  and vup are not orthogonal");
         }
-        position = _position;
-        vTo = _vTo.normalize();
-        vUp = _vUp.normalize();
-        vRight = vTo.crossProduct(vUp).normalize();
+        this.position = position;
+
+        this.vTo = vTo.normalize();
+        this.vUp = vUp.normalize();
+
+        vRight = this.vTo.crossProduct(this.vUp);
     }
 
     /**
@@ -183,26 +184,58 @@ public class Camera {
         return new Ray(position, Pij.subtract(position));
     }
 
-    /**
-     * function that gets the color of the pixel and renders in to image
-     */
-    public Camera renderImage() {
-        if (position== null || vRight == null
-                || vUp == null || vTo == null || distance == 0
-                || width == 0 || height == 0
-                || imageWriter == null || rayTracer == null) {
-            throw new MissingResourceException("Missing camera data", Camera.class.getName(), null);
-        }
-        for (int i = 0; i < imageWriter.getNy(); i++) {
-            for (int j = 0; j < imageWriter.getNx(); j++) {
-                // Pixel coloring by ray
-                Ray ray = constructRayThroughPixel(imageWriter.getNx(), imageWriter.getNy(), j, i);
-                imageWriter.writePixel(j,i, rayTracer.traceRay(ray));
 
+    public Camera renderImage() {
+        try {
+            if (imageWriter == null) {
+                throw new MissingResourceException("missing resource", ImageWriter.class.getName(), "");
             }
+            if (rayTracer == null) {
+                throw new MissingResourceException("missing resource", RayTracerBase.class.getName(), "");
+            }
+            int nX = imageWriter.getNx();
+            int nY = imageWriter.getNy();
+
+            for (int i = 0; i < nY; i++) {
+                for (int j = 0; j < nX; j++) {
+                    castRay(nX, nY, i, j);
+                }
+            }
+//            }
+        } catch (MissingResourceException e) {
+            throw new UnsupportedOperationException("Not implemented yet" + e.getClassName());
         }
         return this;
     }
+
+
+
+
+    /**
+     * function that gets the color of the pixel and renders in to image
+     */
+//    public Camera renderImage() {
+//        if (position== null || vRight == null
+//                || vUp == null || vTo == null || distance == 0
+//                || width == 0 || height == 0
+//                || imageWriter == null || rayTracer == null) {
+//            throw new MissingResourceException("Missing camera data", Camera.class.getName(), null);
+//        }
+//        for (int i = 0; i < imageWriter.getNy(); i++) {
+//            for (int j = 0; j < imageWriter.getNx(); j++) {
+//                // Pixel coloring by ray
+//                Ray ray = constructRayThroughPixel(imageWriter.getNx(), imageWriter.getNy(), j, i);
+//                imageWriter.writePixel(j,i, rayTracer.traceRay(ray));
+//
+//            }
+//        }
+//        return this;
+//    }
+
+
+
+
+
     /**
      * function that prints grid on top of image
      *
@@ -214,20 +247,28 @@ public class Camera {
             throw new MissingResourceException("imageWriter is null", ImageWriter.class.getName(), null);
         imageWriter.printGrid(interval,color);
     }
-    public Ray constructRayThroughPixel(int nX, int nY, int j, int i) {
-        Point pIJ = getCenterOfPixel(nX, nY, j, i); // center point of the pixel
+//    public Ray constructRayThroughPixel(int nX, int nY, int j, int i) {
+//        Point pIJ = getCenterOfPixel(nX, nY, j, i); // center point of the pixel
+//
+//        //Vi,j = Pi,j - P0, the direction of the ray to the pixel(j, i)
+//        Vector vIJ = pIJ.subtract(p0);
+//        return new Ray(p0, vIJ);
+//    }
 
-        //Vi,j = Pi,j - P0, the direction of the ray to the pixel(j, i)
-        Vector vIJ = pIJ.subtract(p0);
-        return new Ray(p0, vIJ);
-    }
+
+
+
     /**
      * function that calls write to image function
+     *
+     * @return
      */
-    public void writeToImage() {
-        if (imageWriter == null)
-            throw new MissingResourceException("", "", "Camera is not initialized");
+    public Camera writeToImage() {
+        if (imageWriter == null){
+            throw new MissingResourceException("", "", "Camera is not initialized");}
+
         imageWriter.writeToImage();
+        return this;
     }
 
     /**
@@ -239,9 +280,10 @@ public class Camera {
      * @param j  the y coordinate
      * @return the color
      */
-    private Color castRay(int nX, int nY, int i, int j) {
-        Ray tempRay = constructRay(nX, nY, j, i);
-        return rayTracer.traceRay(tempRay);
+    private void castRay(int nX, int nY, int i, int j) {
+        Ray ray = constructRay(nX, nY, j, i);
+        Color pixelColor = rayTracer.traceRay(ray);
+        imageWriter.writePixel(j, i, pixelColor);
 
     }
 
