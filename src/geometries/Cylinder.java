@@ -1,9 +1,10 @@
-
 package geometries;
 
 import primitives.Ray;
 import primitives.Vector;
 import primitives.Point;
+
+import java.util.List;
 
 import static primitives.Util.*;
 
@@ -63,5 +64,10 @@ public class Cylinder extends Tube {
 
         return point.subtract(o).normalize();
     }
+    @Override
+    public List<GeoPoint> findGeoIntersectionsHelper(Ray ray, double maxDistance) {
+        return null;
+    }
+
 
 }

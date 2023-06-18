@@ -19,59 +19,73 @@ public class Geometries extends Intersectable {
     /**
      * A list of intersectable geometries that are stored in this Geometries object.
      */
-     private List<Intersectable> intersectables;
+    List<Intersectable> list;
 
 
     /**
      * Constructs an empty Geometries object.
      */
     public Geometries() {
-        intersectables = new LinkedList<>();
+        list = new LinkedList<>();
     }
 
 
     /**
      * Constructs a Geometries object that contains the given Intersectable geometries.
      *
-     * @param intersectables An array of Intersectable geometries to add to this Geometries object.
+     * @param geometries An array of Intersectable geometries to add to this Geometries object.
      */
-    public Geometries(Intersectable... intersectables) {
-        this();
-        add(intersectables);
+    public Geometries(Intersectable... geometries){
+        this.list = new LinkedList<>();
+        this.add(geometries);
     }
 
     /**
-     * Add interfaces to the list of the geometries
-     * @param intersectables one or more interfaces to add to the geometries list
-     */
-    public void add(Intersectable... intersectables){
-        for(var item : intersectables){
-            this.intersectables.add(item);
-        }
-    }
-
-
-    /**
-     * find intersections of ray with geometry shape
+     * Finds all the intersection points of the given Ray object with the geometries stored in this Geometries object.
      *
-     * @param ray ray that cross the geometry
-     * @return list of intersection points that were found
+     * @param ray The Ray object to intersect with the geometries in this Geometries object.
+     * @return A list of Point objects that represent the intersection points of the given Ray object with the geometries in this Geometries object,
+     *         or null if no intersection points were found.
      */
+//    @Override
+//    public List<Point> findIntersections(Ray ray) {
+//        List<Point> listOfAllThePoint = new ArrayList<>();
+//
+//        for (Intersectable geometry : list) {
+//            List<Point> pointList = geometry.findIntersections(ray);
+//            if (pointList == null) continue;
+//            for (Point point : pointList) {
+//                listOfAllThePoint.add(point);
+//            }
+//        }
+//
+//        if (listOfAllThePoint.size() == 0)
+//            return null;
+//        return listOfAllThePoint;
+//    }
 
     @Override
-    protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray,double maxDistance) {
+    protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray, double maxDistance) {
+        List<GeoPoint> Intersections = new LinkedList<>();
 
-        List<GeoPoint> list = new LinkedList<GeoPoint>();;
-        for (Intersectable geometry :intersectables) {
-            List<GeoPoint> lst = geometry.findGeoIntersections(ray, maxDistance);
-            if (lst != null) {
-                if (list == null)
-                    list = new LinkedList<>();
-                list.addAll(lst);
-            }
+        for (Intersectable intersectable: this.list) {
+            List<GeoPoint> currentIntersection = intersectable.findGeoIntersectionsHelper(ray, maxDistance);
+            if(currentIntersection != null) // intersection was found
+                Intersections.addAll(currentIntersection);
         }
-        return list;
+
+        if(Intersections.size() == 0)
+            return null;
+        return Intersections;
     }
-
-
+    /**
+     * Adds the given Intersectable geometries to this Geometries object.
+     *
+     * @param geometries An array of Intersectable geometries to add to this Geometries object.
+     */
+    public void add(Intersectable... geometries){
+        for (Intersectable geometry : geometries) {
+            list.add(geometry);
+        }
+    }
 }

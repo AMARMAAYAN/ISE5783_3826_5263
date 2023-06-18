@@ -1,88 +1,111 @@
 package primitives;
 
 /**
- * Represents the material properties of an object in a scene.
+
+ Represents the material properties of an object in a scene.
+
+ Defines the diffuse reflection coefficient (kD), specular reflection coefficient (kS),
+
+ and the shininess factor (nShininess) of the material.
+ @author AMARMAAYAN
  */
 public class Material {
-    public Double3 kD = Double3.ZERO;
-    public Double3 kS = Double3.ZERO;
-    public int nShininess = 0;
-    public Double3 kT = Double3.ZERO;
-    public Double3 kR = Double3.ZERO;
-    private static final double MIN_CALC_COLOR_K = 0.001;
-    /**
-     * Sets the diffuse reflection coefficient of the material.
-     *
-     * @param kD The diffuse reflection coefficient as a Double3 (RGB values).
-     * @return The Material object with the updated diffuse reflection coefficient.
-     */
-    public Material setKd(Double3 kD) {
-        this.kD = kD;
-        return this;
-    }
 
     /**
-     * Sets the diffuse reflection coefficient of the material.
-     *
-     * @param doubleTokD The value of the diffuse reflection coefficient for all RGB channels.
-     * @return The Material object with the updated diffuse reflection coefficient.
+     * Kd - diffuse component, represents the scattering of light rays to all directions from the surface
      */
-    public Material setKd(double doubleTokD) {
-        this.kD = new Double3(doubleTokD);
-        return this;
-    }
+    private Double3 Kd = Double3.ZERO;
 
     /**
-     * Sets the specular reflection coefficient of the material.
-     *
-     * @param kS The specular reflection coefficient as a Double3 (RGB values).
-     * @return The Material object with the updated specular reflection coefficient.
+     * Ks - specular component, represents the reflectance of the light source over the surface
      */
-    public Material setKs(Double3 kS) {
-        this.kS = kS;
-        return this;
-    }
+    private Double3 Ks = Double3.ZERO;
 
     /**
-     * Sets the specular reflection coefficient of the material.
-     *
-     * @param doubleTokS The value of the specular reflection coefficient for all RGB channels.
-     * @return The Material object with the updated specular reflection coefficient.
+     * Kt - transparency component
+     * 0.0 is opaque
+     * 1.0 is clear
      */
-    public Material setKs(double doubleTokS) {
-        this.kS = new Double3(doubleTokS);
-        return this;
-    }
+    private Double3 Kt = Double3.ZERO;
 
     /**
-     * Sets the shininess factor of the material.
-     *
-     * @param nShininess The shininess factor of the material.
-     * @return The Material object with the updated shininess factor.
+     * Kr - reflection component
+     * 0.0 is matte
+     * 1.0 is very reflexive
      */
-    public Material setNShininess(int nShininess) {
+    private Double3 Kr = Double3.ZERO;
+
+    /**
+     * Shininess - how shiny the material is
+     */
+    private int nShininess = 0;
+
+    //****Setters****
+
+
+    public Material setShininess(int nShininess) {
         this.nShininess = nShininess;
         return this;
     }
 
-    public Material setKt(Double3 kT) {
-        this.kT = kT;
+    public Material setKs(double ks) {
+        Ks = new Double3(ks);
         return this;
     }
 
-    public Material setKt(double doubleTokT) {
-        this.kT = new Double3(doubleTokT);
+    public Material setKs(Double3 ks) {
+        Ks = ks;
+        return this;
+    }
+    public Material setKd(double kd) {
+        this.Kd = new Double3(kd);
         return this;
     }
 
-    public Material setKr(Double3 kR) {
-        this.kR = kR;
-        return this;
-
-    }
-
-    public Material setKr(double doubleTokR) {
-        this.kR = new Double3(doubleTokR);
+    public Material setKd(Double3 kd) {
+        this.Kd = kd;
         return this;
     }
+
+    public Material setKt(double kt) {
+        this.Kt = new Double3(kt);
+        return this;
+    }
+
+    public Material setKt(Double3 kt) {
+        this.Kt = kt;
+        return this;
+    }
+
+    public Material setKr(double kr) {
+        this.Kr = new Double3(kr);
+        return this;
+    }
+
+    public Material setKr(Double3 kr) {
+        this.Kr = kr;
+        return this;
+    }
+
+    //****Getters****
+
+    public Double3 getKr() {
+        return Kr;
+    }
+
+    public Double3 getKs() {
+        return Ks;
+    }
+
+    public Double3 getKt() {
+        return Kt;
+    }
+    public Double3 getKd() {
+        return Kd;
+    }
+    public int getShininess() {
+        return nShininess;
+    }
+
+
 }

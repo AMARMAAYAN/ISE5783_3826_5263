@@ -56,53 +56,34 @@ public class Sphere extends RadialGeometry {
      */
     @Override
     protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray, double maxDistance) {
-        Point P0 = ray.getP0();
-        Vector v = ray.getDir();
+        List<GeoPoint> intersections = new ArrayList<>();
 
-        if (P0.equals(center)) {
-            if (alignZero(radius - maxDistance) > 0) {
-                return null;
-            }
-            return List.of(new GeoPoint(this, ray.getPoint(radius)));
+        if(this.center.equals(ray.getP0())){           //ray starts at the center of the sphere
+            intersections.add(new GeoPoint(this, ray.getPoint(radius)));
+            return intersections;
         }
 
-        Vector U = center.subtract(P0);
+        Vector u = this.center.subtract(ray.getP0());  // vector from ray to the sphere's center
 
-        double tm = alignZero(v.dotProduct(U));
-        double d = alignZero(Math.sqrt(U.lengthSquared() - tm * tm));
+        double tm = u.dotProduct(ray.getDir());        // projection of u on ray
+        double dSquared =u.lengthSquared() - tm * tm;  // Pythagoras - distance from sphere's center to the ray
 
-        // no intersections : the ray direction is above the sphere
-        if (d >= radius) {
+        if (alignZero(dSquared - this.radius * this.radius) >= 0)         // ray crosses outside the sphere
             return null;
-        }
 
-        double th = alignZero(Math.sqrt(radius * radius - d * d));
+        double th = alignZero(Math.sqrt(this.radius * this.radius - dSquared));
+        // t1, t2 are the units to extend dir vec inorder to get the intersections
+        double t1 = tm + th;
+        double t2 = tm - th;
 
-        double t1 = alignZero(tm - th);
-        double t2 = alignZero(tm + th);
-
-        if (t1 <= 0 && t2 <= 0) {
+        if (alignZero(t1) <= 0 && alignZero(t2) <= 0)   // intersects on the opposite direction of ray
             return null;
-        }
 
-        if (t1 > 0 && t2 > 0 && alignZero(t1 - maxDistance) <= 0 && alignZero(t2 - maxDistance) <= 0) {
-//            Point P1 = P0.add(v.scale(t1));
-//            Point P2 = P0.add(v.scale(t2));
-            Point P1 = ray.getPoint(t1);
-            Point P2 = ray.getPoint(t2);
-            return List.of(new GeoPoint(this, P1), new GeoPoint(this, P2));
-        }
-        if (t1 > 0 && alignZero(t1 - maxDistance) <= 0) {
-//            Point P1 = P0.add(v.scale(t1));
-            Point P1 = ray.getPoint(t1);
-            return List.of(new GeoPoint(this, P1));
-        }
-        if (t2 > 0 && alignZero(t2 - maxDistance) <= 0) {
-//            Point P2 = P0.add(v.scale(t2));
-            Point P2 = ray.getPoint(t2);
-            return List.of(new GeoPoint(this, P2));
-        }
-        return null;
+        if(alignZero(t1) > 0 && alignZero(t1 - maxDistance) <= 0)
+            intersections.add(new GeoPoint(this, ray.getPoint(t1)));
+        if(alignZero(t2) > 0 && alignZero(t2 - maxDistance) <= 0)
+            intersections.add(new GeoPoint(this, ray.getPoint(t2)));
 
+        return intersections;
     }
 }

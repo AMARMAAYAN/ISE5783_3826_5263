@@ -32,7 +32,7 @@ public class LightsTests {
     private final Camera camera2 = new Camera(new Point(0, 0, 1000),
             new Vector(0, 0, -1), new Vector(0, 1, 0))
             .setVPSize(200, 200).setVPDistance(1000);
-    private final Material material = new Material().setKd(KD3).setKs(KS3).setNShininess(SHININESS);
+    private final Material material = new Material().setKd(KD3).setKs(KS3).setShininess(SHININESS);
     private final Color trianglesLightColor = new Color(800, 500, 250);
     private final Color sphereLightColor = new Color(800, 500, 0);
     private final Color sphereColor = new Color(BLUE).reduce(2);
@@ -54,7 +54,7 @@ public class LightsTests {
     private final Vector trianglesLightDirection = new Vector(-2, -2, -2);
 
     private final Geometry sphere = new Sphere(sphereCenter, SPHERE_RADIUS)
-            .setEmission(sphereColor).setMaterial(new Material().setKd(KD).setKs(KS).setNShininess(SHININESS));
+            .setEmission(sphereColor).setMaterial(new Material().setKd(KD).setKs(KS).setShininess(SHININESS));
     private final Geometry triangle1 = new Triangle(vertices[0], vertices[1], vertices[2])
             .setMaterial(material);
     private final Geometry triangle2 = new Triangle(vertices[0], vertices[1], vertices[3])

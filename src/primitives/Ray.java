@@ -10,6 +10,8 @@ import static primitives.Util.*;
  */
 public class Ray {
 
+
+    private static final double DELTA = 0.1;
     /**
      * The starting point of the ray.
      */
@@ -19,6 +21,24 @@ public class Ray {
      * The normalized direction dir of the ray.
      */
     final Vector dir;
+
+
+
+    /**
+     * Constructor tthat moves the ray by DELTA
+     *
+     * @param point  point direction – direction (must be normalized) normal – normal
+     * @param n   normal vector
+     * @param dir direction vector of the ray
+     */
+    public Ray(Point point, Vector dir, Vector n) {
+        Vector delta = n.scale(n.dotProduct(dir) > 0d ? DELTA : - DELTA);
+        p0 = point.add(delta);
+        this.dir = dir.normalize();
+    }
+
+
+
 
     /**
      * returns the point po
@@ -100,28 +120,25 @@ public class Ray {
         // Return the closest point found
         return closestPoint;
     }
-    public GeoPoint findClosestGeoPoint(List<GeoPoint> intersections) {
+    public GeoPoint findClosestGeoPoint(List<GeoPoint> geoPoints){
+        if(geoPoints == null){
+            return null;
+        }
 
-        GeoPoint closestGeoPoint = null;
-        double miniDistance = Double.MAX_VALUE;
-        double ptDistance;
+        GeoPoint closesGeoPoint = null;
+        double minDistance = Double.MAX_VALUE;
 
-        // Iterate through each Point object in the intersections list
-        for (GeoPoint gp : intersections) {
-            // Calculate the distance between the current point (gp) and a reference point (p0)
-            ptDistance = gp.point.distanceSquared(p0);
-
-            // Check if the calculated distance is smaller than the current minimum distance
-            if (ptDistance < miniDistance) {
-                // If so, update the minimum distance and set the closest point to the current point
-                miniDistance = ptDistance;
-                closestGeoPoint = gp;
+        for(var geoPoint : geoPoints){
+            double temp = geoPoint.point.distance(p0);
+            if(minDistance > temp){
+                closesGeoPoint = geoPoint;
+                minDistance = temp;
             }
         }
 
-        // Return the closest point found
-        return closestGeoPoint;
+        return closesGeoPoint;
     }
+
 
 
 }
