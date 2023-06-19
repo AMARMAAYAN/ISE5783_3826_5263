@@ -18,7 +18,7 @@ import primitives.Vector;
  */
 public class SpotLight extends PointLight{
 
-    private final Vector direction;
+    private Vector direction;
 
     /**
      * constructor for the intensity
@@ -33,7 +33,15 @@ public class SpotLight extends PointLight{
 
     @Override
     public Color getIntensity(Point point) {
-        return super.getIntensity(point)
-                .scale( Math.max(0, this.direction.dotProduct(this.getL(point))));  // add the beam angle's effect
+        double projection = this.direction.dotProduct(getL(point));
+
+        if (Util.isZero(projection)) {
+            return Color.BLACK;
+        }
+
+        double factor = Math.max(0, projection);
+        Color pointLightIntensity = super.getIntensity(point);
+
+        return (pointLightIntensity.scale(factor));
     }
 }

@@ -11,6 +11,7 @@ package primitives;
  */
 public class Material {
 
+
     /**
      * Kd - diffuse component, represents the scattering of light rays to all directions from the surface
      */

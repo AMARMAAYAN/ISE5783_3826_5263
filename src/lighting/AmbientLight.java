@@ -12,8 +12,18 @@ import primitives.Double3;
  */
 public class AmbientLight extends Light {
 
+    /**
 
+     Constant static field representing no ambient light (black color and attenuation factor of (0, 0, 0)).
+     */
+    public static final AmbientLight NONE = new AmbientLight(Color.BLACK, Double3.ZERO);
 
+    /**
+
+     Constructs an AmbientLight object with the specified original color and attenuation factor.
+     @param Ia The original color of the light (intensity of the light according to RGB)
+     @param Ka The attenuation factor of the original light
+     */
     public AmbientLight(Color Ia, Double3 Ka) {
         super(Ia.scale(Ka));
     }
@@ -22,7 +32,7 @@ public class AmbientLight extends Light {
      Default constructor for AmbientLight that initializes the background to black.
      */
     public AmbientLight() {
-        super(new Color(0,0,0));
+        super(Color.BLACK);
     }
 }
 
