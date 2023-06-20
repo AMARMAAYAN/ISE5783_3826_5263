@@ -9,36 +9,17 @@ import static primitives.Util.*;
  The Ray class represents a ray in 3D space, defined by a starting point and a direction dir.
  */
 public class Ray {
-
-
     private static final double DELTA = 0.1;
+
     /**
      * The starting point of the ray.
      */
-    final Point p0;
+    private final Point p0;
 
     /**
      * The normalized direction dir of the ray.
      */
-    final Vector dir;
-
-
-
-    /**
-     * Constructor tthat moves the ray by DELTA
-     *
-     * @param point  point direction – direction (must be normalized) normal – normal
-     * @param n   normal vector
-     * @param dir direction vector of the ray
-     */
-    public Ray(Point point, Vector dir, Vector n) {
-        Vector delta = n.scale(n.dotProduct(dir) > 0d ? DELTA : - DELTA);
-        p0 = point.add(delta);
-        this.dir = dir;
-    }
-
-
-
+    private final Vector dir;
 
     /**
      * returns the point po
@@ -72,6 +53,13 @@ public class Ray {
         this.dir = dir.normalize();
     }
 
+    public Ray(Point p0, Vector dir, Vector n) {
+
+        double delta = dir.dotProduct(n) >= 0 ? DELTA : -DELTA;
+        this.p0 = p0.add(n.scale(delta));
+        this.dir = dir;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -100,45 +88,31 @@ public class Ray {
      * @return The Point object that is closest to the reference point.
      */
     public Point findClosestPoint(List<Point> intersections) {
-        Point closestPoint = null;
-        double miniDistance = Double.MAX_VALUE;
-        double ptDistance;
-
-        // Iterate through each Point object in the intersections list
-        for (Point pt : intersections) {
-            // Calculate the distance between the current point (pt) and a reference point (p0)
-            ptDistance = pt.distanceSquared(p0);
-
-            // Check if the calculated distance is smaller than the current minimum distance
-            if (ptDistance < miniDistance) {
-                // If so, update the minimum distance and set the closest point to the current point
-                miniDistance = ptDistance;
-                closestPoint = pt;
-            }
-        }
-
-        // Return the closest point found
-        return closestPoint;
+        return intersections == null || intersections.isEmpty() ? null
+                : findClosestGeoPoint(intersections.stream().map(p -> new GeoPoint(null, p)).toList()).point;
     }
-    public GeoPoint findClosestGeoPoint(List<GeoPoint> geoPoints){
-        if(geoPoints == null){
+    public GeoPoint findClosestGeoPoint(List<GeoPoint> geoPointList) {
+
+        if (geoPointList == null) {
             return null;
         }
 
-        GeoPoint closesGeoPoint = null;
+        GeoPoint closestPoint = null;
         double minDistance = Double.MAX_VALUE;
+        double geoPointDistance; // the distance between the "this.p0" to each point in the list
 
-        for(var geoPoint : geoPoints){
-            double temp = geoPoint.point.distance(p0);
-            if(minDistance > temp){
-                closesGeoPoint = geoPoint;
-                minDistance = temp;
+        if (!geoPointList.isEmpty()) {
+            for (var geoPoint : geoPointList) {
+                geoPointDistance = this.p0.distance(geoPoint.point);
+                if (geoPointDistance < minDistance) {
+                    minDistance = geoPointDistance;
+                    closestPoint = geoPoint;
+                }
             }
         }
-
-        return closesGeoPoint;
+        return closestPoint;
+    }
     }
 
 
 
-}

@@ -15,12 +15,12 @@ public class Polygon extends Geometry {
     /**
      * List of polygon's vertices
      */
-    protected List<Point> vertices;
+    protected final List<Point> vertices;
     /**
      * Associated plane in which the polygon lays
      */
-    protected Plane plane;
-    private int size;
+    protected final Plane plane;
+    private final int size;
 
     /**
      * Polygon constructor based on vertices list. The list must be ordered by edge
@@ -96,34 +96,41 @@ public class Polygon extends Geometry {
      * @return A list containing the intersection point, or null if there is no intersection.
      */
     @Override
-    protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray , double maxDistance) {
-        List<GeoPoint> intersections = plane.findGeoIntersections(ray, maxDistance);
-        if (intersections == null)
+    protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
+        // Find the intersection point with the plane
+        List<Point> planeIntersections = plane.findIntersections(ray);
+        if (planeIntersections == null)
             return null;
-        Point intersectionPoint = intersections.get(0).point;
+
+        // Get the first intersection point and initialize variables for checking if it's inside the polygon
+        Point p = planeIntersections.get(0);
+        Point p0 = ray.getP0();
+        Vector v = ray.getDir();
+        double oldSign = 0;
+        double sign = 0;
+
+        // Calculate the signs of the cross products between the ray direction vector and the edges of the polygon
+        Vector v1 = vertices.get(1).subtract(p0);
+        Vector v2 = vertices.get(0).subtract(p0);
         try {
-            Vector edgeVector = this.vertices.get(0).subtract(this.vertices.get(this.size - 1)).normalize();
-            Vector vecToPoint = intersectionPoint.subtract(this.vertices.get(size - 1)).normalize();
-            Vector normalVector = edgeVector.crossProduct(vecToPoint).normalize();	// the first vector to compare to the others
-
-            for (int i = 0; i < this.size - 1; i++) {
-                edgeVector = this.vertices.get(i + 1).subtract(this.vertices.get(i)).normalize();
-                vecToPoint = intersectionPoint.subtract(this.vertices.get(i)).normalize();
-                Vector crossVector = edgeVector.crossProduct(vecToPoint).normalize();
-
-                if (!normalVector.equals(crossVector))	// at least 1 vec is not the same, then the point is outside the polygon
-                    return null;
-            }
-            intersections.clear(); // the point is inside the polygon
-            intersections.add(new GeoPoint(this, intersectionPoint));
-            return intersections;
+            oldSign = v.dotProduct(v1.crossProduct(v2));
+        } catch (IllegalArgumentException e) {
+            System.out.println(this.vertices);
         }
-        catch (IllegalArgumentException e){
-            // an exception was thrown because the zero vector was constructed because
-            // the point of intersection was on a vertex or on an edge
+        if (isZero(oldSign))
             return null;
+
+        // Iterate through the remaining edges of the polygon and check if the signs of the cross products change
+        for (int i = vertices.size() - 1; i > 0; --i) {
+            v1 = v2;
+            v2 = vertices.get(i).subtract(p0);
+            sign = alignZero(v.dotProduct(v1.crossProduct(v2)));
+            if ((oldSign * sign) <= 0)
+                return null;
         }
 
+        // If the intersection point is inside the polygon, return it in a list
+        return List.of(new GeoPoint(this,p));
     }
 }
 

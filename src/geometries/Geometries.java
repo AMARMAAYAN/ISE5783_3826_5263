@@ -19,7 +19,7 @@ public class Geometries extends Intersectable {
     /**
      * A list of intersectable geometries that are stored in this Geometries object.
      */
-     List<Intersectable> list;
+     private List<Intersectable> list;
 
 
     /**
@@ -36,8 +36,10 @@ public class Geometries extends Intersectable {
      * @param geometries An array of Intersectable geometries to add to this Geometries object.
      */
     public Geometries(Intersectable... geometries){
-        this.list = new LinkedList<>();
-        this.add(geometries);
+        list = new LinkedList<>();
+        for (Intersectable geometry : geometries) {
+            list.add(geometry);
+        }
     }
 
     /**
@@ -47,37 +49,38 @@ public class Geometries extends Intersectable {
      * @return A list of Point objects that represent the intersection points of the given Ray object with the geometries in this Geometries object,
      *         or null if no intersection points were found.
      */
-//    @Override
-//    public List<Point> findIntersections(Ray ray) {
-//        List<Point> listOfAllThePoint = new ArrayList<>();
-//
-//        for (Intersectable geometry : list) {
-//            List<Point> pointList = geometry.findIntersections(ray);
-//            if (pointList == null) continue;
-//            for (Point point : pointList) {
-//                listOfAllThePoint.add(point);
-//            }
-//        }
-//
-//        if (listOfAllThePoint.size() == 0)
-//            return null;
-//        return listOfAllThePoint;
-//    }
-
     @Override
-    protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray, double maxDistance) {
-        List<GeoPoint> Intersections = new LinkedList<>();
+    public List<Point> findIntersections(Ray ray) {
+        List<Point> listOfAllThePoint = new ArrayList<>();
 
-        for (Intersectable intersectable: this.list) {
-            List<GeoPoint> currentIntersection = intersectable.findGeoIntersectionsHelper(ray, maxDistance);
-            if(currentIntersection != null) // intersection was found
-                Intersections.addAll(currentIntersection);
+        for (Intersectable geometry : list) {
+            List<Point> pointList = geometry.findIntersections(ray);
+            if (pointList == null) continue;
+            for (Point point : pointList) {
+                listOfAllThePoint.add(point);
+            }
         }
 
-        if(Intersections.size() == 0)
+        if (listOfAllThePoint.size() == 0)
             return null;
-        return Intersections;
+        return listOfAllThePoint;
     }
+
+    @Override
+    protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
+
+        List<GeoPoint> intersections = null;
+        for (Intersectable geometry :list) {
+            var temp = geometry.findGeoIntersections(ray);
+            if (temp != null) {
+                if (intersections == null)
+                    intersections = new LinkedList<>();
+                intersections.addAll(temp);
+            }
+        }
+        return intersections;
+    }
+
     /**
      * Adds the given Intersectable geometries to this Geometries object.
      *

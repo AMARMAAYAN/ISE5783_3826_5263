@@ -91,21 +91,4 @@ public class ImageWriter {
 
     }
 
-    public void printGrid(int interval, Color color) {
-        for (int i = 0; i < nX; i+= interval) {
-            for (int j = 0; j < nY; j++) {
-                // _width/interval // _height/interval
-                writePixel(i, j, color);
-
-            }
-        }
-        for (int i = 0; i < nX; i++) {
-            for (int j = 0; j < nY; j+= interval) {
-                // _width/interval // _height/interval
-                writePixel(i, j, color);
-
-            }
-        }
-    }
-
 }

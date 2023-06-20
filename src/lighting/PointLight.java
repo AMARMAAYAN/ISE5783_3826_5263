@@ -1,6 +1,5 @@
 package lighting;
 import primitives.Color;
-import primitives.Double3;
 import primitives.Point;
 import primitives.Vector;
 /**
@@ -32,10 +31,8 @@ import primitives.Vector;
 public class PointLight extends Light implements LightSource {
 
     private final Point position; // The position point of the light source in the space
-    // the attenuation factors
-    private Double3 kC = new Double3(1);
-    private Double3 kL = new Double3(0);
-    private Double3 kQ = new Double3(0);
+    private double kC = 1, kL = 0, kQ = 0; // Light attenuation factors -> constant, linear, and quadratic
+
     /**
 
      Constructs a point light with the given intensity and position.
@@ -56,13 +53,10 @@ public class PointLight extends Light implements LightSource {
      */
     @Override
     public Color getIntensity(Point point) {
-        double d = point.distance(this.position);  // distance from the light source
-        try {
-            return this.getIntensity().reduce(kC.add(kL.scale(d)).add(kQ.scale(d * d)));
-        }
-        catch (Exception x){ // in case vector zero is constructed
-            return this.getIntensity();
-        }
+        double distance = this.position.distance(point);
+        double distanceSquared = distance * distance;
+        double factor = this.kC + this.kL * distance + this.kQ * distanceSquared;
+        return getIntensity().reduce(factor);
     }
     /**
 
@@ -78,7 +72,7 @@ public class PointLight extends Light implements LightSource {
 
     @Override
     public double getDistance(Point point) {
-        return point.distance(point);
+        return point.distance(position);
     }
 
     /**
@@ -87,7 +81,7 @@ public class PointLight extends Light implements LightSource {
      @return the updated PointLight object
      */
     public PointLight setkC(double kC) {
-        this.kC = new Double3(kC);
+        this.kC = kC;
         return this;
     }
     /**
@@ -97,7 +91,7 @@ public class PointLight extends Light implements LightSource {
      @return the updated PointLight object
      */
     public PointLight setKl(double kL) {
-        this.kL = new Double3(kL);
+        this.kL = kL;
         return this;
     }
     /**
@@ -107,7 +101,7 @@ public class PointLight extends Light implements LightSource {
      @return the updated PointLight object
      */
     public PointLight setKq(double kQ) {
-        this.kQ = new Double3(kQ);
+        this.kQ = kQ;
         return this;
     }
 }

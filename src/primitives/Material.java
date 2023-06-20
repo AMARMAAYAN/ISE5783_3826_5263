@@ -11,6 +11,7 @@ package primitives;
  */
 public class Material {
 
+
     /**
      * Kd - diffuse component, represents the scattering of light rays to all directions from the surface
      */
@@ -40,7 +41,7 @@ public class Material {
      */
     private int nShininess = 0;
 
-    //*********Setters*********
+    //****Setters****
 
 
     public Material setShininess(int nShininess) {
@@ -87,7 +88,7 @@ public class Material {
         return this;
     }
 
-    //*********Getters*********
+    //****Getters****
 
     public Double3 getKr() {
         return Kr;
@@ -109,11 +110,3 @@ public class Material {
 
 
 }
-
-
-
-
-
-
-
-
