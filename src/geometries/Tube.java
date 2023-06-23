@@ -58,49 +58,52 @@ public class Tube extends RadialGeometry {
 
     @Override
     protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
-        List<GeoPoint> intersections = new ArrayList<GeoPoint>();
-        Vector rayDirection = ray.getDir();
-        Point rayOrigin = ray.getP0();
-        boolean condition=false;
+        List<GeoPoint> intersections = new ArrayList<GeoPoint>(); // List to store intersection points
+        Vector rayDirection = ray.getDir(); // Direction vector of the ray
+        Point rayOrigin = ray.getP0(); // Origin point of the ray
+        boolean condition = false; // Flag to handle intersection point ordering
 
         // Calculate the coefficients of the quadratic equation to find the intersection points
-        Vector axisDirection = axisRay.getDir();
-        Point axisOrigin = axisRay.getP0();
-        double a = rayDirection.dotProduct(rayDirection) - Math.pow(rayDirection.dotProduct(axisDirection), 2);
-        double b = 2 * (rayDirection.dotProduct(rayOrigin.subtract(axisOrigin)) - rayDirection.dotProduct(axisDirection) * rayOrigin.subtract(axisOrigin).dotProduct(axisDirection));
-        double c = rayOrigin.subtract(axisOrigin).dotProduct(rayOrigin.subtract(axisOrigin)) - Math.pow(rayOrigin.subtract(axisOrigin).dotProduct(axisDirection), 2) - Math.pow(radius, 2);
+        Vector axisDirection = axisRay.getDir(); // Direction vector of the axis ray
+        Point axisOrigin = axisRay.getP0(); // Origin point of the axis ray
+        double a = rayDirection.dotProduct(rayDirection) - Math.pow(rayDirection.dotProduct(axisDirection), 2); // Coefficient 'a' calculation
+        double b = 2 * (rayDirection.dotProduct(rayOrigin.subtract(axisOrigin)) - rayDirection.dotProduct(axisDirection) * rayOrigin.subtract(axisOrigin).dotProduct(axisDirection)); // Coefficient 'b' calculation
+        double c = rayOrigin.subtract(axisOrigin).dotProduct(rayOrigin.subtract(axisOrigin)) - Math.pow(rayOrigin.subtract(axisOrigin).dotProduct(axisDirection), 2) - Math.pow(radius, 2); // Coefficient 'c' calculation
 
-        double discriminant = b * b - 4 * a * c;
-        if (discriminant < 0) {
-            return intersections; // no intersection
-        }
-        else if (discriminant == 0) {
-            double t = -b / (2 * a);
-            Point p = ray.getPoint(t);
-            double tAxis = axisDirection.dotProduct(p.subtract(axisOrigin));
-            if (tAxis >= 0 && tAxis <= axisDirection.length()) {
-                intersections.add(0,new GeoPoint(this,p));
+        double discriminant = b * b - 4 * a * c; // Discriminant calculation for quadratic equation
+
+        if (discriminant < 0) { // No intersection if discriminant is negative
+            return intersections;
+        } else if (discriminant == 0) { // One intersection if discriminant is zero
+            double t = -b / (2 * a); // Calculate intersection parameter 't'
+            Point p = ray.getPoint(t); // Calculate intersection point
+            double tAxis = axisDirection.dotProduct(p.subtract(axisOrigin)); // Calculate parameter 't' along the axis ray
+            if (tAxis >= 0 && tAxis <= axisDirection.length()) { // Check if the intersection point lies within the bounds of the cylinder
+                intersections.add(0, new GeoPoint(this, p)); // Add the intersection point to the list
             }
-        }
-        else {
-            double t1 = (-b + Math.sqrt(discriminant)) / (2 * a);
-            double t2 = (-b - Math.sqrt(discriminant)) / (2 * a);
-            Point intersection1 = ray.getPoint(t1);
-            Point intersection2 = ray.getPoint(t2);
-            double tAxis1 = axisDirection.dotProduct(intersection1.subtract(axisOrigin));
-            double tAxis2 = axisDirection.dotProduct(intersection2.subtract(axisOrigin));
-            if (tAxis1 >= 0 && tAxis1 <= axisDirection.length()) {
-                intersections.add(0,new GeoPoint(this,intersection1));
-                condition=true;
+        } else { // Two intersections if discriminant is positive
+            double t1 = (-b + Math.sqrt(discriminant)) / (2 * a); // Calculate intersection parameter 't' for the first point
+            double t2 = (-b - Math.sqrt(discriminant)) / (2 * a); // Calculate intersection parameter 't' for the second point
+            Point intersection1 = ray.getPoint(t1); // Calculate first intersection point
+            Point intersection2 = ray.getPoint(t2); // Calculate second intersection point
+            double tAxis1 = axisDirection.dotProduct(intersection1.subtract(axisOrigin)); // Calculate parameter 't' along the axis ray for the first point
+            double tAxis2 = axisDirection.dotProduct(intersection2.subtract(axisOrigin)); // Calculate parameter 't' along the axis ray for the second point
+
+            if (tAxis1 >= 0 && tAxis1 <= axisDirection.length()) { // Check if the first intersection point lies within the bounds of the cylinder
+                intersections.add(0, new GeoPoint(this, intersection1)); // Add the first intersection point to the list
+                condition = true; // Set the condition flag to true
             }
-            if (tAxis2 >= 0 && tAxis2 <= axisDirection.length()) {
-                if(condition==true)
-                    intersections.add(1,new GeoPoint(this,intersection2));
+
+            if (tAxis2 >= 0 && tAxis2 <= axisDirection.length()) { // Check if the second intersection point lies within the bounds of the cylinder
+                if (condition == true)
+                    intersections.add(1, new GeoPoint(this, intersection2)); // Add the second intersection point to the list at index 1 if the condition is true
                 else
-                    intersections.add(0,new GeoPoint(this,intersection2));
+                    intersections.add(0, new GeoPoint(this, intersection2)); // Add the second intersection point to the list at index 0 if the condition is false
             }
         }
-        return intersections;
+
+        return intersections; // Return the list of intersection points
     }
+
 }
 

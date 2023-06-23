@@ -16,109 +16,93 @@ import scene.Scene;
 import static java.awt.Color.*;
 
 public class PRO7Test {
-    private final Scene scene = new Scene.SceneBuilder("Test scene").setBackground(new Color(120,140,255)).build();
+    private final Scene scene = new Scene.SceneBuilder("Test scene").setBackground(new Color(212, 230, 241)).build();
 
     @Test
-    void PR07Test() {
+    void SnowMan() {
         //Camera camera = new Camera(new Point(-2500, -2500, 800), new Vector(1, 1, 0), new Vector(0, 0, 1)) //
         //	.setVPSize(2500, 2500).setVPDistance(3000); //
         //first option: we see the bird from the back:
-        Camera camera = new Camera(
-                new Point(35,50,0), //position
-                new Vector(-1,-1,0), //vTo
-                new Vector(0,0,1)) //vUp
-                .setVPSize(60,60)
-                //.setAntiAliasingOn(20)
-                .setVPDistance(40)
-                .moveNearAway(40)
-                .moveUpDown(40)
-                .moveRightLeft(10)
-                .spinAroundVRight(-40)
-                .spinAroundVTo(40)
-                .spinAroundVUp(-20);
+//        Camera camera = new Camera(
+//                new Point(35,50,0), //position
+//                new Vector(-1,-1,0), //vTo
+//                new Vector(0,0,1)) //vUp
+//                .setVPSize(60,60)
+//                //.setAntiAliasingOn(20)
+//                .setVPDistance(40)
+//                .moveNearAway(40)
+//                .moveUpDown(40)
+//                .moveRightLeft(-10)
+//                .spinAroundVRight(-40)
+//                .spinAroundVTo(30)
+//                .spinAroundVUp(-10);
+        Camera camera = new Camera(new Point(-50,-50,0), new Vector(1,1,0), new Vector(0,0,1)) //
+                .setVPSize(60,60).setVPDistance(40);
 		/* //more option, need to fix, we see the bird from the front
 		Camera camera = new Camera(new Point(-50,-50,0), new Vector(1,1,0), new Vector(0,0,1)) //
 				.setVPSize(60,60).setVPDistance(40);*/
-        Material mateBirdSkin = new Material().setKt(0.2).setShininess(30).setKs(0.1).setKd(0.7);
-        Material mateBirdOrgans = new Material().setKd(0.7).setShininess(10);
-        Material mateBirdBeak = new Material().setKr(0.001).setKs(0.2).setKd(0.5);
-        Material mateEye = new Material().setKt(1).setKs(0.5).setKd(0.01);
-        scene.setAmbientLight(new AmbientLight(new Color(20, 150, 240), new Double3(0.1)));//color of sky, less or more
+        Material snowmanSkin = new Material().setKt(0.2).setShininess(30).setKs(0.1).setKd(0.7);
+        Material snowmanOrgans = new Material().setKd(0.7).setShininess(10);
+        Material snowmanNose = new Material().setKr(0.001).setKs(0.2).setKd(0.5);
+        Material snowmanEye = new Material().setKt(1).setKs(0.5).setKd(0.01);
+        scene.setAmbientLight(new AmbientLight(new Color(214, 234, 248 ), new Double3(0.1)));//color of sky, less or more
 
         scene.getGeometries().add(
-                //body of the bird
-                new Sphere(new Point(2,2,-3), 14)
-                        .setEmission(new Color(230,120,20)).setMaterial(mateBirdSkin),
-                //head of the bird
-                new Sphere(new Point(-14,0,2),10)
-                        .setEmission(new Color(230,120,20)).setMaterial(mateBirdSkin.setKt(0.05)),
-                //eyes of the bird
-                new Sphere(new Point(-18,-9,4.5), 1)
-                        .setEmission(new Color(0,0,0)),
-                new Sphere(new Point(-19, -7, 4.5),2)
-                        .setEmission(new Color(255,255,220)).setMaterial(mateEye),
-                new Sphere(new Point(-18,9,4.5),1)
-                        .setEmission(new Color(0,0,0)),
-                new Sphere(new Point(-19,7,4.5),2)
-                        .setEmission(new Color(255,255,220)).setMaterial(mateEye),
-                //beak of the bird (pyramid, other did not succeed to me)
+                //the bottun in the body
+                new Sphere(new Point(-30,-28,-2),1)
+                        .setEmission(new Color(236, 112, 99)),
 
-                //new Triangle(new Point(-22,0,0), new Point(-19,0,-6), new Point(-35,0,-12))
-                //		.setEmission(new Color(130,50,10)),
-                new Triangle(new Point(-20,-4,0), new Point(-17,-2,-5.5), new Point(-35,0,-12))
-                        .setEmission(new Color(130,50,10)).setMaterial(mateBirdBeak),
-                new Triangle(new Point(-20,4,0), new Point(-17,2,-5.5), new Point(-35,0,-12))
-                        .setEmission(new Color(130,50,10)).setMaterial(mateBirdBeak),
-                new Triangle(new Point(-20,-4,0), new Point(-20,4,0), new Point(-35,0,-12))
-                        .setEmission(new Color(130,50,10)).setMaterial(mateBirdBeak),
-                new Triangle(new Point(-17,-2,-5.5), new Point(-17,2,-5.5), new Point(-32,0,-13))
-                        .setEmission(new Color(130,50,10)).setMaterial(mateBirdBeak),
-                //legs of the bird
-                new Triangle(new Point(5,-7,-13), new Point(6,-6,-16), new Point(-8,-13,-27))
-                        .setEmission(new Color(100,40,10)).setMaterial(mateBirdOrgans),
-                new Triangle(new Point(5,9,-13), new Point(6,8,-16), new Point(-8,13,-27))
-                        .setEmission(new Color(100,40,10)).setMaterial(mateBirdOrgans),
-                //wings of the bird
-                new Triangle(new Point(-7,-8,5), new Point(3.5,-9,6), new Point(18,-34,-5))
-                        .setEmission(new Color(255,200,30)).setMaterial(mateBirdOrgans),
-                new Triangle(new Point(-5,12,5),new Point(3.5,13,6),new Point(18,30,-5))
-                        .setEmission(new Color(255,200,30)).setMaterial(mateBirdOrgans),
-                //tail of the bird
-                new Polygon(new Point(12,-2,0), new Point(12,2,0), new Point(20,6,-4), new Point(20,-2,-4))
-                        .setEmission(new Color(255,200,30)).setMaterial(mateBirdOrgans),
-                //the land (replace to tube, like a branch?) the water source, and the shore
-                new Plane(new Point(-8,-13,-25), new Point(-8,13,-25), new Point(1,1,-25))
-                        .setEmission(new Color/*(140,50,40)*/(9,67,19)).setMaterial(new Material().setKd(0.6).setShininess(10)),
+                new Sphere(new Point(-30,-28,-5),1)
+                        .setEmission(new Color(236, 112, 99)),
+
+                new Sphere(new Point(-30,-28,-8),1)
+                        .setEmission(new Color(236, 112, 99)),
+                //body of the snowman
+                new Sphere(new Point(-8,-5,-10), 14)
+                        .setEmission(new Color(169, 204, 227  )).setMaterial(snowmanSkin),
+                //head of the snowman
+                new Sphere(new Point(-10,-5,8),10)
+                        .setEmission(new Color(169, 204, 227)).setMaterial(snowmanSkin.setKt(0.05)),
+
+
+                //eyes of the snowman
+                new Sphere(new Point(-16,-18,7), 1)
+                        .setEmission(new Color(0,0,0)),
+                new Sphere(new Point(-14, -16, 7.5),2)
+                        .setEmission(new Color(144, 148, 151)).setMaterial(snowmanEye),
+
+                new Sphere(new Point(-20,-13,7),1)
+                        .setEmission(new Color(0,0,0)),
+                new Sphere(new Point(-18,-11,7.5),2)
+                        .setEmission(new Color(144, 148, 151 )).setMaterial(snowmanEye),
+                //nose of the snowman (pyramid, other did not succeed to me)
+
+//                 new Triangle(new Point(-14,-4,5), new Point(-17,-2,-0.5), new Point(-35,0,-7))
+//                        .setEmission(new Color(130,50,10)).setMaterial(snowmanNose),
+                new Triangle(new Point(-20,-20,8), new Point(-20,-18,3.5), new Point(-10,-25,0))
+                        .setEmission(new Color(130,50,10)).setMaterial(snowmanNose),
+
+//                new Triangle(new Point(-10,-28,-4), new Point(-7,2,-4), new Point(-7,0,-4))
+//                        .setEmission(new Color(130,50,10)).setMaterial(snowmanNose),
+//
+//                new Triangle(new Point(-10,-18,-4), new Point(-10,-12,-4), new Point(-25,-12,-8))
+//                        .setEmission(new Color(130,50,10)).setMaterial(snowmanNose),
+//
+//                new Triangle(new Point(-7,-2,3.5), new Point(-7,2,3.5), new Point(-22,0,-5))
+//                        .setEmission(new Color(130,50,10)).setMaterial(snowmanNose),
+
+//
+
+
+
+//                //the land (replace to tube, like a branch?) the water source, and the shore
+                new Plane(new Point(215, 189, 226 ), new Point(-8,13,-25), new Point(1,1,-25))
+                        .setEmission(new Color/*(140,50,40)*/(41, 128, 185 )).setMaterial(new Material().setKd(0.6).setShininess(10)),
+
                 new Plane(new Point(-15,10,-25), new Point(-15,-10,-25), new Point(-35,0,-12))
-                        .setEmission(new Color(0, 20, 255)).setMaterial(new Material().setKr(0.5)),//.setKd(0.7).setKs(0.4).setShininess(20)),
-                new Tube(new Ray(new Point(-15,10,-25), new Vector(0,-250,0)), 2)
-                        .setEmission(new Color/*(77,0,0)*/(3,22,6)).setMaterial(new Material().setKd(0.6).setShininess(10)),
-                new Sphere(new Point(-35,0,-11), 2)
-                        .setEmission(new Color(0,0,100)).setMaterial(new Material().setKt(0.5).setKs(0.5)));
+                        .setEmission(new Color(0, 20, 255)).setMaterial(new Material().setKr(0.5)));//.setKd(0.7).setKs(0.4).setShininess(20)),
 
-        //scene.geometries.add(new Triangle(new Point(-21,-3,8), new Point(-24,-1,3), new Point(-30,0,20)).setEmission(new Color(255,26,140)).setMaterial(new Material().setShininess(30).setKd(0.5).setKs(0.8)),
-        //new Sphere(new Point(-30,0,20), 2).setEmission(new Color(255,255,255)).setMaterial(new Material().setKt(0.7).setKd(0.3).setKs(0.3)));
-				/*new Sphere(new Point(0,0,100),100).setEmission(new Color(BLUE)),
-				new Polygon(new Point(500,-500,0), new Point(-500,-500,0),new Point(-500,500,0),new Point(500,500,0))
-						.setEmission(new Color(GRAY)).setMaterial(new Material().setKr(0.9)),
-				new Triangle(new Point(1500,0,250),new Point(0,1500,250),new Point(1500,1500,1000))
-						.setEmission(new Color(WHITE)),
-				new Sphere(new Point(300,300,300),100).setEmission(new Color(RED))
-						.setMaterial(new Material().setKt(0.7)),
-				//new Sphere(new Point(300,0,300),50).setEmission(new Color(RED)),
-				new Triangle(new Point(1500,0,250), new Point(500,500,0), new Point(500,-500,0))
-						.setEmission(new Color(LIGHT_GRAY)).setMaterial(new Material().setKr(1)),
-				new Triangle(new Point(0,1500,250),new Point(500,500,0), new Point(-500,500,0))
-						.setEmission(new Color(LIGHT_GRAY)).setMaterial(new Material().setKr(1)));*/
 
-		/*scene.lights.add(new SpotLight(new Color(0, 400, 400), new Point(-500, -500, 2000), new Vector(-1,-1,-1)) //
-				.setKl(0.00001).setKq(0.000005));
-		scene.lights.add(new SpotLight(new Color(0, 400, 400), new Point(-500, -500, -100), new Vector(1,1,10)) //
-				.setKl(0.00001).setKq(0.000005));
-		scene.lights.add(new PointLight(new Color(50,150,150), new Point(-500,-500,-500)).setKl(0.000005)); //
-		for(int i=0  ;i<360 ; i++ ){
-			scene.lights.add(new DirectionalLight(new Color(123,255,0),new Point(Math.cos(i),Math.sin(i),Math.sin(i)).subtract(new Point(2,2,-3))));
-		}*/
         //scene.lights.add(new PointLight(new Color(255,255,255), new Point(-30,0,20)).setKq(0.00001).setKl(0.00001));
         scene.getLights().add(new PointLight(new Color(255,255,255), new Point(0,0,10)).setKl(0.00001).setKq(0.0001));
         //scene.lights.add(new PointLight(new Color(800,500,250), new Point(-19,-9,4.5)).setKq(0.001));

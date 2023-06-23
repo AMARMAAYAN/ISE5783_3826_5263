@@ -70,7 +70,7 @@ public class ImageWriter {
      */
     public void writeToImage() {
         try {
-            File file = new File("C:/Users/bmteh/ISE5783_3826_5263/.images" + '/' + imageName + ".png");
+            File file = new File(FOLDER_PATH + '/' + imageName + ".png");
             ImageIO.write(image, "png", file);
         } catch (IOException e) {
             logger.log(Level.SEVERE, "I/O error", e);

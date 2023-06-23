@@ -4,7 +4,7 @@ package primitives;
  This class represents a three-dimensional Vector, which extends Point.
  A Vector has a magnitude and direction, represented by its X, Y, and Z components.
  It provides methods for performing vector operations, such as adding, scaling, normalizing, computing cross and dot product.
- @author Maayan Amar
+ @author AMARMAAYAN
  */
 public class Vector extends Point {
 
@@ -102,6 +102,7 @@ public class Vector extends Point {
          **/
 
     }
+
     /**
      * Returns a new vector that is the result of scaling this vector by the specified scalar value.
      * @param x The scalar value to scale this vector by.

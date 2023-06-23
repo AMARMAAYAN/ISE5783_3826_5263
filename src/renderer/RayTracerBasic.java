@@ -14,26 +14,42 @@ import static primitives.Util.*;
  *  adding the local and global effects of the objects presented in the scene
  */
 public class RayTracerBasic extends RayTracerBase{
+
+    /**
+     * Maximum level of color calculation recursion.
+     */
     private static final int MAX_CALC_COLOR_LEVEL = 10;
+
+    /**
+     * Minimum value of color calculation factor.
+     */
     private static final double MIN_CALC_COLOR_K = 0.001;
+
+    /**
+     * Initial color factor value.
+     */
     private static final Double3 INITIAL_K = new Double3(1.0);
 
+    /**
+     * Creates a RayTracerBasic object with the specified scene.
+     * @param scene The scene to be rendered.
+     */
     public RayTracerBasic(Scene scene) {
         super(scene);
     }
 
 
-    //region traceRay
+
     @Override
     public Color traceRay(Ray ray) {
         GeoPoint gp = findClosestIntersection(ray); // intersect the ray with the geometries
         if (gp == null)     // no intersection was found
             return this.scene.getBackground();   // the background color
-        return calcColor(gp, ray);                                   // return the calculated color of this point
+        return calcColor(gp, ray);   // return the calculated color of this point
     }
-    //endregion
 
-    // region transparency
+
+
     /**
      *  calculate the amount of shade covering the point
      * @param geopoint a point to check the shadow on
@@ -58,9 +74,7 @@ public class RayTracerBasic extends RayTracerBase{
         }
         return transparent;
     }
-    //endregion
 
-    //region calcColor - base function
     /**
      * calculate the color of a point infected by a light ray
      * cover function for the recursive function that calculates the color
@@ -72,9 +86,7 @@ public class RayTracerBasic extends RayTracerBase{
         return scene.getAmbientLight().getIntensity()               // the intensity of the ambient light
                 .add(calcColor(geoPoint, ray, MAX_CALC_COLOR_LEVEL, INITIAL_K));  // recursive call
     }
-    //endregion
 
-    //region calcColor - recursive function
     /**
      * calculating the local (diffuse + specular) and the global (reflection + refraction) effects
      * @param geoPoint  to calculate its color
@@ -89,9 +101,7 @@ public class RayTracerBasic extends RayTracerBase{
         return 1 == level ? color :
                 color.add(calcGlobalEffects(geoPoint, ray, level, k));
     }
-    //endregion
 
-    //region calcGlobalEffects - level
     /**
      * calculate the next level of the global effects if there are more intersections to check
      * @param ray the is used to intersect the geometries
@@ -104,9 +114,8 @@ public class RayTracerBasic extends RayTracerBase{
         GeoPoint gp = findClosestIntersection(ray);
         return (gp == null ? scene.getBackground() : calcColor(gp, ray, level - 1, kkx)).scale(kx);
     }
-    //endregion
 
-    //region calcGlobalEffects - k
+
     /**
      * calculate the color according to the k factor for the reflection and refraction effects
      * @param gp calculate the color of this point
@@ -130,9 +139,7 @@ public class RayTracerBasic extends RayTracerBase{
 
         return color;
     }
-    //endregion
 
-    //region calcLocalEffects
     /**
      * calculate the effects of the lighting on the intensity of the point
      * @param geoPoint a GeoPoint object to calculate the effects on
@@ -168,9 +175,8 @@ public class RayTracerBasic extends RayTracerBase{
         }
         return color;
     }
-    //endregion
 
-    //region calcSpecular
+
     /**
      * the specular effect on the object according to the phong reflection model
      * @param mat the geometry's material
@@ -187,9 +193,8 @@ public class RayTracerBasic extends RayTracerBase{
                 .scale(mat.getKs().scale( alignZero( Math.pow( Math.max(0, v.scale(-1).dotProduct(r)),
                         mat.getShininess()))));
     }
-    //endregion
 
-    //region calcDiffusive
+
     /**
      * the diffusion effect on the object according to the phong reflection model
      * @param mat the geometry's material
@@ -202,9 +207,8 @@ public class RayTracerBasic extends RayTracerBase{
         // the phong model formula for the diffusive effect: 𝒌𝑫 ∙| 𝒍 ∙ 𝒏 |∙ 𝑰
         return lightIntensity.scale(mat.getKd().scale(Math.abs(n.dotProduct(l))));
     }
-    //endregion
 
-    //region findClosestIntersection
+
     /**
      * intersects the ray with the scene and finds the closest point the ray intersects
      * @param ray to intersect the scene with
@@ -214,9 +218,7 @@ public class RayTracerBasic extends RayTracerBase{
         List<GeoPoint> intersectionPoints = scene.getGeometries().findGeoIntersections(ray);
         return ray.findClosestGeoPoint(intersectionPoints);
     }
-    //endregion
 
-    //region secondary rays - reflection / refraction
 
     /**
      * construct the refraction ray according to the physics law of refraction
@@ -239,9 +241,7 @@ public class RayTracerBasic extends RayTracerBase{
     private Ray constructReflectedRay(Point point, Ray ray, Vector n) {
         return new Ray(point, reflectionVector(ray.getDir(), n), n);
     }
-    //endregion
 
-    //region reflectionVector
     /**
      * calculate the reflected vector using linear algebra and projection on a normal vector
      * @param l the vector to reflect
@@ -251,5 +251,5 @@ public class RayTracerBasic extends RayTracerBase{
     private Vector reflectionVector(Vector l, Vector n) {
         return l.subtract(n.scale(2 * l.dotProduct(n))).normalize();
     }
-    //endregion
+
 }

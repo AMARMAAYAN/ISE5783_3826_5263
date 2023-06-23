@@ -13,15 +13,15 @@ import static primitives.Util.isZero;
  */
 public class Camera {
 
-    private Point position;
-    private Vector vTo;
-    private Vector vUp;
-    private Vector vRight;
-    private double distance;
-    private double height;
-    private double width;
-    private ImageWriter imageWriter;
-    private RayTracerBase rayTracer;
+    private Point position; // The position of the camera
+    private Vector vTo; // The direction vector pointing towards the target
+    private Vector vUp; // The up vector
+    private Vector vRight; // The right vector
+    private double distance; // The distance between the camera and the view plane
+    private double height; // The height of the view plane
+    private double width; // The width of the view plane
+    private ImageWriter imageWriter; // The image writer used to write the rendered image
+    private RayTracerBase rayTracer; // The ray tracer used for rendering
 
 
     /**
@@ -97,10 +97,11 @@ public class Camera {
     public Camera(Point _position, Vector _vTo, Vector _vUp) {
         if (_vTo.dotProduct(_vUp) != 0)
             throw new IllegalArgumentException("vTo and vUp must be orthogonal");
-        position = _position;
-        vTo = _vTo.normalize();
-        vUp = _vUp.normalize();
-        vRight = vTo.crossProduct(vUp).normalize();
+
+        position = _position; // Set the camera position
+        vTo = _vTo.normalize(); // Normalize the vTo vector
+        vUp = _vUp.normalize(); // Normalize the vUp vector
+        vRight = vTo.crossProduct(vUp).normalize(); // Calculate the normalized vRight vector
     }
 
     /**
@@ -159,19 +160,19 @@ public class Camera {
      * @return the ray
      */
     public Ray constructRay(int nX, int nY, int j, int i) {
-        Point pC = position.add(vTo.scale(distance));
+        Point pC = position.add(vTo.scale(distance)); // Calculate the center point of the image plane
 
-        double rY = height / nY;
-        double rX = width / nX;
+        double rY = height / nY; // Calculate the height of a single pixel in the image plane
+        double rX = width / nX; // Calculate the width of a single pixel in the image plane
 
-        double yI = -(i - (nY - 1d) / 2) * rY;
-        double jX = (j - (nX - 1d) / 2) * rX;
-        Point Pij = pC;
+        double yI = -(i - (nY - 1d) / 2) * rY; // Calculate the vertical offset of the pixel from the center
+        double jX = (j - (nX - 1d) / 2) * rX; // Calculate the horizontal offset of the pixel from the center
+        Point Pij = pC; // Initialize the point on the image plane to the center point
 
-        if (yI != 0) Pij = Pij.add(vUp.scale(yI));
-        if (jX != 0) Pij = Pij.add(vRight.scale(jX));
+        if (yI != 0) Pij = Pij.add(vUp.scale(yI)); // Adjust the point vertically based on the offset
+        if (jX != 0) Pij = Pij.add(vRight.scale(jX)); // Adjust the point horizontally based on the offset
 
-        return new Ray(position, Pij.subtract(position));
+        return new Ray(position, Pij.subtract(position)); // Create and return the constructed ray
     }
 
     /**
@@ -180,14 +181,17 @@ public class Camera {
     public Camera renderImage() {
         if (position == null || vTo == null || vUp == null || vRight == null || distance == 0 || height == 0 || width == 0 || imageWriter == null || rayTracer == null)
             throw new MissingResourceException("", "", "Camera is not initialized");
-        int nX = imageWriter.getNx();
-        int nY = imageWriter.getNy();
+
+        int nX = imageWriter.getNx(); // Get the width of the image
+        int nY = imageWriter.getNy(); // Get the height of the image
+
         for (int i = 0; i < imageWriter.getNx(); i++) {
             for (int j = 0; j < imageWriter.getNy(); j++) {
-                Ray ray = constructRay(nX, nY, j, i);
-                imageWriter.writePixel(j, i, this.castRay(nX, nY, i, j));
+                Ray ray = constructRay(nX, nY, j, i); // Construct the ray for the current pixel
+                imageWriter.writePixel(j, i, this.castRay(nX, nY, i, j)); // Cast the ray and write the color to the image writer
             }
         }
+
         return this;
     }
 
