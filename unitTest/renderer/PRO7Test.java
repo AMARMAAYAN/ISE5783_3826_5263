@@ -20,7 +20,7 @@ public class PRO7Test {
 
     @Test
     void SnowMan() {
-        //Camera camera = new Camera(new Point(-2500, -2500, 800), new Vector(1, 1, 0), new Vector(0, 0, 1)) //
+        //// Camera camera = new Camera(new Point(-2500, -2500, 800), new Vector(1, 1, 0), new Vector(0, 0, 1)) //
         //	.setVPSize(2500, 2500).setVPDistance(3000); //
         //first option: we see the bird from the back:
 //        Camera camera = new Camera(
