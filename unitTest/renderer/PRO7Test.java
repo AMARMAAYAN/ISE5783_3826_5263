@@ -42,21 +42,21 @@ public class PRO7Test {
 		Camera camera = new Camera(new Point(-50,-50,0), new Vector(1,1,0), new Vector(0,0,1)) //
 				.setVPSize(60,60).setVPDistance(40);*/
         Material snowmanSkin = new Material().setKt(0.2).setShininess(30).setKs(0.1).setKd(0.7);
-        Material snowmanOrgans = new Material().setKd(0.7).setShininess(10);
+        Material snowmanOrgans = new Material().setKd(0.7).setShininess(30);
         Material snowmanNose = new Material().setKr(0.001).setKs(0.2).setKd(0.5);
         Material snowmanEye = new Material().setKt(1).setKs(0.5).setKd(0.01);
         scene.setAmbientLight(new AmbientLight(new Color(214, 234, 248 ), new Double3(0.1)));//color of sky, less or more
 
         scene.getGeometries().add(
                 //the bottun in the body
-                new Sphere(new Point(-30,-28,-2),1)
-                        .setEmission(new Color(236, 112, 99)),
+                new Sphere(new Point(-28.5,-28,-2),1)
+                        .setEmission(new Color(236, 112, 99)).setMaterial(snowmanSkin),
 
-                new Sphere(new Point(-30,-28,-5),1)
-                        .setEmission(new Color(236, 112, 99)),
+                new Sphere(new Point(-28.5,-28,-5),1)
+                        .setEmission(new Color(236, 112, 99)).setMaterial(snowmanSkin),
 
-                new Sphere(new Point(-30,-28,-8),1)
-                        .setEmission(new Color(236, 112, 99)),
+                new Sphere(new Point(-28.5,-28,-8),1)
+                        .setEmission(new Color(236, 112, 99)).setMaterial(snowmanSkin),
                 //body of the snowman
                 new Sphere(new Point(-8,-5,-10), 14)
                         .setEmission(new Color(169, 204, 227  )).setMaterial(snowmanSkin),
@@ -67,40 +67,37 @@ public class PRO7Test {
 
                 //eyes of the snowman
                 new Sphere(new Point(-16,-18,7), 1)
-                        .setEmission(new Color(0,0,0)),
+                        .setEmission(new Color(0,0,0)).setMaterial(snowmanSkin),
                 new Sphere(new Point(-14, -16, 7.5),2)
                         .setEmission(new Color(144, 148, 151)).setMaterial(snowmanEye),
 
                 new Sphere(new Point(-20,-13,7),1)
-                        .setEmission(new Color(0,0,0)),
+                        .setEmission(new Color(0,0,0)).setMaterial(snowmanSkin),
                 new Sphere(new Point(-18,-11,7.5),2)
                         .setEmission(new Color(144, 148, 151 )).setMaterial(snowmanEye),
-                //nose of the snowman (pyramid, other did not succeed to me)
 
-//                 new Triangle(new Point(-14,-4,5), new Point(-17,-2,-0.5), new Point(-35,0,-7))
-//                        .setEmission(new Color(130,50,10)).setMaterial(snowmanNose),
-                new Triangle(new Point(-20,-20,8), new Point(-20,-18,3.5), new Point(-10,-25,0))
+                //the hand:
+                new Triangle(new Point(-30,-20,-2), new Point(-35,-18,-4), new Point(-30,-19,-3.3))
+                        .setEmission(new Color(138,96,30)).setMaterial(snowmanOrgans),
+
+                new Triangle(new Point(-10,-20,-2), new Point(10,-18,-3.7), new Point(-10,-20.5,-3.4))
+                        .setEmission(new Color(138,96,30)).setMaterial(snowmanOrgans),
+
+                //nose of the snowman (pyramid)
+                new Triangle(new Point(-21.7,-20,6), new Point(-16.8,-18,3.8), new Point(-17.5,-19,1))
                         .setEmission(new Color(130,50,10)).setMaterial(snowmanNose),
 
-//                new Triangle(new Point(-10,-28,-4), new Point(-7,2,-4), new Point(-7,0,-4))
-//                        .setEmission(new Color(130,50,10)).setMaterial(snowmanNose),
-//
-//                new Triangle(new Point(-10,-18,-4), new Point(-10,-12,-4), new Point(-25,-12,-8))
-//                        .setEmission(new Color(130,50,10)).setMaterial(snowmanNose),
-//
-//                new Triangle(new Point(-7,-2,3.5), new Point(-7,2,3.5), new Point(-22,0,-5))
-//                        .setEmission(new Color(130,50,10)).setMaterial(snowmanNose),
-
-//
+                new Triangle(new Point(-21.7,-20,6), new Point(-21.8,-18,3.5), new Point(-17.5,-19,1))
+                        .setEmission(new Color(224,158,56)).setMaterial(snowmanNose),
 
 
-
-//                //the land (replace to tube, like a branch?) the water source, and the shore
+                //the land (replace to tube, like a branch?) the water source, and the shore
                 new Plane(new Point(215, 189, 226 ), new Point(-8,13,-25), new Point(1,1,-25))
                         .setEmission(new Color/*(140,50,40)*/(41, 128, 185 )).setMaterial(new Material().setKd(0.6).setShininess(10)),
 
                 new Plane(new Point(-15,10,-25), new Point(-15,-10,-25), new Point(-35,0,-12))
                         .setEmission(new Color(0, 20, 255)).setMaterial(new Material().setKr(0.5)));//.setKd(0.7).setKs(0.4).setShininess(20)),
+
 
 
         //scene.lights.add(new PointLight(new Color(255,255,255), new Point(-30,0,20)).setKq(0.00001).setKl(0.00001));
