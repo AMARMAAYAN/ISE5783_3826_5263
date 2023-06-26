@@ -1,9 +1,11 @@
 package renderer;
 import primitives.*;
 import primitives.Color;
-import java.util.MissingResourceException;
-import java.util.NoSuchElementException;
+import primitives.Vector;
 
+import java.util.*;
+
+import static primitives.Util.alignZero;
 import static primitives.Util.isZero;
 
 /**
@@ -23,6 +25,21 @@ public class Camera {
     private ImageWriter imageWriter; // The image writer used to write the rendered image
     private RayTracerBase rayTracer; // The ray tracer used for rendering
 
+    /**
+     * number of rays in beam for supersampling
+     */
+    private int _nSS = 64;
+
+    /**
+     * setter for _nSS
+     *
+     * @param nSS value
+     * @return this
+     */
+    public Camera setNSS(int nSS) {
+        _nSS = nSS;
+        return this;
+    }
 
     /**
      * function that gets the position of the camera
@@ -364,6 +381,156 @@ public class Camera {
             position = position.add(vTo.scale(distance));
         }
         return this;
+    }
+
+    /**
+     * render the image using the image writer, using super sampling in the random method
+     * @return this, builder pattern
+     */
+    public Camera renderImageSuperSampling() {
+        checkExceptions();
+        // for each pixel
+        int nx = imageWriter.getNx();
+        int ny = imageWriter.getNy();
+        for (int i = 0; i < nx; i++) {
+            for (int j = 0; j < ny; j++) {
+                imageWriter.writePixel(j, i, castBeamSuperSampling(j, i));
+            }
+        }
+        return this;
+    }
+
+    /**
+     * casts beam of rays around the center ray of pixel
+     *
+     * @param j col index
+     * @param i row index
+     * @return Color for a certain pixel
+     */
+    private Color castBeamSuperSampling(int j, int i) {
+        List<Ray> beam = constructBeamSuperSampling(imageWriter.getNx(), imageWriter.getNy(), j, i);
+        Color color = Color.BLACK;
+        // calculate average color of rays traced
+        for (Ray ray : beam) {
+            color = color.add(rayTracer.traceRay(ray));
+        }
+        return color.reduce(_nSS);
+    }
+
+    /**
+     * creates beam of rays around center of pixel randomly
+     *
+     * @param nX num of row pixels
+     * @param nY num of col pixels
+     * @param j  col index
+     * @param i  row index
+     * @return list of rays in beam
+     */
+    private List<Ray> constructBeamSuperSampling(int nX, int nY, int j, int i) {
+        List<Ray> beam = new LinkedList<>();
+        beam.add(constructRay(nX, nY, j, i));
+        double ry = height / nY;
+        double rx = width / nX;
+        double yScale = alignZero((j - nX / 2d) * rx + rx / 2d);
+        double xScale = alignZero((i - nY / 2d) * ry + ry / 2d);
+        Point pixelCenter = position.add(vTo.scale(distance)); // center
+        if (!isZero(yScale))
+            pixelCenter = pixelCenter.add(vRight.scale(yScale));
+        if (!isZero(xScale))
+            pixelCenter = pixelCenter.add(vUp.scale(-1 * xScale));
+        Random rand = new Random();
+        // create rays randomly around the center ray
+        for (int c = 0; c < _nSS; c++) {
+            // move randomly in the pixel
+            double dxfactor = rand.nextBoolean() ? rand.nextDouble() : -1 * rand.nextDouble();
+            double dyfactor = rand.nextBoolean() ? rand.nextDouble() : -1 * rand.nextDouble();
+            double dx = rx * dxfactor;
+            double dy = ry * dyfactor;
+            Point randomPoint = pixelCenter;
+            if (!isZero(dx))
+                randomPoint = randomPoint.add(vRight.scale(dx));
+            if (!isZero(dy))
+                randomPoint = randomPoint.add(vUp.scale(-1 * dy));
+            beam.add(new Ray(position, randomPoint.subtract(position)));
+        }
+        return beam;
+    }
+
+
+    /**
+     * maximum level of recursion for adaptive supersampling
+     */
+    private int _maxLevelAdaptiveSS = 3;
+
+
+    /**
+     * casts beam of rays in pixel according to adaptive supersampling
+     *
+     * @param j col index
+     * @param i row index
+     * @return Color for a certain pixel
+     */
+    private Color castBeamAdaptiveSuperSampling(int j, int i) {
+        Ray center = constructRay(imageWriter.getNx(), imageWriter.getNy(), j, i);
+        Color centerColor = rayTracer.traceRay(center);
+        return calcAdaptiveSuperSampling(imageWriter.getNx(), imageWriter.getNy(), j, i, _maxLevelAdaptiveSS, centerColor);
+    }
+
+    /**
+     * calculates actual color using adaptive supersampling
+     *
+     * @param nX    num of rows
+     * @param nY    num of cols
+     * @param j     col index of pixel
+     * @param i     row index of pixel
+     * @param level level of recursion
+     * @return color of pixel
+     */
+    private Color calcAdaptiveSuperSampling(int nX, int nY, int j, int i, int level, Color centerColor) {
+        // recursion reached maximum level
+        if (level == 0) {
+            return centerColor;
+        }
+        Color color = centerColor;
+        // divide pixel into 4 mini-pixels
+        Ray[] beam = new Ray[]{constructRay(2 * nX, 2 * nY, 2 * j, 2 * i),
+                constructRay(2 * nX, 2 * nY, 2 * j, 2 * i + 1),
+                constructRay(2 * nX, 2 * nY, 2 * j + 1, 2 * i),
+                constructRay(2 * nX, 2 * nY, 2 * j + 1, 2 * i + 1)};
+        // for each mini-pixel
+        for (int ray = 0; ray < 4; ray++) {
+            Color currentColor = rayTracer.traceRay(beam[ray]);
+            if (!currentColor.equals(centerColor))
+                currentColor = calcAdaptiveSuperSampling(2 * nX, 2 * nY,
+                        2 * j + ray / 2, 2 * i + ray % 2, level - 1, currentColor);
+            color = color.add(currentColor);
+        }
+        return color.reduce(5);
+    }
+
+    /**
+     * function checking that camera object has everything needed for rendering
+     */
+    private void checkExceptions() {
+        if (position == null)
+            throw new MissingResourceException("location is missing", "Point", "location");
+        if (vTo == null)
+            throw new MissingResourceException("Vto is missing", "Vector", "vto");
+        if (vUp == null)
+            throw new MissingResourceException("Vup is missing", "Vector", "vup");
+        if (vRight == null)
+            throw new MissingResourceException("Vright is missing", "Vector", "vright");
+        if (height == 0)
+            throw new MissingResourceException("height is missing", "double", "height");
+        if (width == 0)
+            throw new MissingResourceException("width is missing", "double", "width");
+        if (distance == 0)
+            throw new MissingResourceException("distance is missing", "double", "distance");
+        if (imageWriter == null)
+            throw new MissingResourceException("imageWriter is missing", "ImageWriter", "imageWriter");
+        if (rayTracer == null)
+            throw new MissingResourceException("rayTracerBase is missing", "RayTraceBase", "rayTracerBase");
+
     }
 
 
