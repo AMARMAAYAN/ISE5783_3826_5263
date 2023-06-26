@@ -367,4 +367,35 @@ public class Camera {
     }
 
 
+    //for MP1
+//    public Camera renderImageMultiThreading() {
+//        Pixel.initialize(imageWriter.getNy(), imageWriter.getNx(), 1);
+//        while (_threadsCount-- > 0) {
+//            new Thread(() -> {
+//                for (Pixel pixel = new Pixel(); pixel.nextPixel(); Pixel.pixelDone())
+//                    imageWriter.writePixel(pixel.col, pixel.row, castRay(pixel.col, pixel.row));
+//            }).start();
+//        }
+//        Pixel.waitToFinish();
+//        return this;
+//    }
+//
+//    /**
+//     * renders image using multithreading and adaptive supersampling
+//     *
+//     * @return this
+//     */
+//    public Camera renderImageMultiThreadingASS() {
+//        Pixel.initialize(imageWriter.getNy(), imageWriter.getNx(), 60);
+//        while (_threadsCount-- > 0) {
+//            new Thread(() -> {
+//                for (Pixel pixel = new Pixel(); pixel.nextPixel(); Pixel.pixelDone())
+//                    imageWriter.writePixel(pixel.col, pixel.row, castBeamAdaptiveSuperSampling(pixel.col, pixel.row));
+//            }).start();
+//        }
+//        Pixel.waitToFinish();
+//        return this;
+//    }
+
+
 }

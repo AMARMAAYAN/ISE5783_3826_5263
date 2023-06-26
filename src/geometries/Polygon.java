@@ -90,6 +90,8 @@ public class Polygon extends Geometry {
     }
 
 
+
+
     /**
      * Finds the intersection point between a given ray and a polygon.
      * @param ray The ray to intersect with the polygon.

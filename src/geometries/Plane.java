@@ -21,6 +21,7 @@ public class Plane extends Geometry {
      */
     final protected Vector normal;
 
+
     /**
      * Constructs a new plane with the given three points.
      * @param p1 The first point.
