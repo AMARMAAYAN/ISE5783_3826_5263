@@ -5,6 +5,7 @@ import primitives.*;
 import scene.Scene;
 import geometries.Intersectable.GeoPoint;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import static primitives.Util.*;
@@ -31,6 +32,11 @@ public class RayTracerBasic extends RayTracerBase{
     private static final Double3 INITIAL_K = new Double3(1.0);
 
     /**
+     * sqrt of maximum number of rays in a beam
+     */
+    private int _nRays = 4;
+
+    /**
      * Creates a RayTracerBasic object with the specified scene.
      * @param scene The scene to be rendered.
      */
@@ -38,6 +44,16 @@ public class RayTracerBasic extends RayTracerBase{
         super(scene);
     }
 
+    /**
+     * setter for nrays
+     *
+     * @param nRays sqrt of maximum number of rays in a beam
+     * @return this
+     */
+    public RayTracerBasic setNRays(int nRays) {
+        _nRays = nRays;
+        return this;
+    }
 
 
     @Override
@@ -99,7 +115,7 @@ public class RayTracerBasic extends RayTracerBase{
         Color color = calcLocalEffects(geoPoint, ray, k)
                 .add(geoPoint.geometry.getEmission());
         return 1 == level ? color :
-                color.add(calcGlobalEffects(geoPoint, ray, level, k));
+                color.add(calcGlobalEffects(geoPoint, ray.getDir(), level, k));
     }
 
     /**
@@ -116,7 +132,9 @@ public class RayTracerBasic extends RayTracerBase{
     }
 
 
+
     /**
+     * before the improvement for mini project1
      * calculate the color according to the k factor for the reflection and refraction effects
      * @param gp calculate the color of this point
      * @param ray the ray of intersection that 'hit' the point
@@ -124,20 +142,93 @@ public class RayTracerBasic extends RayTracerBase{
      * @param k the volume of the color
      * @return the calculated color
      */
-    private Color calcGlobalEffects(GeoPoint gp, Ray ray, int level, Double3 k) {
+
+//    private Color calcGlobalEffects(GeoPoint gp, Ray ray, int level, Double3 k) {
+//        Color color = Color.BLACK;
+//        Vector n = gp.geometry.getNormal(gp.point);
+//        Material material = gp.geometry.getMaterial();
+//
+//        Double3 kkr = k.product(material.getKr());
+//        if (!kkr.lowerThan(MIN_CALC_COLOR_K)) // the color is effected by the reflection
+//            color = calcGlobalEffects(constructReflectedRay(gp.point, ray, n), level, material.getKr(), kkr);
+//
+//        Double3 kkt = k.product(material.getKt());
+//        if (!kkt.lowerThan(MIN_CALC_COLOR_K)) // the color is effected due to the transparency
+//            color = color.add(calcGlobalEffects(constructRefractedRay(gp.point, ray, n), level, material.getKt(), kkt));
+//
+//        return color;
+//    }
+
+    /**
+     * calculates global lighting effects recursively
+     *
+     * @param gp    point to calculate color for
+     * @param v     direction vector of ray intersection the point
+     * @param level depth left for recursive calls
+     * @param k     current k
+     * @return color calculated for the given point
+     */
+    private Color calcGlobalEffects(GeoPoint gp, Vector v, int level, Double3 k) {
         Color color = Color.BLACK;
         Vector n = gp.geometry.getNormal(gp.point);
         Material material = gp.geometry.getMaterial();
-
         Double3 kkr = k.product(material.getKr());
-        if (!kkr.lowerThan(MIN_CALC_COLOR_K)) // the color is effected by the reflection
-            color = calcGlobalEffects(constructReflectedRay(gp.point, ray, n), level, material.getKr(), kkr);
-
+        // reflectance
+        if (kkr.greaterThan(MIN_CALC_COLOR_K)) {
+            List<Ray> reflectedBeam = constructBeamAroundRay(constructReflectedRay(gp.point, v, n), n,
+                    material._kg);
+            Color temp = Color.BLACK;
+            for (Ray reflected : reflectedBeam) {
+                temp = temp.add(calcGlobalEffects(reflected, level, material.getKr(), kkr));
+            }
+            color = color.add(temp.reduce(reflectedBeam.size()));
+        }
         Double3 kkt = k.product(material.getKt());
-        if (!kkt.lowerThan(MIN_CALC_COLOR_K)) // the color is effected due to the transparency
-            color = color.add(calcGlobalEffects(constructRefractedRay(gp.point, ray, n), level, material.getKt(), kkt));
-
+        // refraction
+        if (kkt.greaterThan(MIN_CALC_COLOR_K)) {
+            List<Ray> refractedBeam = constructBeamAroundRay(constructRefractedRay(gp.point, v, n), n,
+                    1 - material._kb);
+            Color temp = Color.BLACK;
+            for (Ray refracted : refractedBeam) {
+                temp = temp.add(calcGlobalEffects(refracted, level, material.getKt(), kkt));
+            }
+            color = color.add(temp.reduce(refractedBeam.size()));
+        }
         return color;
+    }
+
+    /**
+     * constructs a beam around a ray according to coefficient
+     *
+     * @param ray         ray to construct beam around
+     * @param n           normal to geometry
+     * @param coefficient precision factor
+     * @return list of rays in beam
+     */
+    private List<Ray> constructBeamAroundRay(Ray ray, Vector n, double coefficient) {
+
+        List<Ray> beam = new LinkedList<>();
+        beam.add(ray);
+        double widthFactor = 1 - coefficient;
+        Vector ortho;
+        // ortho = dir - (dir * n) * n
+        if (isZero(ray.getDir().dotProduct(n)))
+            ortho = n;
+        else
+            ortho = ray.getDir().subtract(n.scale(ray.getDir().dotProduct(n))).normalize();
+
+        for (int i = 0; i < _nRays && !isZero(widthFactor); i++, widthFactor *= 0.9d) {
+            ortho = ortho.scale(widthFactor);
+            Vector dir = ray.getDir().add(ortho).normalize();
+            for (int j = 0; j < _nRays;
+                 j++, dir = dir.rotate(ray.getDir(), 360d / _nRays)) {
+                // if the rays are on the same side of surface
+                if (dir.dotProduct(n) * ray.getDir().dotProduct(n) > 0) {
+                    beam.add(new Ray(ray.getP0(), dir));
+                }
+            }
+        }
+        return beam;
     }
 
     /**
@@ -231,6 +322,10 @@ public class RayTracerBasic extends RayTracerBase{
         return new Ray(point, ray.getDir(), n);
     }
 
+    private Ray constructRefractedRay(Point point, Vector v, Vector n) {
+        return new Ray(point, v, n);
+    }
+
     /**
      * construct the reflection ray according to the physics law of reflection
      * @param point reference point of the new ray
@@ -240,6 +335,21 @@ public class RayTracerBasic extends RayTracerBase{
      */
     private Ray constructReflectedRay(Point point, Ray ray, Vector n) {
         return new Ray(point, reflectionVector(ray.getDir(), n), n);
+    }
+
+    /**
+     * constructs a reflected ray for a given point and vector
+     *
+     * @param point point
+     * @param v     vector of ray that intersects
+     * @param n     normal to point
+     * @return reflected ray
+     */
+    private Ray constructReflectedRay(Point point, Vector v, Vector n) {
+        if (isZero(v.dotProduct(n)))
+            return new Ray(point, v);
+        Vector r = v.subtract(n.scale(v.dotProduct(n)).scale(2)); // r = v - 2 * (v * n) * n
+        return new Ray(point, r, n);
     }
 
     /**

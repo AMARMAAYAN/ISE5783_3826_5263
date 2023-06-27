@@ -31,6 +31,8 @@ public class Sphere extends RadialGeometry {
     public Sphere(Point center, double radius) {
         super(radius);
         this.center = center;
+        if (_bvhIsOn)
+            createBoundingBox();
 
     }
 
@@ -98,6 +100,20 @@ public class Sphere extends RadialGeometry {
         return null; // If none of the conditions above are met, there are no valid intersection points, so return null
     }
 
+
+    /**
+     * create boundary box for object
+     */
+    @Override
+    public void createBoundingBox() {
+        double minX = center.getX() - radius;
+        double minY = center.getY() - radius;
+        double minZ = center.getZ() - radius;
+        double maxX = center.getX() + radius;
+        double maxY = center.getY() + radius;
+        double maxZ = center.getZ() + radius;
+        _box = new BoundingBox(new Point(minX, minY, minZ), new Point(maxX, maxY, maxZ));
+    }
 
 }
 

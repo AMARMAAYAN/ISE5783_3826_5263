@@ -27,16 +27,11 @@ public class TryMP1 {
 
     @Test
     public void picture() {
-
-
-
-
-
         // There are two versions of the photo- the normal one, and another one taken from the top to show another angle of the created scene, for ease of working with it
         Camera camera = new Camera(new Point(-1000, 0, 500), new Vector(1, 0, -0.05), new Vector(0.05, 0, 1)) //
                 .setVPSize(200, 150).setVPDistance(Math.sqrt(500000));
         Camera cameraTop = new Camera(new Point(5000, 0, 580), new Vector(0, 0, -1), new Vector(1, 0, 0)) //
-                .setVPSize(100, 150).setVPDistance(100);
+                .setVPSize(70, 120).setVPDistance(100);
 
         //created three lanes
        createLanes();
@@ -48,9 +43,9 @@ public class TryMP1 {
         //createFallingBowlingPins(firstX, 240);
         //creating walls for the room- including a window on the left side, with a directional light which you can see hitting the left lane
         //this is light number one
-        createWalls();
+        //createWalls();
         //creating the black boxes to symbol the end of lane, to make the image more realistic
-        createBoxForEndOfLane();
+        //createBoxForEndOfLane();
 
         //addPin(new Point(10 + 3 * Math.sqrt(27), 0, -9));
 
@@ -59,8 +54,8 @@ public class TryMP1 {
 
         //light number 2- this light is located in front of the middle bowling pins, and you can see it on the back wall-
         // it is green, and you can see the shape of the bowling pins shaded on the back wall.
-        SpotLight lightFixture2 = new SpotLight(new Color(102, 255, 51), new Point(4670, 20, 7), new Vector(1, 0, 0.02));
-        scene.getLights().add(lightFixture2);
+        //SpotLight lightFixture2 = new SpotLight(new Color(102, 255, 51), new Point(4670, 20, 7), new Vector(1, 0, 0.02));
+        //scene.getLights().add(lightFixture2);
         //creates the bal holder on the left of the image- If you zoom in on each ball you can see the whole room reflected
         //  createBallHolder(2500, -150, 3);
 
@@ -74,14 +69,14 @@ public class TryMP1 {
 //        addPin(new Point(1900, 100, 100));
 //        addPin(new Point(1900, -100, 200));
 
-        addPin(new Point(8500, 50.1, 17));
-        addPin(new Point(8500, -44.1, 17));
-        addPin(new Point(8500, 3.1, 17));
+        addPin(new Point(6500, 50.1, 17));
+        addPin(new Point(6500, -44.1, 17));
+        addPin(new Point(6500, 3.1, 17));
 
-        addPin(new Point(8100, 23.1, 17));
-        addPin(new Point(8100, -17.1, 17));
+        addPin(new Point(6100, 23.1, 17));
+        addPin(new Point(6100, -17.1, 17));
 
-        addPin(new Point(7700, 3.1, 17));
+        addPin(new Point(5700, 3.1, 17));
 
         addPin(new Point(4000, 3.1, 17));
 
@@ -298,5 +293,7 @@ public class TryMP1 {
         scene.getGeometries().add(rightTube, leftTube);
 
     }
+
+
 
 }

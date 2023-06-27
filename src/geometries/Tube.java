@@ -27,6 +27,8 @@ public class Tube extends RadialGeometry {
     public Tube(Ray axisRay, double radius) {
         super(radius);
         this.axisRay = axisRay;
+        if (_bvhIsOn)
+            createBoundingBox();
     }
 
     /**
@@ -38,6 +40,14 @@ public class Tube extends RadialGeometry {
         return axisRay;
     }
 
+
+    /**
+     * create boundary box for object
+     */
+    @Override
+    public void createBoundingBox() {
+        _box = null;
+    }
 
     @Override
     public Vector getNormal(Point point) {

@@ -82,6 +82,32 @@ public class Polygon extends Geometry {
             if (positive != (edge1.crossProduct(edge2).dotProduct(n) > 0))
                 throw new IllegalArgumentException("All vertices must be ordered and the polygon must be convex");
         }
+        if (_bvhIsOn)
+            createBoundingBox();
+    }
+
+    /**
+     * create boundary box for object
+     */
+    @Override
+    public void createBoundingBox() {
+        if (vertices == null)
+            return;
+        double minX = Double.POSITIVE_INFINITY;
+        double minY = Double.POSITIVE_INFINITY;
+        double minZ = Double.POSITIVE_INFINITY;
+        double maxX = Double.NEGATIVE_INFINITY;
+        double maxY = Double.NEGATIVE_INFINITY;
+        double maxZ = Double.NEGATIVE_INFINITY;
+        for (Point ver : vertices) {
+            minX = Math.min(minX, ver.getX());
+            minY = Math.min(minY, ver.getY());
+            minZ = Math.min(minZ, ver.getZ());
+            maxX = Math.max(maxX, ver.getX());
+            maxY = Math.max(maxY, ver.getY());
+            maxZ = Math.max(maxZ, ver.getZ());
+        }
+        _box = new BoundingBox(new Point(minX, minY, minZ), new Point(maxX, maxY, maxZ));
     }
 
     @Override

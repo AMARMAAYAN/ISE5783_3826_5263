@@ -38,6 +38,16 @@ public class Material {
      */
     private int nShininess = 0;
 
+    /**
+      * glossiness coefficient
+     */
+    public double _kg = 1;
+    /**
+     * blurriness coefficient
+     */
+    public double _kb = 0;
+
+
     // **** Setters ****
 
     /**
@@ -139,6 +149,27 @@ public class Material {
         return this;
     }
 
+    /**
+     * setter for field kglossy, builder pattern
+     *
+     * @param kg glossiness coefficient
+     * @return this
+     */
+    public Material setKg(double kg) {
+        _kg = kg;
+        return this;
+    }
+
+    /**
+     * setter for field kblurry, builder pattern
+     *
+     * @param kb blurriness coefficient
+     * @return this
+     */
+    public Material setKb(double kb) {
+        _kb = kb;
+        return this;
+    }
     // **** Getters ****
 
     /**

@@ -21,8 +21,9 @@ public class Triangle extends Polygon {
      * @param pC The third vertex of the triangle.
      */
     public Triangle(Point pA, Point pB, Point pC) {
-
         super(pA, pB, pC);
+        if (_bvhIsOn)
+            createBoundingBox();
     }
 
 

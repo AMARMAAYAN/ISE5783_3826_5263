@@ -14,7 +14,7 @@ import static primitives.Util.isZero;
  @author Maayan Amar
  */
 public class Camera {
-
+    private int _threadsCount = 3;
     private Point position; // The position of the camera
     private Vector vTo; // The direction vector pointing towards the target
     private Vector vUp; // The up vector
@@ -253,6 +253,17 @@ public class Camera {
 
     }
 
+    /**
+     * Casts a ray through a pixel, traces it and returns the color for the pixel
+     *
+     * @param j col index
+     * @param i row index
+     * @return Color for a certain pixel
+     */
+    private Color castRay(int j, int i) {
+        Ray ray = constructRay(imageWriter.getNx(), imageWriter.getNy(), j, i);
+        return rayTracer.traceRay(ray);
+    }
 
     //additional classes for stage 7:
     /**
@@ -456,6 +467,22 @@ public class Camera {
         return beam;
     }
 
+    /**
+     * render the image using the image writer, using adaptive supersampling
+     * @return this, builder pattern
+     */
+    public Camera renderImageAdaptiveSuperSampling() {
+        checkExceptions();
+        // for each pixel
+        int nx = imageWriter.getNx();
+        int ny = imageWriter.getNy();
+        for (int i = 0; i < nx; i++) {
+            for (int j = 0; j < ny; j++) {
+                imageWriter.writePixel(j, i, castBeamAdaptiveSuperSampling(j, i));
+            }
+        }
+        return this;
+    }
 
     /**
      * maximum level of recursion for adaptive supersampling
@@ -509,6 +536,17 @@ public class Camera {
     }
 
     /**
+     * setter for _maxLevel
+     *
+     * @param maxLevelAdaptiveSS value
+     * @return this
+     */
+    public Camera setMaxLevelAdaptiveSS(int maxLevelAdaptiveSS) {
+        _maxLevelAdaptiveSS = maxLevelAdaptiveSS;
+        return this;
+    }
+
+    /**
      * function checking that camera object has everything needed for rendering
      */
     private void checkExceptions() {
@@ -533,36 +571,40 @@ public class Camera {
 
     }
 
+    /**
+     * renders image using multithreading
+     *
+     * @return this
+     */
+    public Camera renderImageMultiThreading() {
+        Pixel.initialize(imageWriter.getNy(), imageWriter.getNx(), 1);
+        while (_threadsCount-- > 0) {
+            new Thread(() -> {
+                for (Pixel pixel = new Pixel(); pixel.nextPixel(); Pixel.pixelDone())
+                    imageWriter.writePixel(pixel.col, pixel.row, castRay(pixel.col, pixel.row));
+            }).start();
+        }
+        Pixel.waitToFinish();
+        return this;
+    }
 
-    //for MP1
-//    public Camera renderImageMultiThreading() {
-//        Pixel.initialize(imageWriter.getNy(), imageWriter.getNx(), 1);
-//        while (_threadsCount-- > 0) {
-//            new Thread(() -> {
-//                for (Pixel pixel = new Pixel(); pixel.nextPixel(); Pixel.pixelDone())
-//                    imageWriter.writePixel(pixel.col, pixel.row, castRay(pixel.col, pixel.row));
-//            }).start();
-//        }
-//        Pixel.waitToFinish();
-//        return this;
-//    }
-//
-//    /**
-//     * renders image using multithreading and adaptive supersampling
-//     *
-//     * @return this
-//     */
-//    public Camera renderImageMultiThreadingASS() {
-//        Pixel.initialize(imageWriter.getNy(), imageWriter.getNx(), 60);
-//        while (_threadsCount-- > 0) {
-//            new Thread(() -> {
-//                for (Pixel pixel = new Pixel(); pixel.nextPixel(); Pixel.pixelDone())
-//                    imageWriter.writePixel(pixel.col, pixel.row, castBeamAdaptiveSuperSampling(pixel.col, pixel.row));
-//            }).start();
-//        }
-//        Pixel.waitToFinish();
-//        return this;
-//    }
+    /**
+     * renders image using multithreading and adaptive supersampling
+     *
+     * @return this
+     */
+    public Camera renderImageMultiThreadingASS() {
+        Pixel.initialize(imageWriter.getNy(), imageWriter.getNx(), 60);
+        while (_threadsCount-- > 0) {
+            new Thread(() -> {
+                for (Pixel pixel = new Pixel(); pixel.nextPixel(); Pixel.pixelDone())
+                    imageWriter.writePixel(pixel.col, pixel.row, castBeamAdaptiveSuperSampling(pixel.col, pixel.row));
+            }).start();
+        }
+        Pixel.waitToFinish();
+        return this;
+    }
+
 
 
 }

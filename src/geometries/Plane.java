@@ -48,8 +48,17 @@ public class Plane extends Geometry {
     public Plane(Point q0, Vector vector) {
         this.q0 = q0;
         this.normal = vector.normalize();
+        if (_bvhIsOn)
+            createBoundingBox();
     }
 
+    /**
+     * create boundary box for object
+     */
+    @Override
+    public void createBoundingBox() {
+        _box = null;
+    }
 
     @Override
     public Vector getNormal(Point point) {
