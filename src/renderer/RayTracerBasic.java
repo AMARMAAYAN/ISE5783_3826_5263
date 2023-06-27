@@ -362,4 +362,9 @@ public class RayTracerBasic extends RayTracerBase{
         return l.subtract(n.scale(2 * l.dotProduct(n))).normalize();
     }
 
+
+
+
+
+
 }

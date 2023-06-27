@@ -31,6 +31,13 @@ public class Camera {
     private int _nSS = 64;
 
     /**
+     * maximum level of recursion for adaptive supersampling
+     */
+    private int _maxLevelAdaptiveSS = 3;
+
+
+
+    /**
      * setter for _nSS
      *
      * @param nSS value
@@ -190,26 +197,6 @@ public class Camera {
         if (jX != 0) Pij = Pij.add(vRight.scale(jX)); // Adjust the point horizontally based on the offset
 
         return new Ray(position, Pij.subtract(position)); // Create and return the constructed ray
-    }
-
-    /**
-     * function that gets the color of the pixel and renders in to image
-     */
-    public Camera renderImage() {
-        if (position == null || vTo == null || vUp == null || vRight == null || distance == 0 || height == 0 || width == 0 || imageWriter == null || rayTracer == null)
-            throw new MissingResourceException("", "", "Camera is not initialized");
-
-        int nX = imageWriter.getNx(); // Get the width of the image
-        int nY = imageWriter.getNy(); // Get the height of the image
-
-        for (int i = 0; i < imageWriter.getNx(); i++) {
-            for (int j = 0; j < imageWriter.getNy(); j++) {
-                Ray ray = constructRay(nX, nY, j, i); // Construct the ray for the current pixel
-                imageWriter.writePixel(j, i, this.castRay(nX, nY, i, j)); // Cast the ray and write the color to the image writer
-            }
-        }
-
-        return this;
     }
 
     /**
@@ -394,6 +381,28 @@ public class Camera {
         return this;
     }
 
+
+    /**
+     * render the image using the image writer
+     * @return this, builder pattern
+     */
+    public Camera renderImage() {
+        checkExceptions();
+        int nx = imageWriter.getNx();
+        int ny = imageWriter.getNy();
+        Pixel.initialize(imageWriter.getNy(), imageWriter.getNx(), 60);
+        for (int i = 0; i < nx; ++i) {
+            for (int j = 0; j < ny; ++j) {
+                imageWriter.writePixel(j, i, castRay(j, i));
+                Pixel.pixelDone();
+                //Pixel.printPixel();
+            }
+        }
+        return this;
+
+    }
+
+
     /**
      * render the image using the image writer, using super sampling in the random method
      * @return this, builder pattern
@@ -410,6 +419,32 @@ public class Camera {
         }
         return this;
     }
+
+
+
+
+
+    /**
+     * function that gets the color of the pixel and renders in to image
+     */
+//    public Camera renderImage() {
+//        if (position == null || vTo == null || vUp == null || vRight == null || distance == 0 || height == 0 || width == 0 || imageWriter == null || rayTracer == null)
+//            throw new MissingResourceException("", "", "Camera is not initialized");
+//
+//        int nX = imageWriter.getNx(); // Get the width of the image
+//        int nY = imageWriter.getNy(); // Get the height of the image
+//
+//        for (int i = 0; i < imageWriter.getNx(); i++) {
+//            for (int j = 0; j < imageWriter.getNy(); j++) {
+//                Ray ray = constructRay(nX, nY, j, i); // Construct the ray for the current pixel
+//                imageWriter.writePixel(j, i, this.castRay(nX, nY, i, j)); // Cast the ray and write the color to the image writer
+//            }
+//        }
+//
+//        return this;
+//    }
+
+
 
     /**
      * casts beam of rays around the center ray of pixel
@@ -483,12 +518,6 @@ public class Camera {
         }
         return this;
     }
-
-    /**
-     * maximum level of recursion for adaptive supersampling
-     */
-    private int _maxLevelAdaptiveSS = 3;
-
 
     /**
      * casts beam of rays in pixel according to adaptive supersampling

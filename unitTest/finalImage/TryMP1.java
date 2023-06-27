@@ -27,6 +27,9 @@ public class TryMP1 {
 
     @Test
     public void picture() {
+
+        scene.setAmbientLight(new AmbientLight(new Color(214, 234, 248 ), new Double3(0.1)));
+
         // There are two versions of the photo- the normal one, and another one taken from the top to show another angle of the created scene, for ease of working with it
         Camera camera = new Camera(new Point(-1000, 0, 500), new Vector(1, 0, -0.05), new Vector(0.05, 0, 1)) //
                 .setVPSize(200, 150).setVPDistance(Math.sqrt(500000));
@@ -35,39 +38,27 @@ public class TryMP1 {
 
         //created three lanes
        createLanes();
-        //creating the bowling pins
-        // createBowlingPins(firstX, 0);
 
-       // createBowlingPins(firstX, -240);
 
-        //createFallingBowlingPins(firstX, 240);
-        //creating walls for the room- including a window on the left side, with a directional light which you can see hitting the left lane
-        //this is light number one
-        //createWalls();
+
+        //creating walls for the room- with a directional light which you can see hitting the left lane
+        //this is light #1-directional light
+        createWalls();
         //creating the black boxes to symbol the end of lane, to make the image more realistic
-        //createBoxForEndOfLane();
-
-        //addPin(new Point(10 + 3 * Math.sqrt(27), 0, -9));
-
-//        addPin(new Point(2250, -150, 3));
+        createBoxForEndOfLane();
 
 
-        //light number 2- this light is located in front of the middle bowling pins, and you can see it on the back wall-
+        //light # 2- this light is located in front of the middle bowling pins, and you can see it on the back wall-
         // it is green, and you can see the shape of the bowling pins shaded on the back wall.
-        //SpotLight lightFixture2 = new SpotLight(new Color(102, 255, 51), new Point(4670, 20, 7), new Vector(1, 0, 0.02));
-        //scene.getLights().add(lightFixture2);
-        //creates the bal holder on the left of the image- If you zoom in on each ball you can see the whole room reflected
-        //  createBallHolder(2500, -150, 3);
+        SpotLight lightFixture2 = new SpotLight(new Color(102, 255, 51), new Point(4670, 20, 7), new Vector(1, 0, 0.02));
+        scene.getLights().add(lightFixture2);
 
-        //creates light number 3- the spotlight located on the top of the room, pointing downwards
+
+        //creates light #3- the spotlight located on the top of the room, pointing downwards
         createLightFixture(new Point(3500, 0, 550));
 
-//
-//        creates the texture on top of the end of lane box- to make the image look nicer
-        //  createTexture(new Ray(new Point(6999, -330, 200), new Vector(0, 1, 1)));
-
-//        addPin(new Point(1900, 100, 100));
-//        addPin(new Point(1900, -100, 200));
+//       creates the texture on top of the end of lane box- to make the image look nicer
+        // createTexture(new Ray(new Point(6999, -330, 200), new Vector(0, 1, 1)));
 
         addPin(new Point(6500, 50.1, 17));
         addPin(new Point(6500, -44.1, 17));
@@ -86,11 +77,11 @@ public class TryMP1 {
         ball(new Point(3000,-225,25), new Color(231, 76, 60));
 
 
-
         camera.setImageWriter(new ImageWriter("final picture", 2000, 2000)) //
                 .setRayTracer(new RayTracerBasic(scene)) //
-                .renderImage()
-//                .renderImageMultiThreadingASS() //
+               // .renderImage()
+                //.renderImageMultiThreadingASS() //
+                .renderImageSuperSampling()
                 .writeToImage();
 
 //        cameraTop.setImageWriter(new ImageWriter("ourPictureMP2UpBVH", 2000, 2000)) //
@@ -174,8 +165,8 @@ public class TryMP1 {
     }
 
     private void createWalls() {
-        Material wall = new Material().setKd(0.4).setKr(0.09).setShininess(10);
-        Color wallColor = new Color(65, 105, 225).scale(2);
+        Material wall = new Material().setKd(0.4).setKr(0.05).setShininess(10);
+        Color wallColor = new Color( 36, 113, 163).scale(2);
         //create wall with space for window
         int closeX = 4000;
         int farX = 5500;
@@ -187,27 +178,18 @@ public class TryMP1 {
         Point bottomClosePoint = new Point(closeX, 340, bottomZ);
         Polygon leftWall1 = (Polygon) new Polygon(new Point(-500, 340, 1500), new Point(lengthToX, 340, 1500), new Point(lengthToX, 340, 0), new Point(-500, 340, 0)).setEmission(wallColor)
                 .setMaterial(wall);
-//        Polygon leftWall2 = (Polygon) new Polygon(new Point(farX, 340, 1500), new Point(lengthToX, 340, 1500), new Point(lengthToX, 340, 0), new Point(farX, 340, 0)).setEmission(wallColor)
-//                .setMaterial(wall);
-//        Polygon leftWall3 = (Polygon) new Polygon(new Point(closeX, 340, 1500), new Point(farX, 340, 1500), new Point(farX, 340, topZ), new Point(closeX, 340, topZ)).setEmission(wallColor)
-//                .setMaterial(wall.setKd(0.25).setKr(0.1));
-//        Polygon leftWall4 = (Polygon) new Polygon(new Point(closeX, 340, bottomZ), new Point(farX, 340, bottomZ), new Point(farX, 340, 0), new Point(closeX, 340, 0)).setEmission(wallColor)
-//                .setMaterial(wall);
-//        Geometry verticalStick = new Polygon(new Point((farX + closeX) / 2d - 20, 339, topZ), new Point((farX + closeX) / 2d + 20, 339, topZ), new Point((farX + closeX) / 2d + 20, 339, bottomZ), new Point((farX + closeX) / 2d - 20, 339, bottomZ))
-//                .setEmission(new Color(LIGHT_GRAY));
-//        Geometry horizontalStick = new Polygon(new Point(closeX, 339, (topZ + bottomZ) / 2d - 5), new Point(farX, 339, (topZ + bottomZ) / 2d - 5), new Point(farX, 339, (topZ + bottomZ) / 2d + 5), new Point(closeX, 339, (topZ + bottomZ) / 2d + 5))
-//                .setEmission(new Color(LIGHT_GRAY));
+
       scene.getGeometries().add(leftWall1/*, leftWall2, leftWall3, leftWall4,verticalStick, horizontalStick*/);
 
-        scene.getLights().add(new DirectionalLight(new Color(255, 230, 128), new Vector(0, -1, -0.7)));
+        scene.getLights().add(new DirectionalLight(new Color(165, 105, 189), new Vector(0, -1, -0.7)));
 
         Polygon rightWall = (Polygon) new Polygon(new Point(-500, -340, 1500), new Point(lengthToX, -340, 1500), new Point(lengthToX, -340, 0), new Point(-500, -340, 0)).setEmission(wallColor)
                 .setMaterial(wall);
         Polygon backWall = (Polygon) new Polygon(new Point(7000, 340, 1500), new Point(7000, -340, 1500), new Point(7000, -340, 0), new Point(7000, 340, 0)).setEmission(wallColor)
                 .setMaterial(wall);
-        Color roofColor = new Color(65, 105, 225);
+        Color roofColor = new Color(40, 116, 166 );
         Geometry roof = new Polygon(new Point(7000, 340, 600), new Point(7000, -340, 600), new Point(-500, -340, 600), new Point(-600, 340, 600))
-                .setEmission(new Color(65, 105, 225)).setMaterial(new Material().setKd(0.9).setShininess(19));
+                .setEmission(new Color(40, 116, 166 )).setMaterial(new Material().setKd(0.9).setShininess(19));
 //        Geometry roof = new Polygon(new Point(7000, 340, 600), new Point(7000, -340, 600), new Point(-500, -340, 600), new Point(-600, 340, 600))
 //                .setEmission(new Color(0, 153, 204)).setMaterial(new Material().setKd(0.9).setShininess(19));
         scene.getGeometries().add(rightWall, backWall, roof);
