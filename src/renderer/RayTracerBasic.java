@@ -212,6 +212,8 @@ public class RayTracerBasic extends RayTracerBase{
         double widthFactor = 1 - coefficient;
         Vector ortho;
         // ortho = dir - (dir * n) * n
+        Vector v = ray.getDir();
+
         if (isZero(ray.getDir().dotProduct(n)))
             ortho = n;
         else

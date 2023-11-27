@@ -22,8 +22,8 @@ public class TryMP1 {
     //length till end of lanes
     int lengthToX = 10000;
     //first x for the bowling pins-
-    int firstX = 5000;
-    int distanceBetweenPins = 70;
+    // int firstX = 5000;
+    // int distanceBetweenPins = 70;
 
     @Test
     public void picture() {
@@ -32,12 +32,12 @@ public class TryMP1 {
 
         // There are two versions of the photo- the normal one, and another one taken from the top to show another angle of the created scene, for ease of working with it
         Camera camera = new Camera(new Point(-1000, 0, 500), new Vector(1, 0, -0.05), new Vector(0.05, 0, 1)) //
-                .setVPSize(200, 150).setVPDistance(Math.sqrt(500000));
+                .setVPSize(150, 100).setVPDistance(Math.sqrt(500000));
         Camera cameraTop = new Camera(new Point(5000, 0, 580), new Vector(0, 0, -1), new Vector(1, 0, 0)) //
                 .setVPSize(70, 120).setVPDistance(100);
 
         //created three lanes
-       createLanes();
+        createLanes();
 
 
 
@@ -48,14 +48,15 @@ public class TryMP1 {
         createBoxForEndOfLane();
 
 
-        //light # 2- this light is located in front of the middle bowling pins, and you can see it on the back wall-
-        // it is green, and you can see the shape of the bowling pins shaded on the back wall.
-        SpotLight lightFixture2 = new SpotLight(new Color(102, 255, 51), new Point(4670, 20, 7), new Vector(1, 0, 0.02));
+        //light # 2- this light is located in front of the  bowling pins, and you can see it on the pink mirrors-
+        SpotLight lightFixture2 = new SpotLight(new Color(102, 255, 51), new Point(4670, -20, 7), new Vector(1, 0, 0.02));
         scene.getLights().add(lightFixture2);
 
 
         //creates light #3- the spotlight located on the top of the room, pointing downwards
         createLightFixture(new Point(3500, 0, 550));
+
+        createLightFixture(new Point(500, 0, 550));
 
 //       creates the texture on top of the end of lane box- to make the image look nicer
         // createTexture(new Ray(new Point(6999, -330, 200), new Vector(0, 1, 1)));
@@ -79,9 +80,9 @@ public class TryMP1 {
 
         camera.setImageWriter(new ImageWriter("final picture", 2000, 2000)) //
                 .setRayTracer(new RayTracerBasic(scene)) //
-               // .renderImage()
+                .renderImage()
                 //.renderImageMultiThreadingASS() //
-                .renderImageSuperSampling()
+                //.renderImageSuperSampling()
                 .writeToImage();
 
 //        cameraTop.setImageWriter(new ImageWriter("ourPictureMP2UpBVH", 2000, 2000)) //
@@ -115,36 +116,15 @@ public class TryMP1 {
         scene.getLights().add(middleLight);
     }
     private void ball(Point p, Color color){
+        //scene.lights.add(new PointLight(new Color(255,255,255), new Point(-30,0,20)).setKq(0.00001).setKl(0.00001));
+        scene.getLights().add(new PointLight(new Color(255,255,255), new Point(p.getX()+50,p.getY(),p.getZ())).setKl(0.00001).setKq(0.0001));
 
         Geometry ball= new Sphere(new Point(p.getX(),p.getY(),p.getZ()),25)
                 .setEmission(new Color (color.getColor())).setMaterial(new Material().setShininess(50).setKs(10).setKd(0.25).setKr(0.0));
         scene.getGeometries().add(ball);
     }
 
-//    public void addPin(Point p) {
-//        //39, 75
-//        Material pinBody = new Material().setKt(0.2).setShininess(80).setKs(0.9).setKd(0.7);
-//        scene.getGeometries().add(
-//                new Sphere(new Point(p.getX(), 3.1, p.getZ()+10), 15).setEmission(new Color(169, 204, 227 )).setMaterial(pinBody),
-//                new Cylinder( 2.2, new Ray(new Point(p.getX(), 3.1, p.getZ()+5), new Vector(0, 0, 1)), 15).setEmission(new Color(169, 204, 227)).setMaterial(pinBody),
-//                new Cylinder( 2.2, new Ray(new Point(p.getX(), 3.1, p.getZ()+6), new Vector(0, 0, 1)), 15).setEmission(new Color(169, 204, 227)).setMaterial(pinBody),
-//                new Sphere(new Point(p.getX(), 3.1, p.getZ()+3), 15).setEmission(new Color(169, 204, 227 )).setMaterial(pinBody),
-//                //
-//                new Cylinder( 15, new Ray(new Point(p.getX(), 3.1, p.getZ()+25), new Vector(0, 0, 1)), 6).setEmission(new Color(RED)).setMaterial(pinBody),
-//                new Cylinder( 15, new Ray(new Point(p.getX(), 3.1, p.getZ()+26), new Vector(0, 0, 1)), 6).setEmission(new Color(RED)).setMaterial(pinBody),
-//
-//                //new Cylinder(3, new Ray(new Point(p.getX()+80, 5.3, p.getZ()+30), new Vector(0, 0, 1)), 4).setEmission(new Color(WHITE)).setMaterial(pinBody),
-//
-//
-//
-//                // new Sphere(new Point(p.getX()+30, 3.1, p.getZ()+40), 15).setEmission(new Color(WHITE)).setMaterial(pinBody),
-//
-//
-//                new Sphere(new Point(p.getX(), 3.1, p.getZ()+27), 6).setEmission(new Color(169, 204, 227)).setMaterial(pinBody),
-//                //new Cylinder(2, new Ray(new Point(p.getX(), 3.1, p.getZ()+27.5), new Vector(0, 0, 1)), 6 ).setEmission(new Color(WHITE)).setMaterial(pinBody),
-//                new Sphere(new Point(p.getX(), 3.1, p.getZ()+32), 6.3).setEmission(new Color(169, 204, 227)).setMaterial(pinBody));
-//
-//    }
+
 
     public void addPin(Point p)
     {
@@ -167,7 +147,7 @@ public class TryMP1 {
     private void createWalls() {
         Material wall = new Material().setKd(0.4).setKr(0.05).setShininess(10);
         Color wallColor = new Color( 36, 113, 163).scale(2);
-        //create wall with space for window
+
         int closeX = 4000;
         int farX = 5500;
         int bottomZ = 300;
@@ -179,7 +159,7 @@ public class TryMP1 {
         Polygon leftWall1 = (Polygon) new Polygon(new Point(-500, 340, 1500), new Point(lengthToX, 340, 1500), new Point(lengthToX, 340, 0), new Point(-500, 340, 0)).setEmission(wallColor)
                 .setMaterial(wall);
 
-      scene.getGeometries().add(leftWall1/*, leftWall2, leftWall3, leftWall4,verticalStick, horizontalStick*/);
+        scene.getGeometries().add(leftWall1/*, leftWall2, leftWall3, leftWall4,verticalStick, horizontalStick*/);
 
         scene.getLights().add(new DirectionalLight(new Color(165, 105, 189), new Vector(0, -1, -0.7)));
 
@@ -197,11 +177,11 @@ public class TryMP1 {
 
     private void createBoxForEndOfLane() {
         int boxHeight = 200;
-       Geometry leftBox = new Polygon(new Point(6000, 335, boxHeight), new Point(lengthToX, 335, boxHeight), new Point(lengthToX, 335, 0), new Point(6000, 335, 0))
-               .setEmission(new Color(BLACK)).setMaterial(new Material().setKs(0.8).setShininess(19));
+        Geometry leftBox = new Polygon(new Point(6000, 335, boxHeight), new Point(lengthToX, 335, boxHeight), new Point(lengthToX, 335, 0), new Point(6000, 335, 0))
+                .setEmission(new Color(BLACK)).setMaterial(new Material().setKs(0.8).setShininess(19));
         Geometry rightBox = new Polygon(new Point(6000, -335, boxHeight), new Point(lengthToX, -335, boxHeight), new Point(lengthToX, -335, 0), new Point(6000, -335, 0))
                 .setEmission(new Color(BLACK)).setMaterial(new Material().setKs(0.8).setShininess(19));
-       Geometry backMirror= new Polygon(new Point(6995, -335, boxHeight), new Point(6990, -335, 0), new Point(6990, -120, 0), new Point(6995, -120, boxHeight))
+        Geometry backMirror= new Polygon(new Point(6995, -335, boxHeight), new Point(6990, -335, 0), new Point(6990, -120, 0), new Point(6995, -120, boxHeight))
                 .setMaterial(new Material().setKd(0.1).setKr(0.3).setShininess(19)).setEmission(new Color(255, 105, 180));//box color neon pink
 
         Geometry backMirror1= new Polygon(new Point(6995, -335, boxHeight), new Point(6990, -335, 0), new Point(6990, -120, 0), new Point(6995, -120, boxHeight))
@@ -216,7 +196,7 @@ public class TryMP1 {
 
 
         Geometry secondBox = new Polygon(new Point(6000, -120, boxHeight), new Point(lengthToX, -120, boxHeight), new Point(lengthToX, -120, 0), new Point(6000, -120, 0)).setEmission(new Color(BLACK))
-               .setMaterial(new Material().setKs(0.8).setShininess(19));
+                .setMaterial(new Material().setKs(0.8).setShininess(19));
         Geometry thirdBox = new Polygon(new Point(6000, 120, boxHeight), new Point(lengthToX, 120, boxHeight), new Point(lengthToX, 120, 0), new Point(6000, 120, 0)).setEmission(new Color(BLACK))
                 .setMaterial(new Material().setKs(0.8).setShininess(19));
         Geometry topBox = new Polygon(new Point(6000, -335, boxHeight), new Point(lengthToX, -335, boxHeight), new Point(lengthToX, 335, boxHeight), new Point(6000, 335, boxHeight)).setEmission(new Color(BLACK))
@@ -275,7 +255,6 @@ public class TryMP1 {
         scene.getGeometries().add(rightTube, leftTube);
 
     }
-
 
 
 }

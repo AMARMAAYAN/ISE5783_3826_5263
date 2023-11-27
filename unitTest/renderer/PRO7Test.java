@@ -20,7 +20,7 @@ public class PRO7Test {
 
     @Test
     void SnowMan() {
-        //// Camera camera = new Camera(new Point(-2500, -2500, 800), new Vector(1, 1, 0), new Vector(0, 0, 1)) //
+        //Camera camera = new Camera(new Point(-2500, -2500, 800), new Vector(1, 1, 0), new Vector(0, 0, 1)) //
         //	.setVPSize(2500, 2500).setVPDistance(3000); //
         //first option: we see the bird from the back:
 //        Camera camera = new Camera(
@@ -91,30 +91,12 @@ public class PRO7Test {
                         .setEmission(new Color(224,158,56)).setMaterial(snowmanNose),
 
 
-                //the pinball
-                new Sphere(new Point(-25, -10, -3), 2).setEmission(new Color(169, 204, 227  )).setMaterial(snowmanSkin),
-                new Cylinder(2.2 ,new Ray(new Point( -25, 0.6, -3), new Vector(0, 1, 0)), 2).setEmission(new Color(169, 204, 227  )).setMaterial(snowmanSkin),
-                new Sphere(new Point(-25, -7.1, -3), 2).setEmission(new Color(WHITE)).setMaterial(snowmanSkin),
-                new Cylinder(3, new Ray(new Point(-25, 4.6, -3), new Vector(0, 1, 0)), 1).setEmission(new Color(RED)),
-                new Cylinder(2.6 , new Ray(new Point(-25, 5.3, -3), new Vector(0, 1, 0)), 1.01).setEmission(new Color(WHITE)).setMaterial(snowmanSkin),
-                new Sphere(new Point(-25, 7.3, -3), 1.25).setEmission(new Color(WHITE)).setMaterial(snowmanSkin),
-                new Cylinder(1, new Ray(new Point(-25, 7.6,-3), new Vector(0, 1, 0)), 1.25 ).setEmission(new Color(WHITE)).setMaterial(snowmanSkin),
-                new Sphere(new Point(-25, 8.3, -3), 1.25).setEmission(new Color(WHITE)).setMaterial(snowmanSkin),
-
-
-
-
                 //the land (replace to tube, like a branch?) the water source, and the shore
                 new Plane(new Point(215, 189, 226 ), new Point(-8,13,-25), new Point(1,1,-25))
                         .setEmission(new Color/*(140,50,40)*/(41, 128, 185 )).setMaterial(new Material().setKd(0.6).setShininess(10)),
 
                 new Plane(new Point(-15,10,-25), new Point(-15,-10,-25), new Point(-35,0,-12))
                         .setEmission(new Color(0, 20, 255)).setMaterial(new Material().setKr(0.5)));//.setKd(0.7).setKs(0.4).setShininess(20)),
-
-
-
-
-
 
 
 
@@ -126,30 +108,11 @@ public class PRO7Test {
         scene.getLights().add(new DirectionalLight(new Color(100, 150, 150), new Vector(22, -18, -35)));
         //scene.lights.add(new DirectionalLight(new Color(100,150,150), new Vector(17,12,20)));
 
-
-       // addPin(new Point(2250, -150, 3));
-
         ImageWriter imageWriter = new ImageWriter("PR07 - move camera", 500, 500);
         camera.setImageWriter(imageWriter) //
                 .setRayTracer(new RayTracerBasic(scene)) //
                 .renderImage() //
                 .writeToImage();
-    }
-
-    public void addPin(Point p)
-    {
-        Material pinBody = new Material().setKt(0.2).setShininess(30).setKs(0.1).setKd(0.7);
-        scene.getGeometries().add(
-                new Sphere(new Point(p.getX(), 1.1, p.getZ()), 2).setEmission(new Color(169, 204, 227  )).setMaterial(pinBody),
-                new Cylinder(2.2 ,new Ray(new Point( p.getX(), 0.6, p.getZ()), new Vector(0, 1, 0)), 2).setEmission(new Color(169, 204, 227  )).setMaterial(pinBody),
-                new Sphere(new Point(p.getX(), 3.1, p.getZ()), 2).setEmission(new Color(WHITE)),
-                new Cylinder(3, new Ray(new Point(p.getX(), 4.6, p.getZ()), new Vector(0, 1, 0)), 1).setEmission(new Color(RED)),
-                new Cylinder(0.6 , new Ray(new Point(p.getX(), 5.3, p.getZ()), new Vector(0, 1, 0)), 1.01).setEmission(new Color(WHITE)),
-                new Sphere(new Point(p.getX(), 7.3, p.getZ()), 1.25).setEmission(new Color(WHITE)),
-                new Cylinder(1, new Ray(new Point(p.getX(), 7.6, p.getZ()), new Vector(0, 1, 0)), 1.25 ).setEmission(new Color(WHITE)),
-                new Sphere(new Point(p.getX(), 8.3, p.getZ()), 1.25).setEmission(new Color(WHITE))
-        );
-
     }
 
 
